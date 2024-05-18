@@ -28,6 +28,7 @@
     "react-router-dom": "^5.3.4"
   },
   "devDependencies": {
+    "@ionic/cli": "^7.2.0",
     "@capacitor/cli": "6.0.0",
     "@testing-library/dom": ">=7.21.4",
     "@testing-library/jest-dom": "^5.16.5",
