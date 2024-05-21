@@ -1,5 +1,5 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonInput, IonButton, IonFooter, IonText } from '@ionic/react';
-import './login.css';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonInput, IonButton, IonFooter, IonText} from '@ionic/react';
+import './styles.css'
 
 const Login: React.FC = () => {
   return (
