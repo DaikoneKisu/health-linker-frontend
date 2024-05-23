@@ -1,0 +1,62 @@
+ion-header{
+    background-color:initial;
+
+}
+
+ion-icon {
+    color: #8400ff;
+}
+
+
+ion-menu-button {
+    color: #8400ff;
+}
+
+ion-title {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.titulo-app {
+    font-size: 1.2em;
+    color: #8400ff;
+    text-align: center;
+}
+
+.botones-dashboard {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+.botones-inf {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+h2 {
+    margin-left: 20px;
+}
+
+h6 {
+    margin-left: 20px;
+}
+
+.boton-dashboard {
+    font-size: 0.8rem;
+    box-shadow: 0 0.2rem 0.2rem 0 rgba(0, 0, 0, 0.2);
+    color: #8400ff;
+    border-radius: 15px;
+    width: 8em;
+    height: 5.5em;
+    justify-content: center;
+    align-items: center;
+}
+
+.no-color {
+    --background: none;
+    --border-color: none;
+}

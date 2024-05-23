@@ -11,3 +11,7 @@ ion-button {
     margin: 60px;
     display: block;
   }
+
+ion-header {
+    background-color: #e6e6e6;
+}
