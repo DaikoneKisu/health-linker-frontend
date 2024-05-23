@@ -1,17 +1,12 @@
 import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
-  IonIcon,
-  IonLabel,
   IonRouterOutlet,
   IonTabBar,
-  IonTabButton,
   IonTabs,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { ellipse, square, triangle } from "ionicons/icons";
-import Login from "./pages/login";
 import CasosClinicos from "./pages/casos-clinicos/casos-clinicos";
 import HomePage from "./pages/home";
 import Dashboard from './pages/dashboard';
@@ -53,13 +48,12 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route path="/login" component={Login} exact={true} />
           <Route path="/CasosClinicos" component={CasosClinicos} exact={true} />
           <Route path="/home" component={HomePage} exact={true} />
           <Route path="/dashboard" component={Dashboard} exact={true} />
           <Route
             path="/"
-            render={() => <Redirect to="/login" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
+            render={() => <Redirect to="/home" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
             exact={true}
           />
         </IonRouterOutlet>
