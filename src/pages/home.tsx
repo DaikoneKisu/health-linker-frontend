@@ -18,12 +18,12 @@ const HomePage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Casos Clinicos</IonTitle>
+          <IonTitle>Home Page</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
-          <IonTitle size="large">Iniciar sesión</IonTitle>
+          <IonTitle size="large">¡Bienvenido a HealthLinker!</IonTitle>
         </IonHeader>
         <IonList>
           <IonItem>

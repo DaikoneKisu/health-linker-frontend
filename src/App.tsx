@@ -12,7 +12,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import { ellipse, square, triangle } from "ionicons/icons";
 import Login from "./pages/login";
-import CasosClinicos from "./pages/casos-clinicos";
+import CasosClinicos from "./pages/casos-clinicos/casos-clinicos";
 import HomePage from "./pages/home";
 
 /* Core CSS required for Ionic components to work properly */
@@ -57,7 +57,7 @@ const App: React.FC = () => (
           <Route path="/home" component={HomePage} exact={true} />
           <Route
             path="/"
-            render={() => <Redirect to="/login" />}
+            render={() => <Redirect to="/login" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
             exact={true}
           />
         </IonRouterOutlet>
