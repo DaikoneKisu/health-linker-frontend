@@ -20,6 +20,7 @@ import React, { useState, useEffect } from "react";
 
 const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
+  const [abierto, setAbierto] = useState(false);
 
   const pacientes: CasoClinico[] = [
     {
@@ -32,6 +33,7 @@ const CasosClinicos: React.FC = () => {
       descripcionCaso: "Historial de hipertensión",
       archivoAsociado: "informe.pdf",
       MotivoMentoria: "Aprender más sobre ecocardiografía",
+      estatus: false,
     },
     {
       id: 2,
@@ -43,6 +45,7 @@ const CasosClinicos: React.FC = () => {
       descripcionCaso: "Dermatitis crónica",
       archivoAsociado: "fotos_piel.zip",
       MotivoMentoria: "Discutir opciones de tratamiento",
+      estatus: true,
     },
     {
       id: 3,
@@ -54,6 +57,7 @@ const CasosClinicos: React.FC = () => {
       descripcionCaso: "Historial de hipertensión",
       archivoAsociado: "informe.pdf",
       MotivoMentoria: "Aprender más sobre ecocardiografía",
+      estatus: false,
     },
     {
       id: 4,
@@ -65,6 +69,7 @@ const CasosClinicos: React.FC = () => {
       descripcionCaso: "Dermatitis crónica",
       archivoAsociado: "fotos_piel.zip",
       MotivoMentoria: "Discutir opciones de tratamiento",
+      estatus: true,
     },
     {
       id: 5,
@@ -76,6 +81,7 @@ const CasosClinicos: React.FC = () => {
       descripcionCaso: "Dermatitis crónica",
       archivoAsociado: "fotos_piel.zip",
       MotivoMentoria: "Discutir opciones de tratamiento",
+      estatus: false,
     },
     {
       id: 6,
@@ -87,6 +93,7 @@ const CasosClinicos: React.FC = () => {
       descripcionCaso: "Historial de hipertensión",
       archivoAsociado: "informe.pdf",
       MotivoMentoria: "Aprender más sobre ecocardiografía",
+      estatus: true,
     },
     {
       id: 7,
@@ -98,6 +105,7 @@ const CasosClinicos: React.FC = () => {
       descripcionCaso: "Dermatitis crónica",
       archivoAsociado: "fotos_piel.zip",
       MotivoMentoria: "Discutir opciones de tratamiento",
+      estatus: false,
     },
   ];
   return (
@@ -105,8 +113,24 @@ const CasosClinicos: React.FC = () => {
       <IonHeader>
         <IonTitle className="titulo-app">Casos clínicos</IonTitle>
         <IonButtons>
-          <IonButton className="botones-casos">Cerrados</IonButton>
-          <IonButton className="botones-casos">Abiertos</IonButton>
+          <IonButton
+            className="botones-casos"
+            onClick={() => {
+              setCasosClinicos(pacientes);
+              setAbierto(false);
+            }}
+          >
+            Cerrados
+          </IonButton>
+          <IonButton
+            className="botones-casos"
+            onClick={() => {
+              setCasosClinicos(pacientes);
+              setAbierto(true);
+            }}
+          >
+            Abiertos
+          </IonButton>
         </IonButtons>
       </IonHeader>
 
@@ -114,14 +138,18 @@ const CasosClinicos: React.FC = () => {
 
       <IonContent>
         <IonList>
-          {pacientes.map((caso) => (
-            <div key={caso.id}>
-              <IonCard>
-                <IonText>
-                  <h2>{caso.nombre}</h2>
-                  <p>{caso.descripcionCaso}</p>
-                </IonText>
-              </IonCard>
+          {casosClinicos.map((caso) => (
+            <div>
+              {abierto == caso.estatus && (
+                <div key={caso.id}>
+                  <IonCard>
+                    <IonText>
+                      <h2>{caso.nombre}</h2>
+                      <p>{caso.descripcionCaso}</p>
+                    </IonText>
+                  </IonCard>
+                </div>
+              )}
             </div>
           ))}
         </IonList>

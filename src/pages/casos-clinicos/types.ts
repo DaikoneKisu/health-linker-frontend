@@ -8,6 +8,7 @@ export interface CasoClinico {
   descripcionCaso: string;
   archivoAsociado: string;
   MotivoMentoria: string;
+  estatus: boolean;
 }
 
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 
