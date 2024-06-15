@@ -15,7 +15,14 @@ import { CasoClinico } from "../types";
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 
-export const ListaCasos: React.FC<Props> = ({ casosClinicos, cerrado }) => {
+export const ListaCasos: React.FC<Props> = ({
+  casosClinicos,
+  cerrado,
+  setCasoClinico,
+}) => {
+  useEffect(() => {
+    console.log("useEffecteado");
+  }, [casosClinicos]);
   return (
     <IonList>
       {casosClinicos.map((caso) => (
@@ -27,8 +34,14 @@ export const ListaCasos: React.FC<Props> = ({ casosClinicos, cerrado }) => {
                   <h2>{caso.nombre}</h2>
                   <p>{caso.descripcionCaso}</p>
                 </IonText>
-                <IonButton>Agregar</IonButton>
-                <IonButton>Eliminar</IonButton>
+                <IonButton
+                  onClick={() => {
+                    casosClinicos.splice(caso.id - 1, 1);
+                    console.log(casosClinicos);
+                  }}
+                >
+                  Eliminar
+                </IonButton>
                 <IonButton>Editar</IonButton>
               </IonCard>
             </div>
@@ -42,4 +55,5 @@ export const ListaCasos: React.FC<Props> = ({ casosClinicos, cerrado }) => {
 interface Props {
   casosClinicos: CasoClinico[];
   cerrado: boolean;
+  setCasoClinico: React.Dispatch<React.SetStateAction<CasoClinico[]>>;
 }
