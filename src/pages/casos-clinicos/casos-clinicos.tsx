@@ -108,6 +108,11 @@ const CasosClinicos: React.FC = () => {
       estatus: false,
     },
   ];
+
+  useEffect(() => {
+    setCasosClinicos(pacientes);
+  }, [pacientes]);
+
   return (
     <IonPage>
       <IonHeader>
@@ -116,7 +121,6 @@ const CasosClinicos: React.FC = () => {
           <IonButton
             className="botones-casos"
             onClick={() => {
-              setCasosClinicos(pacientes);
               setAbierto(false);
             }}
           >
@@ -125,7 +129,6 @@ const CasosClinicos: React.FC = () => {
           <IonButton
             className="botones-casos"
             onClick={() => {
-              setCasosClinicos(pacientes);
               setAbierto(true);
             }}
           >
