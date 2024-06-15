@@ -6,7 +6,6 @@ import {
   IonCard,
   IonButtons,
   IonButton,
-  IonMenuButton,
   IonText,
   IonList,
   IonSearchbar,
@@ -17,10 +16,11 @@ import { home, chatbox, folder, mail, person, map } from "ionicons/icons";
 import "./styles.css";
 import { CasoClinico } from "./types";
 import React, { useState, useEffect } from "react";
+import { ListaCasos } from "./tarjetas-de-casos/tarjetas-clinicas";
 
 const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
-  const [abierto, setAbierto] = useState(false);
+  const [cerrado, setCerrado] = useState(false);
 
   const pacientes: CasoClinico[] = [
     {
@@ -121,7 +121,7 @@ const CasosClinicos: React.FC = () => {
           <IonButton
             className="botones-casos"
             onClick={() => {
-              setAbierto(false);
+              setCerrado(false);
             }}
           >
             Cerrados
@@ -129,7 +129,7 @@ const CasosClinicos: React.FC = () => {
           <IonButton
             className="botones-casos"
             onClick={() => {
-              setAbierto(true);
+              setCerrado(true);
             }}
           >
             Abiertos
@@ -140,22 +140,7 @@ const CasosClinicos: React.FC = () => {
       <IonSearchbar></IonSearchbar>
 
       <IonContent>
-        <IonList>
-          {casosClinicos.map((caso) => (
-            <div>
-              {abierto == caso.estatus && (
-                <div key={caso.id}>
-                  <IonCard>
-                    <IonText>
-                      <h2>{caso.nombre}</h2>
-                      <p>{caso.descripcionCaso}</p>
-                    </IonText>
-                  </IonCard>
-                </div>
-              )}
-            </div>
-          ))}
-        </IonList>
+        <ListaCasos casosClinicos={pacientes} cerrado={cerrado} />
       </IonContent>
 
       <IonFooter>
