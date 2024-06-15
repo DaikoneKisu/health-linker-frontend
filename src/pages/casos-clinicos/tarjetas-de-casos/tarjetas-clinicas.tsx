@@ -8,13 +8,12 @@ import {
   IonButton,
   IonText,
   IonList,
-  IonSearchbar,
   IonFooter,
   IonIcon,
 } from "@ionic/react";
-import { home, chatbox, folder, mail, person, map } from "ionicons/icons";
 import { CasoClinico } from "../types";
 import React, { useState, useEffect } from "react";
+import "./styles.css";
 
 export const ListaCasos: React.FC<Props> = ({ casosClinicos, cerrado }) => {
   return (
@@ -22,12 +21,15 @@ export const ListaCasos: React.FC<Props> = ({ casosClinicos, cerrado }) => {
       {casosClinicos.map((caso) => (
         <div>
           {cerrado == caso.estatus && (
-            <div key={caso.id}>
+            <div key={caso.id} className="card-styles">
               <IonCard>
                 <IonText>
                   <h2>{caso.nombre}</h2>
                   <p>{caso.descripcionCaso}</p>
                 </IonText>
+                <IonButton>Agregar</IonButton>
+                <IonButton>Eliminar</IonButton>
+                <IonButton>Editar</IonButton>
               </IonCard>
             </div>
           )}
