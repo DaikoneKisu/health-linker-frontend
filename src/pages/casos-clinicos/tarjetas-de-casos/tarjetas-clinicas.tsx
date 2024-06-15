@@ -10,8 +10,13 @@ import {
   IonList,
   IonFooter,
   IonIcon,
+  IonCardContent,
+  IonItemDivider,
+  IonItemSliding,
+  IonItem
 } from "@ionic/react";
 import { CasoClinico } from "../types";
+import { add, pencil, trash } from "ionicons/icons";
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 
@@ -22,15 +27,19 @@ export const ListaCasos: React.FC<Props> = ({ casosClinicos, cerrado }) => {
         <div>
           {cerrado == caso.estatus && (
             <div key={caso.id} className="card-styles">
-              <IonCard>
+              <IonButtons slot="start">
                 <IonText>
-                  <h2>{caso.nombre}</h2>
-                  <p>{caso.descripcionCaso}</p>
+                  <h2 className="caso-nombre">{caso.nombre}</h2>
+                  <p className="caso-desc">{caso.descripcionCaso}</p>
                 </IonText>
-                <IonButton>Agregar</IonButton>
-                <IonButton>Eliminar</IonButton>
-                <IonButton>Editar</IonButton>
-              </IonCard>
+                <IonContent></IonContent>
+                  <IonButton size="large">
+                     <IonIcon icon={pencil} />
+                  </IonButton>
+                  <IonButton size="large">
+                    <IonIcon icon={trash} />
+                  </IonButton>
+              </IonButtons>
             </div>
           )}
         </div>

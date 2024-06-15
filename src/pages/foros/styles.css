@@ -1,0 +1,24 @@
+p {
+  margin-left: 20px;
+}
+
+.botones-casos {
+  width: 1000px;
+}
+
+ion-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
+  height: 3.5em;
+}
+
+.botones-inferiores {
+  width: 70px;
+}
+
+.boton-inferior-activo {
+  width: 70px;
+  color: nocolor;
+}

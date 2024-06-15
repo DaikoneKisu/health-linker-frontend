@@ -6,13 +6,13 @@ import {
   IonCard,
   IonButtons,
   IonButton,
-  IonText,
-  IonList,
+  IonFab,
+  IonFabButton,
   IonSearchbar,
   IonFooter,
   IonIcon,
 } from "@ionic/react";
-import { home, chatbox, folder, mail, person, map } from "ionicons/icons";
+import { home, chatbox, folder, mail, person, add } from "ionicons/icons";
 import "./styles.css";
 import { CasoClinico } from "./types";
 import React, { useState, useEffect } from "react";
@@ -141,7 +141,14 @@ const CasosClinicos: React.FC = () => {
 
       <IonContent>
         <ListaCasos casosClinicos={pacientes} cerrado={cerrado} />
+        <IonFab slot="fixed" horizontal="end" vertical="bottom">
+        <IonFabButton color="light">
+          <IonIcon icon={add}></IonIcon>
+        </IonFabButton>
+      </IonFab>
       </IonContent>
+
+
 
       <IonFooter>
         <IonButtons>
