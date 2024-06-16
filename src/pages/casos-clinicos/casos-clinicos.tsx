@@ -111,7 +111,7 @@ const CasosClinicos: React.FC = () => {
 
   useEffect(() => {
     setCasosClinicos(pacientes);
-  }, [pacientes]);
+  }, []);
 
   return (
     <IonPage>
@@ -142,13 +142,11 @@ const CasosClinicos: React.FC = () => {
       <IonContent>
         <ListaCasos casosClinicos={pacientes} cerrado={cerrado} />
         <IonFab slot="fixed" horizontal="end" vertical="bottom">
-        <IonFabButton color="light">
-          <IonIcon icon={add}></IonIcon>
-        </IonFabButton>
-      </IonFab>
+          <IonFabButton color="light">
+            <IonIcon icon={add}></IonIcon>
+          </IonFabButton>
+        </IonFab>
       </IonContent>
-
-
 
       <IonFooter>
         <IonButtons>
