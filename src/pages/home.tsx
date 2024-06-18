@@ -10,32 +10,30 @@ import {
   IonButton,
   IonFooter,
   IonText,
+  IonIcon,
 } from "@ionic/react";
 import "./login.css";
+import { arrowForwardCircle, pencil} from "ionicons/icons";
+import { Route } from "react-router";
 
 const HomePage: React.FC = () => {
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Home Page</IonTitle>
-        </IonToolbar>
+      <IonHeader className="ion-no-border">
+          <IonTitle>HealthLinker</IonTitle>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonTitle size="large">¡Bienvenido a HealthLinker!</IonTitle>
-        </IonHeader>
-        <IonList>
-          <IonItem>
-            <IonInput label="Usuario"></IonInput>
-          </IonItem>
 
-          <IonItem>
-            <IonInput label="Contraseña" type="password"></IonInput>
-          </IonItem>
-        </IonList>
+      <IonContent >
+        <h3 className="h2-t">Inicia sesión para continuar</h3>
+        <IonInput id="input-hl" label="Cédula"></IonInput>
+        <IonInput id="input-hl" label="Contraseña" type="password"></IonInput>
+      
         <IonButton>Acceder</IonButton>
-      </IonContent>
+        <div>
+          <h6>¿No tienes cuenta?</h6>
+          <IonButton size="small" routerLink="/registro">Registro</IonButton>
+        </div>
+        </IonContent>
     </IonPage>
   );
 };
