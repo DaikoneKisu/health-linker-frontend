@@ -10,6 +10,7 @@ import {
   IonButton,
   IonFooter,
   IonText,
+  IonIcon,
 } from "@ionic/react";
 import "./login.css";
 import { signin } from "../api/auth";
@@ -56,23 +57,24 @@ const HomePage: React.FC = () => {
   return (
     <WithUnAuth>
       <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Home Page</IonTitle>
-          </IonToolbar>
+        <IonHeader className="ion-no-border">
+          <IonTitle>HealthLinker</IonTitle>
         </IonHeader>
         <IonContent fullscreen>
+          <h3 className="h2-t">Inicia sesión para continuar</h3>
           <form onSubmit={handleSubmit}>
             <IonList>
               <IonItem>
                 <IonInput
-                  label="Usuario"
+                  id="input-hl"
+                  label="Cédula"
                   value={username}
                   onIonChange={(e) => setUsername(e.detail.value!)}
                 />
               </IonItem>
               <IonItem>
                 <IonInput
+                  id="input-hl"
                   label="Contraseña"
                   type="password"
                   value={password}
@@ -82,6 +84,12 @@ const HomePage: React.FC = () => {
             </IonList>
             <IonButton type="submit">Acceder</IonButton>
           </form>
+          <div>
+            <h6>¿No tienes cuenta?</h6>
+            <IonButton size="small" routerLink="/registro">
+              Registro
+            </IonButton>
+          </div>
         </IonContent>
       </IonPage>
     </WithUnAuth>

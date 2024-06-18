@@ -15,3 +15,25 @@ ion-button {
 ion-header {
     background-color: #e6e6e6;
 }
+
+#input-hl {
+    margin: auto;
+    margin-top: 3em;
+    width: 22em;
+}
+
+ion-content {
+    align-items: center;
+    justify-content: center;
+}
+
+.h2-t {
+    margin-top: 3em;
+    text-align: center;
+}
+
+div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

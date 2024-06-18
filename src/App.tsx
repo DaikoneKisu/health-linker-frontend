@@ -13,6 +13,7 @@ import HomePage from "./pages/home";
 import Dashboard from "./pages/dashboard";
 import Foros from "./pages/foros/foros";
 import ForoX from "./pages/foros/foroX";
+import Registro from "./pages/registro";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -56,6 +57,7 @@ const App: React.FC = () => (
           <Route path="/dashboard" component={Dashboard} exact={true} />
           <Route path="/foros" component={Foros} exact={true} />
           <Route path="/foroX" component={ForoX} exact={true} />
+          <Route path="/registro" component={Registro} exact={true} />
           <Route
             path="/"
             render={() => <Redirect to="/login" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
