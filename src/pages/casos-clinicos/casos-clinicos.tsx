@@ -17,6 +17,7 @@ import "./styles.css";
 import { CasoClinico } from "./types";
 import React, { useState, useEffect } from "react";
 import { ListaCasos } from "./tarjetas-de-casos/tarjetas-clinicas";
+import WithAuth from "../../components/WithAuth";
 
 const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
@@ -114,64 +115,66 @@ const CasosClinicos: React.FC = () => {
   }, []);
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonTitle className="titulo-app">Casos clínicos</IonTitle>
-        <IonButtons>
-          <IonButton
-            className="botones-casos"
-            onClick={() => {
-              setCerrado(false);
-            }}
-          >
-            Cerrados
-          </IonButton>
-          <IonButton
-            className="botones-casos"
-            onClick={() => {
-              setCerrado(true);
-            }}
-          >
-            Abiertos
-          </IonButton>
-        </IonButtons>
-      </IonHeader>
+    <WithAuth>
+      <IonPage>
+        <IonHeader>
+          <IonTitle className="titulo-app">Casos clínicos</IonTitle>
+          <IonButtons>
+            <IonButton
+              className="botones-casos"
+              onClick={() => {
+                setCerrado(false);
+              }}
+            >
+              Cerrados
+            </IonButton>
+            <IonButton
+              className="botones-casos"
+              onClick={() => {
+                setCerrado(true);
+              }}
+            >
+              Abiertos
+            </IonButton>
+          </IonButtons>
+        </IonHeader>
 
-      <IonSearchbar></IonSearchbar>
+        <IonSearchbar></IonSearchbar>
 
-      <IonContent>
-        <ListaCasos casosClinicos={pacientes} cerrado={cerrado} />
-        <IonFab slot="fixed" horizontal="end" vertical="bottom">
-          <IonFabButton color="light">
-            <IonIcon icon={add}></IonIcon>
-          </IonFabButton>
-        </IonFab>
-      </IonContent>
+        <IonContent>
+          <ListaCasos casosClinicos={pacientes} cerrado={cerrado} />
+          <IonFab slot="fixed" horizontal="end" vertical="bottom">
+            <IonFabButton color="light">
+              <IonIcon icon={add}></IonIcon>
+            </IonFabButton>
+          </IonFab>
+        </IonContent>
 
-      <IonFooter>
-        <IonButtons>
-          <IonButton size="large" className="botones-inferiores">
-            <IonIcon icon={home}></IonIcon>
-          </IonButton>
+        <IonFooter>
+          <IonButtons>
+            <IonButton size="large" className="botones-inferiores">
+              <IonIcon icon={home}></IonIcon>
+            </IonButton>
 
-          <IonButton size="large" className="botones-inferiores">
-            <IonIcon icon={chatbox}></IonIcon>
-          </IonButton>
+            <IonButton size="large" className="botones-inferiores">
+              <IonIcon icon={chatbox}></IonIcon>
+            </IonButton>
 
-          <IonButton size="large" className="botones-inferiores">
-            <IonIcon icon={folder}></IonIcon>
-          </IonButton>
+            <IonButton size="large" className="botones-inferiores">
+              <IonIcon icon={folder}></IonIcon>
+            </IonButton>
 
-          <IonButton size="large" className="botones-inferiores">
-            <IonIcon icon={mail}></IonIcon>
-          </IonButton>
+            <IonButton size="large" className="botones-inferiores">
+              <IonIcon icon={mail}></IonIcon>
+            </IonButton>
 
-          <IonButton size="large" className="botones-inferiores">
-            <IonIcon icon={person}></IonIcon>
-          </IonButton>
-        </IonButtons>
-      </IonFooter>
-    </IonPage>
+            <IonButton size="large" className="botones-inferiores">
+              <IonIcon icon={person}></IonIcon>
+            </IonButton>
+          </IonButtons>
+        </IonFooter>
+      </IonPage>
+    </WithAuth>
   );
 };
 

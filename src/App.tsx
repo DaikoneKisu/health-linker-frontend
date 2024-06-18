@@ -5,13 +5,13 @@ import {
   IonTabBar,
   IonTabs,
   setupIonicReact,
-  IonNav
+  IonNav,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import CasosClinicos from "./pages/casos-clinicos/casos-clinicos";
 import HomePage from "./pages/home";
-import Dashboard from './pages/dashboard';
-import Foros from './pages/foros/foros';
+import Dashboard from "./pages/dashboard";
+import Foros from "./pages/foros/foros";
 import ForoX from "./pages/foros/foroX";
 
 /* Core CSS required for Ionic components to work properly */
@@ -51,14 +51,14 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
+          <Route path="/login" component={HomePage} exact={true} />
           <Route path="/CasosClinicos" component={CasosClinicos} exact={true} />
-          <Route path="/home" component={HomePage} exact={true} />
           <Route path="/dashboard" component={Dashboard} exact={true} />
           <Route path="/foros" component={Foros} exact={true} />
           <Route path="/foroX" component={ForoX} exact={true} />
           <Route
             path="/"
-            render={() => <Redirect to="/home" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
+            render={() => <Redirect to="/login" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
             exact={true}
           />
         </IonRouterOutlet>
