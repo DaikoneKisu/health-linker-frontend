@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { Redirect } from "react-router-dom";
-import { UserState, setUser } from "../store/slices/user";
+import { UserState, setUser, clearUser } from "../store/slices/user";
 import { getOneUser } from "../api/auth";
 import { useEffect, useState } from "react";
 import { setAuth } from "../store/slices/auth";
@@ -38,21 +38,21 @@ const WithAuth = ({ children }: Props): JSX.Element => {
     dispatch(setUser(userData.user!));
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const userInfo = parseJwt(token);
       getUser(userInfo);
-
       dispatch(setAuth(true));
     }
   }, []);
+  */
 
-  if (auth) {
-    return children;
+  if (!auth.auth) {
+    return <Redirect to="/login" />;
   }
 
-  return <Redirect to="/login" />;
+  return children;
 };
 
 export default WithAuth;

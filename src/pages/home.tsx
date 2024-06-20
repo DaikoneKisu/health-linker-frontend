@@ -49,10 +49,11 @@ const HomePage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     const user = localStorage.getItem("token");
     console.log(user);
   }, []);
+  */
 
   return (
     <WithUnAuth>

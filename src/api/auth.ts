@@ -1,5 +1,8 @@
 import axios from "axios";
-const SERVER = "http://localhost:3000";
+import { useAppDispatch } from "../store/hooks";
+import { setAuth } from "../store/slices/auth";
+import { clearUser } from "../store/slices/user";
+import { SERVER } from "./server";
 
 export const signin = async (document: string, password: string) => {
   try {
@@ -112,4 +115,11 @@ export const getOneUser = async (document: string) => {
       return { success: false, error: "Error inesperado" };
     }
   }
+};
+
+export const logOut = () => {
+  const dispatch = useAppDispatch();
+  localStorage.removeItem("token");
+  dispatch(setAuth(false));
+  dispatch(clearUser());
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { UserState, setUser } from "../store/slices/user";
+import { UserState, clearUser, setUser } from "../store/slices/user";
 import { getOneUser } from "../api/auth";
 import { parseJwt } from "./WithAuth";
 import { Redirect } from "react-router";
@@ -17,7 +17,6 @@ const WithUnAuth = ({ children }: Props) => {
 
   const getUser = async (user: any) => {
     const userData = await getOneUser(user!.document);
-    console.log(userData);
     dispatch(setUser(userData.user!));
   };
 
@@ -26,16 +25,15 @@ const WithUnAuth = ({ children }: Props) => {
     if (token) {
       const userInfo = parseJwt(token);
       getUser(userInfo);
-
       dispatch(setAuth(true));
     }
   }, []);
 
-  if (auth) {
+  if (auth.auth) {
     return <Redirect to="/CasosClinicos" />;
+  } else {
+    return children;
   }
-
-  return children;
 };
 
 export default WithUnAuth;

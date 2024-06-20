@@ -18,6 +18,15 @@ import { CasoClinico } from "./types";
 import React, { useState, useEffect } from "react";
 import { ListaCasos } from "./tarjetas-de-casos/tarjetas-clinicas";
 import WithAuth from "../../components/WithAuth";
+import { Redirect } from "react-router";
+interface Props {
+  children: JSX.Element;
+}
+
+const logOut = (): JSX.Element => {
+  localStorage.removeItem("token");
+  return <Redirect to="/login" />;
+};
 
 const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
@@ -126,7 +135,7 @@ const CasosClinicos: React.FC = () => {
                 setCerrado(false);
               }}
             >
-              Cerrados
+              casos cerrados
             </IonButton>
             <IonButton
               className="botones-casos"
@@ -134,7 +143,15 @@ const CasosClinicos: React.FC = () => {
                 setCerrado(true);
               }}
             >
-              Abiertos
+              Mis casos abiertos
+            </IonButton>
+            <IonButton
+              className="botones-casos"
+              onClick={() => {
+                logOut();
+              }}
+            >
+              Cerrar Sesion
             </IonButton>
           </IonButtons>
         </IonHeader>
