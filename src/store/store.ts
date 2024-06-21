@@ -3,17 +3,15 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { authSlice } from "./slices/auth";
-import { registerSlice } from "./slices/register";
 import { userSlice } from "./slices/user";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "register", "user"],
+  whitelist: ["auth", "user"],
 };
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
-  register: registerSlice.reducer,
   user: userSlice.reducer,
 });
 

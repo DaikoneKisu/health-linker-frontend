@@ -11,6 +11,11 @@ export interface CasoClinico {
   estatus: boolean;
 }
 
+export interface Especialidad {
+  id: number;
+  name: string;
+}
+
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 
 género del paciente, 
 motivo de consulta del paciente, 
