@@ -93,7 +93,12 @@ export const signupRuralProfessional = async (
 
 export const getOneUser = async (document: string) => {
   try {
-    const response = await axios.get(`${SERVER}/users/${document}`);
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${SERVER}/users/${document}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
 
     const user = response.data;
 
