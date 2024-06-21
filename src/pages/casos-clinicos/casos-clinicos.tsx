@@ -20,6 +20,7 @@ import { ListaCasos } from "./tarjetas-de-casos/tarjetas-clinicas";
 import WithAuth from "../../components/WithAuth";
 import { Redirect } from "react-router";
 import { getCases } from "../../api/casos-clinicos";
+import { CasoIndividual } from "./tarjetas-de-casos/contenido-caso";
 interface Props {
   children: JSX.Element;
 }
@@ -32,6 +33,16 @@ const logOut = (): JSX.Element => {
 const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
   const [cerrado, setCerrado] = useState(false);
+  const [dentroCaso, setDentroCaso] = useState(false);
+  const [caso, setCaso] = useState(-1);
+
+  const chooseCase = (id: number) => {
+    setCaso(id);
+  };
+
+  const isInside = (answer: boolean) => {
+    setDentroCaso(answer);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -142,38 +153,53 @@ const CasosClinicos: React.FC = () => {
       <IonPage>
         <IonHeader>
           <IonTitle className="titulo-app">Casos clínicos</IonTitle>
-          <IonButtons>
-            <IonButton
-              className="botones-casos"
-              onClick={() => {
-                setCerrado(false);
-              }}
-            >
-              casos cerrados
-            </IonButton>
-            <IonButton
-              className="botones-casos"
-              onClick={() => {
-                setCerrado(true);
-              }}
-            >
-              Mis casos abiertos
-            </IonButton>
-            <IonButton
-              className="botones-casos"
-              onClick={() => {
-                logOut();
-              }}
-            >
-              Cerrar Sesion
-            </IonButton>
-          </IonButtons>
+          {dentroCaso && (
+            <CasoIndividual
+              casoClinico={pacientes[0]}
+              cerrado={cerrado}
+              dentroCaso={isInside}
+              chooseCase={chooseCase}
+            />
+          )}
+          {!dentroCaso && (
+            <IonButtons>
+              <IonButton
+                className="botones-casos"
+                onClick={() => {
+                  setCerrado(false);
+                }}
+              >
+                casos cerrados
+              </IonButton>
+              <IonButton
+                className="botones-casos"
+                onClick={() => {
+                  setCerrado(true);
+                }}
+              >
+                Mis casos abiertos
+              </IonButton>
+              <IonButton
+                className="botones-casos"
+                onClick={() => {
+                  logOut();
+                }}
+              >
+                Cerrar Sesion
+              </IonButton>
+            </IonButtons>
+          )}
         </IonHeader>
 
-        <IonSearchbar></IonSearchbar>
-
         <IonContent>
-          <ListaCasos casosClinicos={pacientes} cerrado={cerrado} />
+          {!dentroCaso && (
+            <ListaCasos
+              casosClinicos={pacientes}
+              cerrado={cerrado}
+              dentroCaso={isInside}
+              chooseCase={chooseCase}
+            />
+          )}
           <IonFab slot="fixed" horizontal="end" vertical="bottom">
             <IonFabButton color="light">
               <IonIcon icon={add}></IonIcon>

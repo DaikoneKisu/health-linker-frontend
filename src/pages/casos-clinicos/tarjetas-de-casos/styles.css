@@ -1,7 +1,8 @@
-.card-styles {
-  display: "flex";
-  justify-content: "space-between";
-  flex-direction: "row";
+.card-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: fit-content;
 }
 
 .caso-nombre {
@@ -14,4 +15,25 @@
   font-size: 1em;
   font-weight: 100;
   font-style: italic;
+}
+
+.card-styles {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.row-styles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.sc-ion-button {
+  display: flex;
+  align-items: space-between;
+  z-index: 99;
+  justify-content: space-between;
 }
