@@ -20,32 +20,50 @@ import {
 import "./login.css";
 import { arrowForwardCircle, pencil } from "ionicons/icons";
 import { Route } from "react-router";
-import { useState } from "react";
-import { registerSpecialist } from "../api/register";
+import { useEffect, useState } from "react";
+import { registerSpecialist, getSpecialities } from "../api/register";
+import { Especialidad } from "./casos-clinicos/types";
 
 const Registro: React.FC = () => {
-  const [specialtyId, setSpecialtyId] = useState(0);
+  const [specialtyId, setSpecialtyId] = useState("");
   const [fullName, setFullName] = useState("");
   const [document, setDocument] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVerify, setPasswordVerify] = useState("");
+  const [listaEspecialista, setListaEspecialista] = useState<Especialidad[]>(
+    []
+  );
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
+      if (
+        !fullName ||
+        !password ||
+        !document ||
+        !email ||
+        !passwordVerify ||
+        !specialtyId
+      ) {
+        throw new Error("Por favor, completa todos los campos.");
+      } else if (password != passwordVerify) {
+        throw new Error(
+          "Las contraseñas proporcioandas no coinciden. Vuelva a intentar"
+        );
+      }
       // 2. Llamada a la función de registro
       const data = await registerSpecialist(
-        specialtyId,
+        Number(specialtyId),
         document,
         email,
         fullName,
         password
       );
-
       // 3. Manejo de la respuesta
       if (data.success) {
-        // Inicio de sesión exitoso
+        // Registro exitoso
         console.log("¡Usuario registrado satisfactoriamente!");
         // Navega a otra página, etc.
       } else {
@@ -57,8 +75,19 @@ const Registro: React.FC = () => {
       alert(error);
     }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getSpecialities();
+      if (data.success) {
+        setListaEspecialista(data.specialties);
+      } else {
+        console.error("Error:", data.error);
+      }
+    };
 
-  console.log(fullName.toLowerCase());
+    fetchData();
+  }, []);
+
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
@@ -91,32 +120,42 @@ const Registro: React.FC = () => {
 
         <div>
           <h6>Especialidad</h6>
-          onSelect
           <IonPicker>
             <IonPickerColumn
               value={specialtyId}
-              onIonChange={(e) => setSpecialtyId(Number(e.detail.value!))}
+              onIonChange={(e) => setSpecialtyId(String(e.detail.value!))}
             >
-              <IonPickerColumnOption value="" disabled={true}>
-                --
-              </IonPickerColumnOption>
-              <IonPickerColumnOption value="1">
-                Enfermero especialista
-              </IonPickerColumnOption>
+              {listaEspecialista.map((lista: Especialidad) => (
+                <IonPickerColumnOption value={lista.id} key={lista.id}>
+                  {lista.name}
+                </IonPickerColumnOption>
+              ))}
             </IonPickerColumn>
           </IonPicker>
         </div>
-        <IonInput id="input-hl" label="Contraseña" type="password">
+        <IonInput
+          id="input-hl"
+          label="Contraseña"
+          type="password"
+          value={password}
+          onIonChange={(e) => setPassword(e.detail.value!)}
+        >
           <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
         </IonInput>
-        <IonInput id="input-hl" label="Confirmar contraseña" type="password">
+        <IonInput
+          id="input-hl"
+          label="Confirmar contraseña"
+          type="password"
+          value={passwordVerify}
+          onIonChange={(e) => setPasswordVerify(e.detail.value!)}
+        >
           <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
         </IonInput>
 
-        <IonButton>Registro</IonButton>
+        <IonButton onClick={handleSubmit}>Registrar</IonButton>
         <div>
           <h6>¿Ya tienes una cuenta?</h6>
-          <IonButton size="small" routerLink="/home">
+          <IonButton size="small" routerLink="/login">
             Iniciar sesión
           </IonButton>
         </div>
@@ -124,5 +163,9 @@ const Registro: React.FC = () => {
     </IonPage>
   );
 };
+
+interface Props {
+  listaEspecialista: Especialidad[];
+}
 
 export default Registro;

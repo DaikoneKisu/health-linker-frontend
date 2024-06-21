@@ -18,19 +18,17 @@ import { CasoClinico } from "./types";
 import React, { useState, useEffect } from "react";
 import { ListaCasos } from "./tarjetas-de-casos/tarjetas-clinicas";
 import WithAuth from "../../components/WithAuth";
-import { Redirect } from "react-router";
 interface Props {
   children: JSX.Element;
 }
 
-const logOut = (): JSX.Element => {
-  localStorage.removeItem("token");
-  return <Redirect to="/login" />;
-};
-
 const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
   const [cerrado, setCerrado] = useState(false);
+
+  const logOut = () => {
+    localStorage.removeItem("token");
+  };
 
   const pacientes: CasoClinico[] = [
     {

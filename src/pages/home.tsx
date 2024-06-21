@@ -16,20 +16,16 @@ import "./login.css";
 import { signin } from "../api/auth";
 import { useEffect, useState } from "react";
 import WithUnAuth from "../components/WithUnAuth";
-
+import { useHistory } from "react-router-dom";
 const HomePage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const history = useHistory();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      // 1. Validation (opcional, puedes hacerlo en el componente o en la función signin)
-      if (!username || !password) {
-        throw new Error("Por favor, completa ambos campos.");
-      }
-
       // 2. Llamada a la función signin
       const data = await signin(username, password);
 
@@ -39,6 +35,7 @@ const HomePage: React.FC = () => {
         console.log("Inicio de sesión exitoso:", data.token);
         localStorage.setItem("token", data.token);
         // Navega a otra página, etc.
+        history.push("/CasosClinicos");
       } else {
         throw new Error("Credenciales inválidas.");
       }
@@ -49,11 +46,7 @@ const HomePage: React.FC = () => {
     }
   };
 
-  /*useEffect(() => {
-    const user = localStorage.getItem("token");
-    console.log(user);
-  }, []);
-  */
+  useEffect(() => {}, []);
 
   return (
     <WithUnAuth>
@@ -70,7 +63,9 @@ const HomePage: React.FC = () => {
                   id="input-hl"
                   label="Cédula"
                   value={username}
-                  onIonChange={(e) => setUsername(e.detail.value!)}
+                  onIonChange={(e) => {
+                    setUsername(e.detail.value!);
+                  }}
                 />
               </IonItem>
               <IonItem>
