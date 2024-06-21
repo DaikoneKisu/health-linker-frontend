@@ -1,0 +1,17 @@
+.card-styles {
+  display: "flex";
+  justify-content: "space-between";
+  flex-direction: "row";
+}
+
+.caso-nombre {
+  font-size: 1.2em;
+  font-weight: 500;
+  font-style: light;
+}
+
+.caso-desc {
+  font-size: 1em;
+  font-weight: 100;
+  font-style: italic;
+}
