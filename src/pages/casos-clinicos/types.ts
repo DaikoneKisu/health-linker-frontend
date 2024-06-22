@@ -1,14 +1,17 @@
 export interface CasoClinico {
   id: number;
-  nombre: string;
-  fNacimiento: string;
+  fechaNacimiento: string;
   genero: string;
-  especialidad: string;
+  especialidadRequerida: string;
+  motivoMentoria: string;
   valoracionPaciente: string;
   descripcionCaso: string;
-  archivoAsociado: string;
-  MotivoMentoria: string;
-  estatus: boolean;
+  archivosAsociados: Archivo[] | null;
+}
+
+export interface Archivo {
+  id: number;
+  enlace: string;
 }
 
 export interface Especialidad {

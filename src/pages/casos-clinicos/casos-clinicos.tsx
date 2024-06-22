@@ -17,8 +17,14 @@ import React, { useState, useEffect } from "react";
 import { ListaCasos } from "./tarjetas-de-casos/tarjetas-clinicas";
 import WithAuth from "../../components/WithAuth";
 import { Redirect } from "react-router";
-import { getCases } from "../../api/casos-clinicos";
 import { CasoIndividual } from "./tarjetas-de-casos/contenido-caso";
+import {
+  getCases,
+  getClosedCasesCurrentUser,
+  getOpenCasesCurrentUser,
+} from "../../api/casos-clinicos";
+import ListaDeCasos from "./lista-de-casos";
+
 interface Props {
   children: JSX.Element;
 }
@@ -33,6 +39,7 @@ const CasosClinicos: React.FC = () => {
   const [cerrado, setCerrado] = useState(false);
   const [dentroCaso, setDentroCaso] = useState(false);
   const [caso, setCaso] = useState(0);
+  const [page, setPage] = useState(1);
 
   const chooseCase = (id: number) => {
     setCaso(id);
@@ -55,147 +62,67 @@ const CasosClinicos: React.FC = () => {
     fetchData();
   }, []);
 
-  const pacientes: CasoClinico[] = [
-    {
-      id: 0,
-      nombre: "Eduardo Arzolay",
-      fNacimiento: "1990-05-15",
-      genero: "Masculino",
-      especialidad: "Cardiología",
-      valoracionPaciente: "Excelente",
-      descripcionCaso: "Historial de hipertensión",
-      archivoAsociado: "informe.pdf",
-      MotivoMentoria: "Aprender más sobre ecocardiografía",
-      estatus: false,
-    },
-    {
-      id: 1,
-      nombre: "Luis Hernandez",
-      fNacimiento: "1985-08-20",
-      genero: "Masculino",
-      especialidad: "Dermatología",
-      valoracionPaciente: "Bueno",
-      descripcionCaso: "Dermatitis crónica",
-      archivoAsociado: "fotos_piel.zip",
-      MotivoMentoria: "Discutir opciones de tratamiento",
-      estatus: true,
-    },
-    {
-      id: 2,
-      nombre: "Daniel Amado",
-      fNacimiento: "1990-05-15",
-      genero: "Femenino",
-      especialidad: "Cardiología",
-      valoracionPaciente: "Excelente",
-      descripcionCaso: "Historial de hipertensión",
-      archivoAsociado: "informe.pdf",
-      MotivoMentoria: "Aprender más sobre ecocardiografía",
-      estatus: false,
-    },
-    {
-      id: 3,
-      nombre: "Santiago Berrios",
-      fNacimiento: "1985-08-20",
-      genero: "Masculino",
-      especialidad: "Dermatología",
-      valoracionPaciente: "Bueno",
-      descripcionCaso: "Dermatitis crónica",
-      archivoAsociado: "fotos_piel.zip",
-      MotivoMentoria: "Discutir opciones de tratamiento",
-      estatus: true,
-    },
-    {
-      id: 4,
-      nombre: "Gabriel Cordoba",
-      fNacimiento: "1985-08-20",
-      genero: "Masculino",
-      especialidad: "Dermatología",
-      valoracionPaciente: "Bueno",
-      descripcionCaso: "Dermatitis crónica",
-      archivoAsociado: "fotos_piel.zip",
-      MotivoMentoria: "Discutir opciones de tratamiento",
-      estatus: false,
-    },
-    {
-      id: 5,
-      nombre: "Gabriela Forgione",
-      fNacimiento: "1990-05-15",
-      genero: "Femenino",
-      especialidad: "Cardiología",
-      valoracionPaciente: "Excelente",
-      descripcionCaso: "Historial de hipertensión",
-      archivoAsociado: "informe.pdf",
-      MotivoMentoria: "Aprender más sobre ecocardiografía",
-      estatus: true,
-    },
-    {
-      id: 6,
-      nombre: "Juan Quijada",
-      fNacimiento: "1985-08-20",
-      genero: "Masculino",
-      especialidad: "Dermatología",
-      valoracionPaciente: "Bueno",
-      descripcionCaso: "Dermatitis crónica",
-      archivoAsociado: "fotos_piel.zip",
-      MotivoMentoria: "Discutir opciones de tratamiento",
-      estatus: false,
-    },
-  ];
+  const getOpenCases = async () => {
+    const response = await getOpenCasesCurrentUser(page);
+    if (response.success) {
+      setCasosClinicos(response.data!);
+    } else {
+      console.error("Error:", response.error);
+    }
+  };
+
+  const getClosedCases = async () => {
+    const response = await getClosedCasesCurrentUser(page);
+    if (response.success) {
+      setCasosClinicos(response.data!);
+    } else {
+      console.error("Error:", response.error);
+    }
+  };
 
   useEffect(() => {
-    setCasosClinicos(pacientes);
-  }, []);
+    if (cerrado) {
+      getClosedCases();
+    } else {
+      getOpenCases();
+    }
+  }, [cerrado]);
 
   return (
     <WithAuth>
       <IonPage>
         <IonHeader>
-          <IonTitle class="titulo-casos">Casos clínicos</IonTitle>
-          {dentroCaso && (
-            <CasoIndividual
-              casoClinico={pacientes[caso]}
-              dentroCaso={isInside}
-            />
-          )}
-          {!dentroCaso && (
-            <IonButtons>
-              <IonButton
-                className="botones-casos"
-                onClick={() => {
-                  setCerrado(false);
-                }}
-              >
-                casos cerrados
-              </IonButton>
-              <IonButton
-                className="botones-casos"
-                onClick={() => {
-                  setCerrado(true);
-                }}
-              >
-                Mis casos abiertos
-              </IonButton>
-              <IonButton
-                className="botones-casos"
-                onClick={() => {
-                  logOut();
-                }}
-              >
-                Cerrar Sesion
-              </IonButton>
-            </IonButtons>
-          )}
+          <IonTitle className="titulo-app">Casos clínicos</IonTitle>
+          <IonButtons>
+            <IonButton
+              className="botones-casos"
+              onClick={() => {
+                setCerrado(true);
+              }}
+            >
+              casos cerrados
+            </IonButton>
+            <IonButton
+              className="botones-casos"
+              onClick={() => {
+                setCerrado(false);
+              }}
+            >
+              Mis casos abiertos
+            </IonButton>
+            <IonButton
+              className="botones-casos"
+              onClick={() => {
+                logOut();
+              }}
+            >
+              Cerrar Sesion
+            </IonButton>
+          </IonButtons>
         </IonHeader>
 
         <IonContent>
-          {!dentroCaso && (
-            <ListaCasos
-              casosClinicos={pacientes}
-              cerrado={cerrado}
-              dentroCaso={isInside}
-              chooseCase={chooseCase}
-            />
-          )}
+          <ListaDeCasos casos={casosClinicos} />
           <IonFab slot="fixed" horizontal="end" vertical="bottom">
             <IonFabButton color="light">
               <IonIcon icon={add}></IonIcon>

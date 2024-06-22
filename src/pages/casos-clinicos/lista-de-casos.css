@@ -1,0 +1,5 @@
+ion-list {
+  padding: 0 10 !important;
+  display: flex;
+  flex-direction: column;
+}

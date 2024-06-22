@@ -3,14 +3,20 @@ import { SERVER } from "./server";
 
 const SINGUP = "/auth/signup";
 
-export const registerRuralProffesional = async (
+export const registerRuralProfessional = async (
+  zone: string,
   document: string,
+  email: string,
+  fullName: string,
   password: string
 ) => {
   try {
     const response = await axios.post(`${SERVER}${SINGUP}/rural-professional`, {
       document,
       password,
+      email,
+      fullName,
+      zone,
     });
 
     const token = response.data;

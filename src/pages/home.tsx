@@ -11,6 +11,7 @@ import {
   IonFooter,
   IonText,
   IonIcon,
+  IonInputPasswordToggle,
 } from "@ionic/react";
 import "./login.css";
 import { signin } from "../api/auth";
@@ -32,7 +33,7 @@ const HomePage: React.FC = () => {
       // 3. Manejo de la respuesta
       if (data.success) {
         // Inicio de sesión exitoso
-        console.log("Inicio de sesión exitoso:", data.token);
+        alert("Inicio de sesión exitoso");
         localStorage.setItem("token", data.token);
         // Navega a otra página, etc.
         history.push("/CasosClinicos");
@@ -45,8 +46,6 @@ const HomePage: React.FC = () => {
       alert(error);
     }
   };
-
-  useEffect(() => {}, []);
 
   return (
     <WithUnAuth>
@@ -75,7 +74,9 @@ const HomePage: React.FC = () => {
                   type="password"
                   value={password}
                   onIonChange={(e) => setPassword(e.detail.value!)}
-                />
+                >
+                  <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
+                </IonInput>
               </IonItem>
             </IonList>
             <IonButton type="submit">Acceder</IonButton>
