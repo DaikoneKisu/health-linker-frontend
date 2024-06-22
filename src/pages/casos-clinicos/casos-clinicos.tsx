@@ -19,7 +19,13 @@ import React, { useState, useEffect } from "react";
 import { ListaCasos } from "./tarjetas-de-casos/tarjetas-clinicas";
 import WithAuth from "../../components/WithAuth";
 import { Redirect } from "react-router";
-import { getCases } from "../../api/casos-clinicos";
+import {
+  getCases,
+  getClosedCasesCurrentUser,
+  getOpenCasesCurrentUser,
+} from "../../api/casos-clinicos";
+import ListaDeCasos from "./lista-de-casos";
+
 interface Props {
   children: JSX.Element;
 }
@@ -31,111 +37,34 @@ const logOut = (): JSX.Element => {
 
 const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
-  const [cerrado, setCerrado] = useState(false);
+  const [cerrado, setCerrado] = useState(true);
+  const [page, setPage] = useState(1);
+
+  const getOpenCases = async () => {
+    const response = await getOpenCasesCurrentUser(page);
+    if (response.success) {
+      setCasosClinicos(response.data!);
+    } else {
+      console.error("Error:", response.error);
+    }
+  };
+
+  const getClosedCases = async () => {
+    const response = await getClosedCasesCurrentUser(page);
+    if (response.success) {
+      setCasosClinicos(response.data!);
+    } else {
+      console.error("Error:", response.error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getCases();
-      if (data.success) {
-        console.log("Casos:", data.data);
-      } else {
-        console.error("Error:", data.error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const pacientes: CasoClinico[] = [
-    {
-      id: 1,
-      nombre: "Eduardo Arzolay",
-      fNacimiento: "1990-05-15",
-      genero: "Masculino",
-      especialidad: "Cardiología",
-      valoracionPaciente: "Excelente",
-      descripcionCaso: "Historial de hipertensión",
-      archivoAsociado: "informe.pdf",
-      MotivoMentoria: "Aprender más sobre ecocardiografía",
-      estatus: false,
-    },
-    {
-      id: 2,
-      nombre: "Luis Hernandez",
-      fNacimiento: "1985-08-20",
-      genero: "Masculino",
-      especialidad: "Dermatología",
-      valoracionPaciente: "Bueno",
-      descripcionCaso: "Dermatitis crónica",
-      archivoAsociado: "fotos_piel.zip",
-      MotivoMentoria: "Discutir opciones de tratamiento",
-      estatus: true,
-    },
-    {
-      id: 3,
-      nombre: "Daniel Amado",
-      fNacimiento: "1990-05-15",
-      genero: "Femenino",
-      especialidad: "Cardiología",
-      valoracionPaciente: "Excelente",
-      descripcionCaso: "Historial de hipertensión",
-      archivoAsociado: "informe.pdf",
-      MotivoMentoria: "Aprender más sobre ecocardiografía",
-      estatus: false,
-    },
-    {
-      id: 4,
-      nombre: "Santiago Berrios",
-      fNacimiento: "1985-08-20",
-      genero: "Masculino",
-      especialidad: "Dermatología",
-      valoracionPaciente: "Bueno",
-      descripcionCaso: "Dermatitis crónica",
-      archivoAsociado: "fotos_piel.zip",
-      MotivoMentoria: "Discutir opciones de tratamiento",
-      estatus: true,
-    },
-    {
-      id: 5,
-      nombre: "Gabriel Cordoba",
-      fNacimiento: "1985-08-20",
-      genero: "Masculino",
-      especialidad: "Dermatología",
-      valoracionPaciente: "Bueno",
-      descripcionCaso: "Dermatitis crónica",
-      archivoAsociado: "fotos_piel.zip",
-      MotivoMentoria: "Discutir opciones de tratamiento",
-      estatus: false,
-    },
-    {
-      id: 6,
-      nombre: "Gabriela Forgione",
-      fNacimiento: "1990-05-15",
-      genero: "Femenino",
-      especialidad: "Cardiología",
-      valoracionPaciente: "Excelente",
-      descripcionCaso: "Historial de hipertensión",
-      archivoAsociado: "informe.pdf",
-      MotivoMentoria: "Aprender más sobre ecocardiografía",
-      estatus: true,
-    },
-    {
-      id: 7,
-      nombre: "Juan Quijada",
-      fNacimiento: "1985-08-20",
-      genero: "Masculino",
-      especialidad: "Dermatología",
-      valoracionPaciente: "Bueno",
-      descripcionCaso: "Dermatitis crónica",
-      archivoAsociado: "fotos_piel.zip",
-      MotivoMentoria: "Discutir opciones de tratamiento",
-      estatus: false,
-    },
-  ];
-
-  useEffect(() => {
-    setCasosClinicos(pacientes);
-  }, []);
+    if (cerrado) {
+      getClosedCases();
+    } else {
+      getOpenCases();
+    }
+  }, [cerrado]);
 
   return (
     <WithAuth>
@@ -146,7 +75,7 @@ const CasosClinicos: React.FC = () => {
             <IonButton
               className="botones-casos"
               onClick={() => {
-                setCerrado(false);
+                setCerrado(true);
               }}
             >
               casos cerrados
@@ -154,7 +83,7 @@ const CasosClinicos: React.FC = () => {
             <IonButton
               className="botones-casos"
               onClick={() => {
-                setCerrado(true);
+                setCerrado(false);
               }}
             >
               Mis casos abiertos
@@ -170,10 +99,8 @@ const CasosClinicos: React.FC = () => {
           </IonButtons>
         </IonHeader>
 
-        <IonSearchbar></IonSearchbar>
-
         <IonContent>
-          <ListaCasos casosClinicos={pacientes} cerrado={cerrado} />
+          <ListaDeCasos casos={casosClinicos} />
           <IonFab slot="fixed" horizontal="end" vertical="bottom">
             <IonFabButton color="light">
               <IonIcon icon={add}></IonIcon>

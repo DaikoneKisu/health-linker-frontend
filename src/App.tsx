@@ -14,6 +14,9 @@ import Dashboard from "./pages/dashboard";
 import Foros from "./pages/foros/foros";
 import ForoX from "./pages/foros/foroX";
 import Registro from "./pages/registro";
+import RegistroProfesionalRural from "./pages/registro/registro-profesional-rural";
+import RegistroEspecialista from "./pages/registro/registro-especialista";
+import NotFound from "./pages/not-found";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -59,10 +62,21 @@ const App: React.FC = () => (
           <Route path="/foroX" component={ForoX} exact={true} />
           <Route path="/registro" component={Registro} exact={true} />
           <Route
+            path="/registro/especialista"
+            component={RegistroEspecialista}
+            exact={true}
+          />
+          <Route
+            path="/registro/profesional-rural"
+            component={RegistroProfesionalRural}
+            exact={true}
+          />
+          <Route
             path="/"
             render={() => <Redirect to="/login" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
             exact={true}
           />
+          <Route component={NotFound} />
         </IonRouterOutlet>
         <IonTabBar></IonTabBar>
       </IonTabs>
