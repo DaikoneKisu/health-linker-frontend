@@ -3,12 +3,10 @@ import {
   IonHeader,
   IonPage,
   IonTitle,
-  IonCard,
   IonButtons,
   IonButton,
   IonFab,
   IonFabButton,
-  IonSearchbar,
   IonFooter,
   IonIcon,
 } from "@ionic/react";
@@ -34,7 +32,7 @@ const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
   const [cerrado, setCerrado] = useState(false);
   const [dentroCaso, setDentroCaso] = useState(false);
-  const [caso, setCaso] = useState(-1);
+  const [caso, setCaso] = useState(0);
 
   const chooseCase = (id: number) => {
     setCaso(id);
@@ -59,7 +57,7 @@ const CasosClinicos: React.FC = () => {
 
   const pacientes: CasoClinico[] = [
     {
-      id: 1,
+      id: 0,
       nombre: "Eduardo Arzolay",
       fNacimiento: "1990-05-15",
       genero: "Masculino",
@@ -71,7 +69,7 @@ const CasosClinicos: React.FC = () => {
       estatus: false,
     },
     {
-      id: 2,
+      id: 1,
       nombre: "Luis Hernandez",
       fNacimiento: "1985-08-20",
       genero: "Masculino",
@@ -83,7 +81,7 @@ const CasosClinicos: React.FC = () => {
       estatus: true,
     },
     {
-      id: 3,
+      id: 2,
       nombre: "Daniel Amado",
       fNacimiento: "1990-05-15",
       genero: "Femenino",
@@ -95,7 +93,7 @@ const CasosClinicos: React.FC = () => {
       estatus: false,
     },
     {
-      id: 4,
+      id: 3,
       nombre: "Santiago Berrios",
       fNacimiento: "1985-08-20",
       genero: "Masculino",
@@ -107,7 +105,7 @@ const CasosClinicos: React.FC = () => {
       estatus: true,
     },
     {
-      id: 5,
+      id: 4,
       nombre: "Gabriel Cordoba",
       fNacimiento: "1985-08-20",
       genero: "Masculino",
@@ -119,7 +117,7 @@ const CasosClinicos: React.FC = () => {
       estatus: false,
     },
     {
-      id: 6,
+      id: 5,
       nombre: "Gabriela Forgione",
       fNacimiento: "1990-05-15",
       genero: "Femenino",
@@ -131,7 +129,7 @@ const CasosClinicos: React.FC = () => {
       estatus: true,
     },
     {
-      id: 7,
+      id: 6,
       nombre: "Juan Quijada",
       fNacimiento: "1985-08-20",
       genero: "Masculino",
@@ -152,13 +150,11 @@ const CasosClinicos: React.FC = () => {
     <WithAuth>
       <IonPage>
         <IonHeader>
-          <IonTitle className="titulo-app">Casos clínicos</IonTitle>
+          <IonTitle class="titulo-casos">Casos clínicos</IonTitle>
           {dentroCaso && (
             <CasoIndividual
-              casoClinico={pacientes[0]}
-              cerrado={cerrado}
+              casoClinico={pacientes[caso]}
               dentroCaso={isInside}
-              chooseCase={chooseCase}
             />
           )}
           {!dentroCaso && (

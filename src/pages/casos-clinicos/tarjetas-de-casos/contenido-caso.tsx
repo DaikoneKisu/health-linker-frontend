@@ -21,23 +21,19 @@ import React, { useState, useEffect } from "react";
 
 export const CasoIndividual: React.FC<Props> = ({
   casoClinico,
-  cerrado,
   dentroCaso,
-  chooseCase,
 }) => {
   return (
     <div>
       <IonText>
-        <h1>hola hermanaos</h1>
+        <h3>{casoClinico.nombre}</h3>
       </IonText>
-      <IonButton onClick={() => dentroCaso(false)}> boton de regreso</IonButton>
+      <IonButton onClick={() => dentroCaso(false)}>boton de regreso</IonButton>
     </div>
   );
 };
 
 interface Props {
   casoClinico: CasoClinico;
-  cerrado: boolean;
   dentroCaso: (answer: boolean) => void;
-  chooseCase: (id: number) => void;
 }
