@@ -5,13 +5,20 @@ import { IonList } from "@ionic/react";
 
 interface Props {
   casos: CasoClinico[];
+  dentroCaso: (answer: boolean) => void;
+  casoEscogido: (id: number) => void;
 }
 
-const ListaDeCasos = ({ casos }: Props) => {
+const ListaDeCasos = ({ casos, dentroCaso, casoEscogido }: Props) => {
   return (
     <IonList>
       {casos.map((c) => (
-        <TarjetaDeCaso caso={c} key={c.id} />
+        <TarjetaDeCaso
+          caso={c}
+          dentroCaso={dentroCaso}
+          casoEscogido={casoEscogido}
+          key={c.id}
+        />
       ))}
     </IonList>
   );

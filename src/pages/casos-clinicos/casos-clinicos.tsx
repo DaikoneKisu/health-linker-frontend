@@ -37,16 +37,16 @@ const logOut = (): JSX.Element => {
 const CasosClinicos: React.FC = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
   const [cerrado, setCerrado] = useState(false);
-  const [dentroCaso, setDentroCaso] = useState(false);
+  const [dentro, setDentro] = useState(false);
   const [caso, setCaso] = useState(0);
   const [page, setPage] = useState(1);
 
-  const chooseCase = (id: number) => {
+  const casoEscogido = (id: number) => {
     setCaso(id);
   };
 
-  const isInside = (answer: boolean) => {
-    setDentroCaso(answer);
+  const dentroCaso = (answer: boolean) => {
+    setDentro(answer);
   };
 
   useEffect(() => {
@@ -88,6 +88,10 @@ const CasosClinicos: React.FC = () => {
     }
   }, [cerrado]);
 
+  useEffect(() => {
+    console.log("El caso es: " + caso);
+  }, [dentro, caso]);
+
   return (
     <WithAuth>
       <IonPage>
@@ -122,7 +126,11 @@ const CasosClinicos: React.FC = () => {
         </IonHeader>
 
         <IonContent>
-          <ListaDeCasos casos={casosClinicos} />
+          <ListaDeCasos
+            casos={casosClinicos}
+            dentroCaso={dentroCaso}
+            casoEscogido={casoEscogido}
+          />
           <IonFab slot="fixed" horizontal="end" vertical="bottom">
             <IonFabButton color="light">
               <IonIcon icon={add}></IonIcon>

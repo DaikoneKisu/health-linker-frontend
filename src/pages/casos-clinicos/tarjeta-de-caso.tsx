@@ -11,11 +11,18 @@ import { CasoClinico } from "./types";
 
 interface Props {
   caso: CasoClinico;
+  dentroCaso: (answer: boolean) => void;
+  casoEscogido: (id: number) => void;
 }
 
-const TarjetaDeCaso = ({ caso }: Props) => {
+const TarjetaDeCaso = ({ caso, dentroCaso, casoEscogido }: Props) => {
   return (
-    <IonCard>
+    <IonCard
+      onClick={() => {
+        dentroCaso(true);
+        casoEscogido(caso.id);
+      }}
+    >
       <IonCardHeader>
         <IonCardTitle>
           Especialidad requerida: <strong>{caso.especialidadRequerida}</strong>

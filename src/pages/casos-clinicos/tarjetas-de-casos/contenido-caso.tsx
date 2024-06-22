@@ -26,7 +26,7 @@ export const CasoIndividual: React.FC<Props> = ({
   return (
     <div>
       <IonText>
-        <h3>{casoClinico.nombre}</h3>
+        <h3>{casoClinico.motivoMentoria}</h3>
       </IonText>
       <IonButton onClick={() => dentroCaso(false)}>boton de regreso</IonButton>
     </div>
