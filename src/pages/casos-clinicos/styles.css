@@ -17,3 +17,9 @@ ion-footer {
 .botones-inferiores {
   width: 70px;
 }
+
+.titulo-casos {
+  font-size: 28px;
+  color: #8400ff;
+  text-align: center;
+}
