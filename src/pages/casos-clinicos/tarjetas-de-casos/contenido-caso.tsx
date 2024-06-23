@@ -14,6 +14,9 @@ import {
   IonItemDivider,
   IonItemSliding,
   IonItem,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
 import { person } from "ionicons/icons";
@@ -39,7 +42,8 @@ export const CasoIndividual: React.FC<Props> = ({
       ></IonIcon>
 
       <div style={{ padding: 10 }}></div>
-      <div className="init-div-style">
+
+      <div className="content-div-style">
         <IonText className="text-style">
           Fecha de nacimiento: {casoClinico.fechaNacimiento}
         </IonText>
@@ -47,16 +51,34 @@ export const CasoIndividual: React.FC<Props> = ({
         <IonText className="text-style">
           Especialidad requerida: {casoClinico.especialidadRequerida}
         </IonText>
-        <IonText className="text-style">
-          Motivo de la mentoría: {casoClinico.motivoMentoria}
-        </IonText>
       </div>
 
-      <IonList>
-        <IonCard>
-          <IonText>testing bro</IonText>
-        </IonCard>
-      </IonList>
+      <IonCard className="card-styles">
+        <IonCardHeader>
+          <IonCardTitle>Motivo de la mentoría</IonCardTitle>
+          <IonCardSubtitle>
+            <span>{casoClinico.motivoMentoria}</span>
+          </IonCardSubtitle>
+        </IonCardHeader>
+      </IonCard>
+
+      <IonCard className="card-styles">
+        <IonCardHeader>
+          <IonCardTitle>Descripción caso</IonCardTitle>
+          <IonCardSubtitle>
+            <span>{casoClinico.descripcionCaso}</span>
+          </IonCardSubtitle>
+        </IonCardHeader>
+      </IonCard>
+
+      <IonCard className="card-styles">
+        <IonCardHeader>
+          <IonCardTitle>Valoración del paciente:</IonCardTitle>
+          <IonCardSubtitle>
+            <span>{casoClinico.valoracionPaciente}</span>
+          </IonCardSubtitle>
+        </IonCardHeader>
+      </IonCard>
 
       <IonFooter></IonFooter>
     </div>

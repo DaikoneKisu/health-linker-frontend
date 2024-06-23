@@ -15,7 +15,6 @@ import { home, chatbox, folder, mail, person, add } from "ionicons/icons";
 import "./styles.css";
 import { CasoClinico } from "./types";
 import React, { useState, useEffect } from "react";
-import { ListaCasos } from "./tarjetas-de-casos/tarjetas-clinicas";
 import WithAuth from "../../components/WithAuth";
 import { Redirect } from "react-router";
 import { CasoIndividual } from "./tarjetas-de-casos/contenido-caso";
