@@ -17,6 +17,7 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
+  IonInfiniteScroll,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
 import { person } from "ionicons/icons";
@@ -52,33 +53,34 @@ export const CasoIndividual: React.FC<Props> = ({
           Especialidad requerida: {casoClinico.especialidadRequerida}
         </IonText>
       </div>
+      <IonInfiniteScroll style={{ height: "225px", overflow: "auto" }}>
+        <IonCard className="card-styles">
+          <IonCardHeader>
+            <IonCardTitle>Motivo de la mentoría</IonCardTitle>
+            <IonCardSubtitle>
+              <span>{casoClinico.motivoMentoria}</span>
+            </IonCardSubtitle>
+          </IonCardHeader>
+        </IonCard>
 
-      <IonCard className="card-styles">
-        <IonCardHeader>
-          <IonCardTitle>Motivo de la mentoría</IonCardTitle>
-          <IonCardSubtitle>
-            <span>{casoClinico.motivoMentoria}</span>
-          </IonCardSubtitle>
-        </IonCardHeader>
-      </IonCard>
+        <IonCard className="card-styles">
+          <IonCardHeader>
+            <IonCardTitle>Descripción caso</IonCardTitle>
+            <IonCardSubtitle>
+              <span>{casoClinico.descripcionCaso}</span>
+            </IonCardSubtitle>
+          </IonCardHeader>
+        </IonCard>
 
-      <IonCard className="card-styles">
-        <IonCardHeader>
-          <IonCardTitle>Descripción caso</IonCardTitle>
-          <IonCardSubtitle>
-            <span>{casoClinico.descripcionCaso}</span>
-          </IonCardSubtitle>
-        </IonCardHeader>
-      </IonCard>
-
-      <IonCard className="card-styles">
-        <IonCardHeader>
-          <IonCardTitle>Valoración del paciente:</IonCardTitle>
-          <IonCardSubtitle>
-            <span>{casoClinico.valoracionPaciente}</span>
-          </IonCardSubtitle>
-        </IonCardHeader>
-      </IonCard>
+        <IonCard className="card-styles">
+          <IonCardHeader>
+            <IonCardTitle>Valoración del paciente:</IonCardTitle>
+            <IonCardSubtitle>
+              <span>{casoClinico.valoracionPaciente}</span>
+            </IonCardSubtitle>
+          </IonCardHeader>
+        </IonCard>
+      </IonInfiniteScroll>
 
       <IonFooter></IonFooter>
     </div>
