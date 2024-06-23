@@ -23,3 +23,22 @@ ion-footer {
   color: #8400ff;
   text-align: center;
 }
+
+.tittle-style {
+  font-size: 40px;
+  color: #8400ff;
+  text-align: center;
+  margin: 0px 0px 0px 0px;
+}
+
+.subtittle-style {
+  font-size: 24px;
+  color: #8400ff;
+  text-align: center;
+}
+
+.header-style {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}

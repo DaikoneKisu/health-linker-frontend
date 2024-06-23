@@ -12,7 +12,7 @@ import { CasoClinico } from "./types";
 interface Props {
   caso: CasoClinico;
   dentroCaso: (answer: boolean) => void;
-  casoEscogido: (id: number) => void;
+  casoEscogido: (caso: CasoClinico) => void;
 }
 
 const TarjetaDeCaso = ({ caso, dentroCaso, casoEscogido }: Props) => {
@@ -20,7 +20,7 @@ const TarjetaDeCaso = ({ caso, dentroCaso, casoEscogido }: Props) => {
     <IonCard
       onClick={() => {
         dentroCaso(true);
-        casoEscogido(caso.id);
+        casoEscogido(caso);
       }}
     >
       <IonCardHeader>

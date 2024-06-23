@@ -6,7 +6,7 @@ import { IonList } from "@ionic/react";
 interface Props {
   casos: CasoClinico[];
   dentroCaso: (answer: boolean) => void;
-  casoEscogido: (id: number) => void;
+  casoEscogido: (caso: CasoClinico) => void;
 }
 
 const ListaDeCasos = ({ casos, dentroCaso, casoEscogido }: Props) => {

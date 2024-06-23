@@ -18,17 +18,24 @@ import {
 import { CasoClinico } from "../types";
 import { add, pencil, trash } from "ionicons/icons";
 import React, { useState, useEffect } from "react";
+import "./styles.css";
 
 export const CasoIndividual: React.FC<Props> = ({
   casoClinico,
   dentroCaso,
 }) => {
   return (
-    <div>
-      <IonText>
-        <h3>{casoClinico.motivoMentoria}</h3>
-      </IonText>
-      <IonButton onClick={() => dentroCaso(false)}>boton de regreso</IonButton>
+    <div className="init-div-style">
+      <IonHeader class="header-style">
+        <IonTitle className="tittle-style">Health-Linker</IonTitle>
+        <IonText className="subtittle-style">Casos Clínicos</IonText>
+      </IonHeader>
+
+      <IonButton className="botones-caso" onClick={() => dentroCaso(false)}>
+        boton de regreso
+      </IonButton>
+
+      <IonFooter></IonFooter>
     </div>
   );
 };
