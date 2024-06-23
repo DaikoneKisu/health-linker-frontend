@@ -76,3 +76,12 @@
   justify-content: center;
   flex-direction: column;
 }
+
+.text-style {
+  font-size: 16px;
+  color: #ffffff;
+  text-align: center;
+  font-weight: 100;
+  padding: 2.5px;
+  text-align: center;
+}
