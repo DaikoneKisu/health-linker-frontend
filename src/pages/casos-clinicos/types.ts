@@ -19,6 +19,13 @@ export interface Especialidad {
   name: string;
 }
 
+export interface Feedback {
+  id: number;
+  fecha: string;
+  texto: string;
+  autor: string;
+}
+
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 
 género del paciente, 
 motivo de consulta del paciente, 

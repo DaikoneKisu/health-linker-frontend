@@ -21,7 +21,7 @@ import {
 } from "@ionic/react";
 import { CasoClinico } from "../types";
 import { DatosPaciente } from "./información/datos-paciente";
-import { Feedback } from "./retroalimentación/retroalimentacion-pacientes";
+import { FeedbackRender } from "./retroalimentación/retroalimentacion-pacientes";
 import { person } from "ionicons/icons";
 import React, { useState, useEffect } from "react";
 
@@ -43,7 +43,7 @@ export const CasoIndividual: React.FC<Props> = ({
   return (
     <div>
       {feedback ? (
-        <Feedback caseId={casoClinico.id} isFeedback={isFeedback} />
+        <FeedbackRender caseId={casoClinico.id} isFeedback={isFeedback} />
       ) : (
         <DatosPaciente
           casoClinico={casoClinico}
