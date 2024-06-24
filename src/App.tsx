@@ -5,7 +5,6 @@ import {
   IonTabBar,
   IonTabs,
   setupIonicReact,
-  IonNav,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import CasosClinicos from "./pages/casos-clinicos/casos-clinicos";
@@ -17,6 +16,7 @@ import Registro from "./pages/registro";
 import RegistroProfesionalRural from "./pages/registro/registro-profesional-rural";
 import RegistroEspecialista from "./pages/registro/registro-especialista";
 import NotFound from "./pages/not-found";
+import CrearCasoClinico from "./pages/casos-clinicos/crear-caso-clinico";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -46,6 +46,11 @@ const App: React.FC = () => (
         <IonRouterOutlet>
           <Route path="/login" component={HomePage} exact={true} />
           <Route path="/CasosClinicos" component={CasosClinicos} exact={true} />
+          <Route
+            path="/CasosClinicos/crear"
+            component={CrearCasoClinico}
+            exact={true}
+          />
           <Route path="/dashboard" component={Dashboard} exact={true} />
           <Route path="/foros" component={Foros} exact={true} />
           <Route path="/foroX" component={ForoX} exact={true} />
