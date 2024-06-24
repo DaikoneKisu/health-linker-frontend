@@ -1,6 +1,7 @@
 import axios from "axios";
 import { SERVER } from "./server";
 import { Feedback } from "../pages/casos-clinicos/types";
+import moment from "moment";
 
 const CLINICALFEEDBACK_URL = "clinical-cases-feedbacks/by-clinical-case/";
 
@@ -48,7 +49,8 @@ const mapFeedbackArray = async (c: any): Promise<Feedback> => {
   });
   return {
     id: c.id,
-    fecha: c.createdAt,
+    fecha: moment(c.createdAt).format("YYYY-MM-DD"),
+    hora: moment(c.createdAt).format("HH:mm:ss"),
     texto: c.text,
     autor: user.fullName,
   };

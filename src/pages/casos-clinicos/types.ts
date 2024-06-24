@@ -1,3 +1,5 @@
+import { Moment } from "moment";
+
 export interface CasoClinico {
   id: number;
   fechaNacimiento: string;
@@ -22,6 +24,7 @@ export interface Especialidad {
 export interface Feedback {
   id: number;
   fecha: string;
+  hora: string;
   texto: string;
   autor: string;
 }

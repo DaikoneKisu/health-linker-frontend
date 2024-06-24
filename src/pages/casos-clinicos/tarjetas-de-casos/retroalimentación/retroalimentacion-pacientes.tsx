@@ -12,9 +12,10 @@ import {
   IonInfiniteScroll,
 } from "@ionic/react";
 import { getCaseFeedback } from "../../../../api/feedback";
-import { person } from "ionicons/icons";
+import moment from "moment";
 import React, { useState, useEffect } from "react";
 import { Feedback } from "../../types";
+import { FeedbackList } from "./lista-retroalimentaciones";
 import "./styles.css";
 
 interface Props {
@@ -41,7 +42,6 @@ export const FeedbackRender: React.FC<Props> = ({ caseId, isFeedback }) => {
 
   useEffect(() => {
     gettingFeedbacks();
-
     console.log(feedbackList);
   }, [refresher]);
 
@@ -55,13 +55,8 @@ export const FeedbackRender: React.FC<Props> = ({ caseId, isFeedback }) => {
       >
         Volver al contenido
       </IonButton>
-      <IonButton
-        onClick={() => {
-          refreshing();
-        }}
-      >
-        Refrescar
-      </IonButton>
+      <IonButton onClick={() => refreshing}>Refrescar</IonButton>
+      <FeedbackList feedbacks={feedbackList} />
     </div>
   );
 };
