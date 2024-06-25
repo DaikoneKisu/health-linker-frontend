@@ -1,0 +1,15 @@
+.mainContent,
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mainContent {
+  margin-top: auto;
+  gap: 30px;
+}
+
+.contentContainer {
+  height: 100%;
+}
