@@ -24,7 +24,8 @@ const ConfirmCaseDelete = ({
 
   return (
     <IonAlert
-      header="Eliminar caso clínico"
+      header="¿Está seguro?"
+      message="Esta acción no se puede deshacer."
       trigger={triggerElementId}
       buttons={[
         { text: "Cancelar", role: "cancel" },

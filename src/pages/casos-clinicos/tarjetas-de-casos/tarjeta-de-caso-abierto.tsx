@@ -19,17 +19,21 @@ interface Props {
   caso: CasoClinico;
   dentroCaso: (answer: boolean) => void;
   casoEscogido: (caso: CasoClinico) => void;
+  getCases: () => void;
 }
 
-const TarjetaDeCasoAbierto = ({ caso, dentroCaso, casoEscogido }: Props) => {
+const TarjetaDeCasoAbierto = ({
+  caso,
+  dentroCaso,
+  casoEscogido,
+  getCases,
+}: Props) => {
   const deleteButtonId = useId();
-  const router = useIonRouter();
 
   const closeCase = async () => {
     closeClinicalCase(caso.id).then((data) => {
       if (data.success) {
-        alert("Caso cerrado con éxito");
-        router.push("/casos-clinicos");
+        getCases();
       } else {
         alert("Error al cerrar el caso");
       }
@@ -69,7 +73,7 @@ const TarjetaDeCasoAbierto = ({ caso, dentroCaso, casoEscogido }: Props) => {
           </IonButton>
           <ConfirmCaseDelete
             caseId={caso.id}
-            afterDelete={() => router.push("/casos-clinicos")}
+            afterDelete={() => getCases()}
             triggerElementId={deleteButtonId}
           />
         </IonButtons>

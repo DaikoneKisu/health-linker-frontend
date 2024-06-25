@@ -20,13 +20,19 @@ interface Props {
   caso: CasoClinico;
   dentroCaso: (answer: boolean) => void;
   casoEscogido: (caso: CasoClinico) => void;
+  getCases: () => void;
 }
 
-const TarjetaDeCasoCerrado = ({ caso, dentroCaso, casoEscogido }: Props) => {
+const TarjetaDeCasoCerrado = ({
+  caso,
+  dentroCaso,
+  casoEscogido,
+  getCases,
+}: Props) => {
   const publicizeCase = () => {
     publicizeClinicalCase(caso.id).then((data) => {
       if (data.success) {
-        alert("Caso hecho público con éxito");
+        getCases();
       } else {
         alert("Error al hacer público el caso");
       }
@@ -36,7 +42,7 @@ const TarjetaDeCasoCerrado = ({ caso, dentroCaso, casoEscogido }: Props) => {
   const reopenCase = () => {
     reopenClinicalCase(caso.id).then((data) => {
       if (data.success) {
-        alert("Caso reabierto con éxito");
+        getCases();
       } else {
         alert("Error al reabrir el caso");
       }

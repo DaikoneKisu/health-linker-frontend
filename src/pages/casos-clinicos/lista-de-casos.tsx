@@ -9,9 +9,16 @@ interface Props {
   dentroCaso: (answer: boolean) => void;
   casoEscogido: (caso: CasoClinico) => void;
   cerrado: boolean;
+  getCases: () => void;
 }
 
-const ListaDeCasos = ({ casos, dentroCaso, casoEscogido, cerrado }: Props) => {
+const ListaDeCasos = ({
+  casos,
+  dentroCaso,
+  casoEscogido,
+  cerrado,
+  getCases,
+}: Props) => {
   return (
     <IonList>
       {casos.length === 0 && cerrado && (
@@ -27,6 +34,7 @@ const ListaDeCasos = ({ casos, dentroCaso, casoEscogido, cerrado }: Props) => {
               dentroCaso={dentroCaso}
               casoEscogido={casoEscogido}
               key={c.id}
+              getCases={getCases}
             />
           ))
         : casos.map((c) => (
@@ -35,6 +43,7 @@ const ListaDeCasos = ({ casos, dentroCaso, casoEscogido, cerrado }: Props) => {
               dentroCaso={dentroCaso}
               casoEscogido={casoEscogido}
               key={c.id}
+              getCases={getCases}
             />
           ))}
     </IonList>

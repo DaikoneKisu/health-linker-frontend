@@ -161,6 +161,7 @@ const CasosClinicos = () => {
             dentroCaso={dentroCaso}
             casoEscogido={casoEscogido}
             cerrado={cerrado}
+            getCases={cerrado ? getClosedCases : getOpenCases}
           />
           <IonFab slot="fixed" horizontal="end" vertical="bottom">
             <IonFabButton color="primary" routerLink="/casos-clinicos/crear">
