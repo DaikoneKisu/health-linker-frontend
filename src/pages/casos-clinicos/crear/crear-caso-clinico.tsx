@@ -20,16 +20,20 @@ import {
   IonSelectOption,
   IonTextarea,
   IonTitle,
+  useIonRouter,
 } from "@ionic/react";
 import { Formik, Field, Form, FieldProps, useField } from "formik";
-import { getSpecialities } from "../../api/register";
-import { type CrearCasoClinico, Especialidad } from "./types";
+import { getSpecialities } from "../../../api/register";
+import { type CrearCasoClinico, Especialidad } from "../types";
 import { DateTime } from "luxon";
-import { createClinicalCase } from "../../api/casos-clinicos";
+import { createClinicalCase } from "../../../api/casos-clinicos";
+import ResetOnLeave from "../../../components/helpers/reset-on-leave";
+import LogoHeader from "../../../components/logo-header/logo-header";
 
 const CrearCasoClinico = () => {
   const [specialties, setSpecialties] = useState<Especialidad[]>([]);
   const datetimeId = useId();
+  const router = useIonRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,9 +50,7 @@ const CrearCasoClinico = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonTitle>Healthlinker</IonTitle>
-      </IonHeader>
+      <LogoHeader />
       <IonContent>
         <Formik
           initialValues={
@@ -69,6 +71,7 @@ const CrearCasoClinico = () => {
             createClinicalCase(values).then((data) => {
               if (data.success) {
                 alert("Caso clínico creado satisfactoriamente");
+                router.push("/casos-clinicos");
               } else {
                 alert("Error al crear el caso clínico");
               }
@@ -76,7 +79,7 @@ const CrearCasoClinico = () => {
             });
           }}
         >
-          {({ isSubmitting, handleReset }) => (
+          {({ isSubmitting }) => (
             <Form>
               <header>
                 <h2>Crear caso clínico</h2>
@@ -258,7 +261,11 @@ const CrearCasoClinico = () => {
                   fill="solid"
                   color="danger"
                   disabled={isSubmitting}
-                  onClick={handleReset}
+                  onClick={() => {
+                    router.canGoBack()
+                      ? router.goBack()
+                      : router.push("/casos-clinicos");
+                  }}
                 >
                   Cancelar
                 </IonButton>
@@ -271,6 +278,7 @@ const CrearCasoClinico = () => {
                   Guardar
                 </IonButton>
               </div>
+              <ResetOnLeave />
             </Form>
           )}
         </Formik>

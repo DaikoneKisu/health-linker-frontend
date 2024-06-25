@@ -3,6 +3,8 @@ import { Redirect } from "react-router-dom";
 import { setUser } from "../store/slices/user";
 import { getOneUser } from "../api/auth";
 import { PropsWithChildren } from "react";
+import { useIonViewWillEnter } from "@ionic/react";
+import { setAuth } from "../store/slices/auth";
 
 export const parseJwt = (token: string) => {
   try {
@@ -26,23 +28,24 @@ export const parseJwt = (token: string) => {
 
 const WithAuth = ({ children }: PropsWithChildren) => {
   const auth = useAppSelector((state) => state.auth);
+
   const dispatch = useAppDispatch();
 
   const getUser = async (user: any) => {
     const userData = await getOneUser(user!.document);
-    console.log(userData);
     dispatch(setUser(userData.user!));
   };
 
-  /*useEffect(() => {
+  useIonViewWillEnter(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const userInfo = parseJwt(token);
       getUser(userInfo);
       dispatch(setAuth(true));
+    } else {
+      dispatch(setAuth(false));
     }
   }, []);
-  */
 
   if (!auth.auth) {
     return <Redirect to="/login" />;

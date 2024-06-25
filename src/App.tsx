@@ -16,7 +16,7 @@ import Registro from "./pages/registro/registro";
 import RegistroProfesionalRural from "./pages/registro/profesional-rural/profesional-rural";
 import RegistroEspecialista from "./pages/registro/especialista/especialista";
 import NotFound from "./pages/not-found";
-import CrearCasoClinico from "./pages/casos-clinicos/crear-caso-clinico";
+import CrearCasoClinico from "./pages/casos-clinicos/crear/crear-caso-clinico";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -36,6 +36,7 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import CasoClinico from "./pages/casos-clinicos/caso-clinico/caso-clinico";
 
 setupIonicReact({ mode: "md" });
 
@@ -49,6 +50,10 @@ const App: React.FC = () => (
           path="/casos-clinicos/crear"
           component={CrearCasoClinico}
           exact={true}
+        />
+        <Route
+          path="/casos-clinicos/caso-clinico/:id"
+          component={CasoClinico}
         />
         <Route path="/dashboard" component={Dashboard} exact={true} />
         <Route path="/foros" component={Foros} exact={true} />

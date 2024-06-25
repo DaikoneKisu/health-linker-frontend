@@ -1,0 +1,15 @@
+.header {
+  margin: 20px 0;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  font-weight: bold;
+  width: min(300px, 80%);
+}

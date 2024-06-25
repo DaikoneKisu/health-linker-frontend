@@ -23,6 +23,8 @@ const WithUnAuth = ({ children }: PropsWithChildren) => {
       const userInfo = parseJwt(token);
       getUser(userInfo);
       dispatch(setAuth(true));
+    } else {
+      dispatch(setAuth(false));
     }
   }, []);
 
