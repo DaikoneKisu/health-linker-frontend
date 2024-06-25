@@ -12,9 +12,9 @@ import Login from "./pages/login/login";
 import Dashboard from "./pages/dashboard";
 import Foros from "./pages/foros/foros";
 import ForoX from "./pages/foros/foroX";
-import Registro from "./pages/registro";
-import RegistroProfesionalRural from "./pages/registro/registro-profesional-rural";
-import RegistroEspecialista from "./pages/registro/registro-especialista";
+import Registro from "./pages/registro/registro";
+import RegistroProfesionalRural from "./pages/registro/profesional-rural/profesional-rural";
+import RegistroEspecialista from "./pages/registro/especialista/especialista";
 import NotFound from "./pages/not-found";
 import CrearCasoClinico from "./pages/casos-clinicos/crear-caso-clinico";
 
@@ -44,15 +44,15 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonRouterOutlet>
         <Route path="/login" component={Login} exact={true} />
-        <Route path="/CasosClinicos" component={CasosClinicos} exact={true} />
+        <Route path="/casos-clinicos" component={CasosClinicos} exact={true} />
         <Route
-          path="/CasosClinicos/crear"
+          path="/casos-clinicos/crear"
           component={CrearCasoClinico}
           exact={true}
         />
         <Route path="/dashboard" component={Dashboard} exact={true} />
         <Route path="/foros" component={Foros} exact={true} />
-        <Route path="/foroX" component={ForoX} exact={true} />
+        <Route path="/foro-x" component={ForoX} exact={true} />
         <Route path="/registro" component={Registro} exact={true} />
         <Route
           path="/registro/especialista"
