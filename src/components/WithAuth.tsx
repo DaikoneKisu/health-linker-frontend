@@ -1,12 +1,8 @@
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { Redirect } from "react-router-dom";
-import { UserState, setUser, clearUser } from "../store/slices/user";
+import { setUser } from "../store/slices/user";
 import { getOneUser } from "../api/auth";
-import { useEffect, useState } from "react";
-import { setAuth } from "../store/slices/auth";
-interface Props {
-  children: JSX.Element;
-}
+import { PropsWithChildren } from "react";
 
 export const parseJwt = (token: string) => {
   try {
@@ -28,7 +24,7 @@ export const parseJwt = (token: string) => {
   }
 };
 
-const WithAuth = ({ children }: Props): JSX.Element => {
+const WithAuth = ({ children }: PropsWithChildren) => {
   const auth = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
@@ -50,9 +46,9 @@ const WithAuth = ({ children }: Props): JSX.Element => {
 
   if (!auth.auth) {
     return <Redirect to="/login" />;
+  } else {
+    return children;
   }
-
-  return children;
 };
 
 export default WithAuth;
