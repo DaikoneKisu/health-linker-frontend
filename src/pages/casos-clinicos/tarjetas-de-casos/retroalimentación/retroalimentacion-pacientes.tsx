@@ -10,8 +10,9 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonInfiniteScroll,
+  IonInput,
 } from "@ionic/react";
-import { getCaseFeedback } from "../../../../api/feedback";
+import { getCaseFeedback, submitFeedback } from "../../../../api/feedback";
 import moment from "moment";
 import React, { useState, useEffect } from "react";
 import { Feedback } from "../../types";
@@ -26,6 +27,24 @@ interface Props {
 export const FeedbackRender: React.FC<Props> = ({ caseId, isFeedback }) => {
   const [feedbackList, setFeedbackList] = useState<Feedback[]>([]);
   const [refresher, setRefresher] = useState(false);
+  const [texto, setTexto] = useState("");
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const data = await submitFeedback(texto, caseId);
+      if (data.success) {
+        alert("Retroalimentación enviada exitosamente");
+        refreshing();
+      } else {
+        throw new Error("Error al enviar la retroalimentación");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert(error);
+    }
+  };
 
   const gettingFeedbacks = async () => {
     const response = await getCaseFeedback(caseId);
@@ -42,7 +61,6 @@ export const FeedbackRender: React.FC<Props> = ({ caseId, isFeedback }) => {
 
   useEffect(() => {
     gettingFeedbacks();
-    console.log(feedbackList);
   }, [refresher]);
 
   return (
@@ -55,8 +73,13 @@ export const FeedbackRender: React.FC<Props> = ({ caseId, isFeedback }) => {
       >
         Volver al contenido
       </IonButton>
-      <IonButton onClick={() => refreshing}>Refrescar</IonButton>
       <FeedbackList feedbacks={feedbackList} />
+      <form onSubmit={handleSubmit}>
+        <IonInput onIonChange={(e) => setTexto(e.detail.value!)}>
+          chat:{" "}
+        </IonInput>
+        <IonButton type="submit">Acceder</IonButton>
+      </form>
     </div>
   );
 };

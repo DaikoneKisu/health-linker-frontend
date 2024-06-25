@@ -1,15 +1,15 @@
 import axios from "axios";
 import { SERVER } from "./server";
 import { Feedback } from "../pages/casos-clinicos/types";
-import moment from "moment";
+import { DateTime } from "luxon";
 
-const CLINICALFEEDBACK_URL = "clinical-cases-feedbacks/by-clinical-case/";
+const CLINICALFEEDBACK_URL = "clinical-cases-feedbacks";
 
 export const getCaseFeedback = async (id: number) => {
   try {
     const token = localStorage.getItem("token");
     const { data: feedbacksFromBackend } = await axios.get(
-      `${SERVER}/${CLINICALFEEDBACK_URL}/${id}`,
+      `${SERVER}/${CLINICALFEEDBACK_URL}/by-clinical-case/${id}`,
       {
         headers: {
           Authorization: "Bearer " + token,
@@ -49,14 +49,35 @@ const mapFeedbackArray = async (c: any): Promise<Feedback> => {
   });
   return {
     id: c.id,
-    fecha: moment(c.createdAt).format("YYYY-MM-DD"),
-    hora: moment(c.createdAt).format("HH:mm:ss"),
+    fecha: DateTime.fromISO(c.createdAt).toFormat("yyyy/MM/DD"),
+    hora: DateTime.fromISO(c.createdAt).toFormat("HH:mm"),
     texto: c.text,
     autor: user.fullName,
   };
 };
 
-/*  id: number;
-  fecha: string;
-  texto: string;
-  autor: string;*/
+export const submitFeedback = async (text: string, caseId: number) => {
+  try {
+    const token = localStorage.getItem("token");
+    const respuesta = await axios.post(
+      `${SERVER}/${CLINICALFEEDBACK_URL}`,
+      { clinicalCaseId: caseId, text: text },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    return { success: true, data: respuesta };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};

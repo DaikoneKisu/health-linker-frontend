@@ -11,6 +11,7 @@ import {
   IonCardSubtitle,
   IonInfiniteScroll,
   IonList,
+  IonInput,
 } from "@ionic/react";
 import { getCaseFeedback } from "../../../../api/feedback";
 import moment from "moment";
@@ -26,7 +27,10 @@ export const OneFeedback: React.FC<Props> = ({ feedback }) => {
   return (
     <div className="init-div-style">
       <IonText> {String(feedback.autor)}</IonText>
-      <IonText> {String(feedback.fecha)}</IonText>
+      <IonText>
+        {" "}
+        {String(feedback.fecha)} — a las: {String(feedback.hora)}
+      </IonText>
       <IonText> {String(feedback.texto)}</IonText>
     </div>
   );
