@@ -8,7 +8,7 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import CasosClinicos from "./pages/casos-clinicos/casos-clinicos";
-import HomePage from "./pages/home";
+import Login from "./pages/login/login";
 import Dashboard from "./pages/dashboard";
 import Foros from "./pages/foros/foros";
 import ForoX from "./pages/foros/foroX";
@@ -37,43 +37,40 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
-setupIonicReact();
+setupIonicReact({ mode: "md" });
 
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route path="/login" component={HomePage} exact={true} />
-          <Route path="/CasosClinicos" component={CasosClinicos} exact={true} />
-          <Route
-            path="/CasosClinicos/crear"
-            component={CrearCasoClinico}
-            exact={true}
-          />
-          <Route path="/dashboard" component={Dashboard} exact={true} />
-          <Route path="/foros" component={Foros} exact={true} />
-          <Route path="/foroX" component={ForoX} exact={true} />
-          <Route path="/registro" component={Registro} exact={true} />
-          <Route
-            path="/registro/especialista"
-            component={RegistroEspecialista}
-            exact={true}
-          />
-          <Route
-            path="/registro/profesional-rural"
-            component={RegistroProfesionalRural}
-            exact={true}
-          />
-          <Route
-            path="/"
-            render={() => <Redirect to="/login" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
-            exact={true}
-          />
-          <Route component={NotFound} />
-        </IonRouterOutlet>
-        <IonTabBar></IonTabBar>
-      </IonTabs>
+      <IonRouterOutlet>
+        <Route path="/login" component={Login} exact={true} />
+        <Route path="/CasosClinicos" component={CasosClinicos} exact={true} />
+        <Route
+          path="/CasosClinicos/crear"
+          component={CrearCasoClinico}
+          exact={true}
+        />
+        <Route path="/dashboard" component={Dashboard} exact={true} />
+        <Route path="/foros" component={Foros} exact={true} />
+        <Route path="/foroX" component={ForoX} exact={true} />
+        <Route path="/registro" component={Registro} exact={true} />
+        <Route
+          path="/registro/especialista"
+          component={RegistroEspecialista}
+          exact={true}
+        />
+        <Route
+          path="/registro/profesional-rural"
+          component={RegistroProfesionalRural}
+          exact={true}
+        />
+        <Route
+          path="/"
+          render={() => <Redirect to="/login" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
+          exact={true}
+        />
+        <Route component={NotFound} />
+      </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
 );
