@@ -1,12 +1,10 @@
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { Redirect } from "react-router-dom";
-import { UserState, setUser, clearUser } from "../store/slices/user";
+import { setUser } from "../store/slices/user";
 import { getOneUser } from "../api/auth";
-import { useEffect, useState } from "react";
+import { PropsWithChildren } from "react";
+import { useIonViewWillEnter } from "@ionic/react";
 import { setAuth } from "../store/slices/auth";
-interface Props {
-  children: JSX.Element;
-}
 
 export const parseJwt = (token: string) => {
   try {
@@ -28,31 +26,32 @@ export const parseJwt = (token: string) => {
   }
 };
 
-const WithAuth = ({ children }: Props): JSX.Element => {
+const WithAuth = ({ children }: PropsWithChildren) => {
   const auth = useAppSelector((state) => state.auth);
+
   const dispatch = useAppDispatch();
 
   const getUser = async (user: any) => {
     const userData = await getOneUser(user!.document);
-    console.log(userData);
     dispatch(setUser(userData.user!));
   };
 
-  /*useEffect(() => {
+  useIonViewWillEnter(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const userInfo = parseJwt(token);
       getUser(userInfo);
       dispatch(setAuth(true));
+    } else {
+      dispatch(setAuth(false));
     }
   }, []);
-  */
 
   if (!auth.auth) {
     return <Redirect to="/login" />;
+  } else {
+    return children;
   }
-
-  return children;
 };
 
 export default WithAuth;

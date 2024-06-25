@@ -6,6 +6,39 @@ import {
   EditarCasoClinico,
 } from "../pages/casos-clinicos/types";
 
+export const getCase = async (id: number) => {
+  try {
+    const token = localStorage.getItem("token");
+    const { data: caseFromBackend } = await axios.get(
+      `${SERVER}/clinical-cases/${id}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const clinicalCase: CasoClinico = await mapClinicalCaseToCasoClinico(
+      caseFromBackend
+    );
+
+    return {
+      success: true,
+      data: clinicalCase,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
 export const getCases = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -378,6 +411,84 @@ export const deleteClinicalCaseFile = async (id: number) => {
     const token = localStorage.getItem("token");
 
     await axios.delete(`${SERVER}/clinical-cases-files/${id}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+export const publicizeClinicalCase = async (id: number) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.patch(`${SERVER}/clinical-cases/publicize/${id}`, undefined, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+export const closeClinicalCase = async (id: number) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.patch(`${SERVER}/clinical-cases/close/${id}`, undefined, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+export const reopenClinicalCase = async (id: number) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.patch(`${SERVER}/clinical-cases/reopen/${id}`, undefined, {
       headers: {
         Authorization: "Bearer " + token,
       },

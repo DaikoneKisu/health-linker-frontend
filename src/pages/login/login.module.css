@@ -1,0 +1,60 @@
+.heroImgContainer {
+  width: min(80%, 400px);
+  aspect-ratio: 329/238;
+  margin: 28px auto;
+}
+
+.loginBgColor {
+  background-color: var(--ion-color-primary);
+  --background: var(--ion-color-primary);
+}
+
+.textColorLight {
+  color: var(--ion-color-light);
+}
+
+.textColorPrimary {
+  color: var(--ion-color-primary);
+}
+
+.loginButton {
+  --ion-color-light-contrast: var(--ion-color-primary);
+  font-weight: bold;
+  width: min(300px, 80%);
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
+.registerButton {
+  --ion-color-light-contrast: var(--ion-color-primary);
+  font-weight: bold;
+  width: min(300px, 80%);
+  margin: 0 auto;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin: auto 0;
+}
+
+.loginFooter {
+  composes: loginBgColor;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 28px;
+  margin-top: auto;
+}
+
+.header {
+  margin: 20px 0;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.item {
+  width: min(100%, 410px);
+  margin: 0 auto;
+}

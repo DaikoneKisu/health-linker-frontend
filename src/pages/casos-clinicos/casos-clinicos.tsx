@@ -10,11 +10,19 @@ import {
   IonFooter,
   IonIcon,
   IonText,
+  useIonViewWillEnter,
+  useIonViewDidEnter,
+  useIonViewDidLeave,
+  useIonLoading,
+  IonLoading,
+  useIonRouter,
+  useIonViewWillLeave,
+  IonToolbar,
 } from "@ionic/react";
 import { home, chatbox, folder, mail, person, add } from "ionicons/icons";
 import "./styles.css";
 import { CasoClinico } from "./types";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import WithAuth from "../../components/WithAuth";
 import { Redirect } from "react-router";
 import { CasoIndividual } from "./tarjetas-de-casos/contenido-caso";
@@ -24,22 +32,25 @@ import {
   getOpenCasesCurrentUser,
 } from "../../api/casos-clinicos";
 import ListaDeCasos from "./lista-de-casos";
+import LogoHeader from "../../components/logo-header/logo-header";
+import styles from "./casos-clinicos.module.css";
 
 interface Props {
   children: JSX.Element;
 }
 
-const logOut = (): JSX.Element => {
-  localStorage.removeItem("token");
-  return <Redirect to="/login" />;
-};
-
-const CasosClinicos: React.FC = () => {
+const CasosClinicos = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
   const [cerrado, setCerrado] = useState(false);
   const [dentro, setDentro] = useState(false);
   const [page, setPage] = useState(1);
   const [currentCase, setCurrentCase] = useState<CasoClinico>();
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const logOut = () => {
+    localStorage.removeItem("token");
+  };
 
   const casoEscogido = (caso: CasoClinico) => {
     setCurrentCase(caso);
@@ -50,84 +61,115 @@ const CasosClinicos: React.FC = () => {
   };
 
   const getOpenCases = async () => {
+    startLoading();
     const response = await getOpenCasesCurrentUser(page);
     if (response.success) {
       setCasosClinicos(response.data!);
     } else {
       console.error("Error:", response.error);
     }
+    finishLoading();
   };
 
   const getClosedCases = async () => {
+    startLoading();
     const response = await getClosedCasesCurrentUser(page);
     if (response.success) {
       setCasosClinicos(response.data!);
     } else {
       console.error("Error:", response.error);
     }
+    finishLoading();
   };
 
-  useEffect(() => {
-    if (cerrado) {
-      getClosedCases();
+  const startLoading = () => {
+    setIsLoading(true);
+  };
+
+  const finishLoading = () => {
+    setIsLoading(false);
+  };
+
+  useIonViewWillEnter(() => {
+    if (cerrado && !(localStorage.getItem("token") == null)) {
+      getClosedCases().then(() => setPageLoaded(true));
     } else {
-      getOpenCases();
-      console.log(casosClinicos);
+      getOpenCases().then(() => setPageLoaded(true));
+    }
+  });
+
+  useEffect(() => {
+    if (pageLoaded && !(localStorage.getItem("token") == null)) {
+      if (cerrado) {
+        getClosedCases();
+      } else {
+        getOpenCases();
+      }
     }
   }, [cerrado]);
 
+  useIonViewWillLeave(() => {
+    setPageLoaded(false);
+  });
+
   return (
     <WithAuth>
-      {dentro ? (
-        <CasoIndividual casoClinico={currentCase!} dentroCaso={dentroCaso} />
-      ) : (
-        <IonPage>
-          <IonHeader className="header-style">
-            <IonTitle className="tittle-style">Health-Linker</IonTitle>
-            <IonText className="subtittle-style">Casos Clínicos</IonText>
-
-            <IonButtons class="botones-header">
-              <IonButton
-                className="botones-casos"
-                onClick={() => {
-                  setCerrado(true);
-                }}
-              >
-                casos cerrados
-              </IonButton>
-              <IonButton
-                className="botones-casos"
-                onClick={() => {
-                  setCerrado(false);
-                }}
-              >
-                Mis casos abiertos
-              </IonButton>
-              <IonButton
-                className="botones-casos"
-                onClick={() => {
-                  logOut();
-                }}
-              >
-                Cerrar Sesion
-              </IonButton>
-            </IonButtons>
+      <IonPage>
+        <LogoHeader>
+          <IonHeader className="header-style ion-no-border">
+            <IonTitle className={`${styles.header}`}>Casos Clínicos</IonTitle>
+            <IonToolbar>
+              <IonButtons class={`${styles.buttons}`}>
+                <IonButton
+                  className={`${styles.button}`}
+                  onClick={() => {
+                    setCerrado(true);
+                  }}
+                  color="primary"
+                  fill={cerrado ? "solid" : "outline"}
+                >
+                  Mis casos cerrados
+                </IonButton>
+                <IonButton
+                  className={`${styles.button}`}
+                  onClick={() => {
+                    setCerrado(false);
+                  }}
+                  color="primary"
+                  fill={!cerrado ? "solid" : "outline"}
+                >
+                  Mis casos abiertos
+                </IonButton>
+                <IonButton
+                  className={`${styles.button}`}
+                  routerLink="/login"
+                  onClick={logOut}
+                  color="dark"
+                  fill="outline"
+                >
+                  Cerrar Sesion
+                </IonButton>
+              </IonButtons>
+            </IonToolbar>
           </IonHeader>
+        </LogoHeader>
 
-          <IonContent>
-            <ListaDeCasos
-              casos={casosClinicos}
-              dentroCaso={dentroCaso}
-              casoEscogido={casoEscogido}
-            />
-            <IonFab slot="fixed" horizontal="end" vertical="bottom">
-              <IonFabButton color="light">
-                <IonIcon icon={add}></IonIcon>
-              </IonFabButton>
-            </IonFab>
-          </IonContent>
-        </IonPage>
-      )}
+        <IonContent>
+          <IonLoading isOpen={isLoading} />
+          <ListaDeCasos
+            casos={isLoading ? [] : casosClinicos}
+            dentroCaso={dentroCaso}
+            casoEscogido={casoEscogido}
+            cerrado={cerrado}
+            getCases={cerrado ? getClosedCases : getOpenCases}
+          />
+          <IonFab slot="fixed" horizontal="end" vertical="bottom">
+            <IonFabButton color="primary" routerLink="/casos-clinicos/crear">
+              <IonIcon icon={add}></IonIcon>
+            </IonFabButton>
+          </IonFab>
+        </IonContent>
+      </IonPage>
     </WithAuth>
   );
 };
