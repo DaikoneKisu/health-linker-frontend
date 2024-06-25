@@ -3,12 +3,34 @@ import { Moment } from "moment";
 export interface CasoClinico {
   id: number;
   fechaNacimiento: string;
-  genero: string;
+  genero: "masculino" | "femenino";
   especialidadRequerida: string;
   motivoMentoria: string;
   valoracionPaciente: string;
   descripcionCaso: string;
+  motivoPaciente: string;
   archivosAsociados: Archivo[] | null;
+}
+
+export interface EditarCasoClinico {
+  fechaNacimiento: string;
+  genero: "masculino" | "femenino";
+  especialidadRequerida: string;
+  motivoMentoria: string;
+  valoracionPaciente: string;
+  descripcionCaso: string;
+  motivoPaciente: string;
+}
+
+export interface CrearCasoClinico {
+  fechaNacimiento: string;
+  genero: "masculino" | "femenino";
+  especialidadRequerida: number;
+  motivoMentoria: string;
+  valoracionPaciente: string;
+  descripcionCaso: string;
+  motivoPaciente: string;
+  archivosAsociados: File[] | null;
 }
 
 export interface Archivo {

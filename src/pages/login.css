@@ -1,39 +1,39 @@
 ion-title {
-    margin-top: 50px;
-    margin-bottom: 40px;
+  margin-top: 50px;
+  margin-bottom: 40px;
 }
 
 ion-input {
-    margin-top:30px;
+  margin-top: 30px;
 }
 
 ion-button {
-    margin: 60px;
-    display: block;
-  }
+  margin: 60px;
+  display: block;
+}
 
 ion-header {
-    background-color: #e6e6e6;
+  background-color: #e6e6e6;
 }
 
 #input-hl {
-    margin: auto;
-    margin-top: 3em;
-    width: 22em;
+  margin: auto;
+  margin-top: 3em;
+  width: 22em;
 }
 
 ion-content {
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .h2-t {
-    margin-top: 3em;
-    text-align: center;
+  margin-top: 3em;
+  text-align: center;
 }
 
 div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -1,6 +1,10 @@
 import axios from "axios";
 import { SERVER } from "./server";
-import { CasoClinico } from "../pages/casos-clinicos/types";
+import {
+  CasoClinico,
+  CrearCasoClinico,
+  EditarCasoClinico,
+} from "../pages/casos-clinicos/types";
 
 export const getCases = async () => {
   try {
@@ -221,7 +225,183 @@ export const getRequiredCurrentSpecialistCases = async (
   }
 };
 
-const mapClinicalCaseToCasoClinico = async (c: any): Promise<CasoClinico> => {
+export const createClinicalCase = async (caso: CrearCasoClinico) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const { data: createdCase } = await axios.post<ClinicalCaseResponse>(
+      `${SERVER}/clinical-cases`,
+      {
+        description: caso.descripcionCaso,
+        reason: caso.motivoMentoria,
+        patientBirthdate: caso.fechaNacimiento,
+        patientGender: caso.genero === "masculino" ? "masculine" : "feminine",
+        patientReason: caso.motivoPaciente,
+        patientAssessment: caso.valoracionPaciente,
+        requiredSpecialtyId: caso.especialidadRequerida,
+      } satisfies ClinicalCasePost,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    if (!(caso.archivosAsociados == null)) {
+      await Promise.all(
+        caso.archivosAsociados.map(async (archivo) => {
+          const form = new FormData();
+          form.append("clinicalCaseId", createdCase.id.toString());
+          form.append("file", archivo);
+
+          await axios.post(`${SERVER}/clinical-cases-files`, form, {
+            headers: { Authorization: "Bearer " + token },
+          });
+        })
+      );
+    }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+export const editClinicalCase = async (
+  id: number,
+  caso: EditarCasoClinico,
+  files?: File[]
+) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.patch(
+      `${SERVER}/clinical-cases/${id}`,
+      {
+        description: caso.descripcionCaso,
+        reason: caso.motivoMentoria,
+        patientBirthdate: caso.fechaNacimiento,
+        patientGender: caso.genero === "masculino" ? "masculine" : "feminine",
+        patientReason: caso.motivoPaciente,
+        patientAssessment: caso.valoracionPaciente,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    if (files) {
+      await Promise.all(
+        files.map(async (archivo) => {
+          const form = new FormData();
+          form.append("clinicalCaseId", id.toString());
+          form.append("file", archivo);
+
+          await axios.post(`${SERVER}/clinical-cases-files`, form, {
+            headers: { Authorization: "Bearer " + token },
+          });
+        })
+      );
+    }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+export const deleteClinicalCase = async (id: number) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const { data: feedbacks } = await axios.get(
+      `${SERVER}/clinical-cases-feedbacks/by-clinical-case/${id}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    if (feedbacks.length > 0) {
+      throw new Error(
+        "No se puede eliminar un caso clínico con retroalimentaciones"
+      );
+    }
+
+    await axios.delete(`${SERVER}/clinical-cases/${id}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+export const deleteClinicalCaseFile = async (id: number) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.delete(`${SERVER}/clinical-cases-files/${id}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+const mapClinicalCaseToCasoClinico = async (
+  c: ClinicalCaseResponse
+): Promise<CasoClinico> => {
   const token = localStorage.getItem("token");
   const { data: specialty } = await axios.get(
     `${SERVER}/specialties/by-id/${c.requiredSpecialtyId}`,
@@ -231,14 +411,52 @@ const mapClinicalCaseToCasoClinico = async (c: any): Promise<CasoClinico> => {
       },
     }
   );
+
+  const { data: files } = await axios.get<ClinicalCaseFileResponse[]>(
+    `${SERVER}/clinical-cases-files/by-clinical-case/${c.id}`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+
   return {
     id: c.id,
-    fechaNacimiento: c.patientBirthdate,
+    fechaNacimiento: new Date(c.patientBirthdate).toLocaleString(),
     genero: c.patientGender === "masculine" ? "masculino" : "femenino",
     especialidadRequerida: specialty.name,
-    motivoMentoria: c.movitoMentoria,
+    motivoMentoria: c.reason,
     valoracionPaciente: c.patientAssessment,
     descripcionCaso: c.description,
-    archivosAsociados: null,
+    motivoPaciente: c.patientReason,
+    archivosAsociados: files.map((f) => ({ id: f.id, enlace: f.link })),
   };
+};
+
+type ClinicalCaseResponse = {
+  id: number;
+  description: string;
+  reason: string;
+  patientBirthdate: string;
+  patientGender: "masculine" | "feminine";
+  patientReason: string;
+  patientAssessment: string;
+  requiredSpecialtyId: number;
+};
+
+type ClinicalCasePost = {
+  description: string;
+  reason: string;
+  patientBirthdate: string;
+  patientGender: "masculine" | "feminine";
+  patientReason: string;
+  patientAssessment: string;
+  requiredSpecialtyId: number;
+};
+
+type ClinicalCaseFileResponse = {
+  id: number;
+  clinicalCaseId: number;
+  link: string;
 };

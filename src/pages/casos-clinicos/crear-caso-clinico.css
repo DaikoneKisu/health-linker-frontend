@@ -1,0 +1,24 @@
+ion-textarea {
+  .textarea-wrapper-inner,
+  .native-wrapper {
+    align-items: initial;
+    justify-content: initial;
+  }
+}
+
+.save-button,
+.cancel-button,
+.upload-button {
+  margin: 0;
+  width: 170px;
+}
+
+.upload-button {
+  margin: 0 auto;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 10px;
+}
