@@ -62,9 +62,9 @@ const TarjetaDeCasoAbierto = ({
           >
             Ver
           </IonButton>
-          <IonButton fill="outline" color="tertiary">
+          {/* <IonButton fill="outline" color="tertiary">
             Editar
-          </IonButton>
+          </IonButton> */}
           <IonButton fill="outline" onClick={closeCase} color="tertiary">
             Cerrar
           </IonButton>
