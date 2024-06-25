@@ -53,3 +53,8 @@
   text-align: center;
   font-size: 1.5rem;
 }
+
+.item {
+  width: min(100%, 410px);
+  margin: 0 auto;
+}

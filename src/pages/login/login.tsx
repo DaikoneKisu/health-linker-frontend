@@ -1,26 +1,24 @@
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
 import {
   IonContent,
   IonHeader,
   IonPage,
   IonTitle,
-  IonList,
   IonItem,
   IonInput,
   IonButton,
   IonFooter,
   IonInputPasswordToggle,
   IonImg,
-  IonToolbar,
+  useIonRouter,
 } from "@ionic/react";
 import { signin } from "../../api/auth";
 import WithUnAuth from "../../components/WithUnAuth";
 import styles from "./login.module.css";
 import { Form, Formik, Field, FieldProps } from "formik";
+import ResetOnLeave from "../../components/helpers/reset-on-leave";
 
 const Login: React.FC = () => {
-  const history = useHistory();
+  const router = useIonRouter();
 
   return (
     <WithUnAuth>
@@ -48,7 +46,7 @@ const Login: React.FC = () => {
                   if (data.success) {
                     alert("Inicio de sesión exitoso");
                     localStorage.setItem("token", data.token);
-                    history.push("/CasosClinicos");
+                    router.push("/casos-clinicos");
                   } else {
                     alert("Error al iniciar sesión");
                   }
@@ -61,7 +59,7 @@ const Login: React.FC = () => {
                   <Field name="document">
                     {({ field }: FieldProps) => (
                       <IonItem
-                        className={`${styles.loginBgColor} ion-padding-horizontal`}
+                        className={`${styles.loginBgColor} ion-padding-horizontal ${styles.item}`}
                       >
                         <IonInput
                           className={`${styles.textColorLight}`}
@@ -78,7 +76,7 @@ const Login: React.FC = () => {
                   <Field name="password">
                     {({ field }: FieldProps) => (
                       <IonItem
-                        className={`${styles.loginBgColor} ion-padding-horizontal`}
+                        className={`${styles.loginBgColor} ion-padding-horizontal ${styles.item}`}
                       >
                         <IonInput
                           className={`${styles.textColorLight}`}
@@ -107,6 +105,7 @@ const Login: React.FC = () => {
                   >
                     Iniciar sesión
                   </IonButton>
+                  <ResetOnLeave />
                 </Form>
               )}
             </Formik>
