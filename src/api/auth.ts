@@ -118,3 +118,31 @@ export const getOneUser = async (document: string) => {
     }
   }
 };
+
+export const getMe = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${SERVER}/users/me`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const user = response.data;
+
+    return {
+      success: true,
+      user,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};

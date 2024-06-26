@@ -11,10 +11,9 @@ import {
   useIonRouter,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
-import {
-  publicizeClinicalCase,
-  reopenClinicalCase,
-} from "../../../api/casos-clinicos";
+import ConfirmCaseDelete from "../../../components/confirm-case-delete/confirm-case-delete";
+import { useId } from "react";
+import { closeClinicalCase } from "../../../api/casos-clinicos";
 
 interface Props {
   caso: CasoClinico;
@@ -23,28 +22,20 @@ interface Props {
   getCases: () => void;
 }
 
-const TarjetaDeCasoCerrado = ({
+const TarjetaDeCasoAbiertoEspecialista = ({
   caso,
   dentroCaso,
   casoEscogido,
   getCases,
 }: Props) => {
-  const publicizeCase = () => {
-    publicizeClinicalCase(caso.id).then((data) => {
-      if (data.success) {
-        getCases();
-      } else {
-        alert("Error al hacer público el caso");
-      }
-    });
-  };
+  const deleteButtonId = useId();
 
-  const reopenCase = () => {
-    reopenClinicalCase(caso.id).then((data) => {
+  const closeCase = async () => {
+    closeClinicalCase(caso.id).then((data) => {
       if (data.success) {
         getCases();
       } else {
-        alert("Error al reabrir el caso");
+        alert("Error al cerrar el caso");
       }
     });
   };
@@ -71,18 +62,12 @@ const TarjetaDeCasoCerrado = ({
           >
             Ver
           </IonButton>
-          {/* <IonButton
+          <IonButton
             fill="outline"
-            routerLink={`/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/${caso.id}`}
+            routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
             color="tertiary"
           >
-            Ver retroalimentaciones
-          </IonButton> */}
-          <IonButton fill="outline" onClick={reopenCase} color="tertiary">
-            Reabrir
-          </IonButton>
-          <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
-            Hacer público
+            Retroalimentar
           </IonButton>
         </IonButtons>
       </IonToolbar>
@@ -90,4 +75,4 @@ const TarjetaDeCasoCerrado = ({
   );
 };
 
-export default TarjetaDeCasoCerrado;
+export default TarjetaDeCasoAbiertoEspecialista;

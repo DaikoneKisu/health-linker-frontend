@@ -62,6 +62,13 @@ const TarjetaDeCasoAbierto = ({
           >
             Ver
           </IonButton>
+          <IonButton
+            fill="outline"
+            routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
+            color="tertiary"
+          >
+            Retroalimentar
+          </IonButton>
           {/* <IonButton fill="outline" color="tertiary">
             Editar
           </IonButton> */}

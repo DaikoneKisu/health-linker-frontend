@@ -23,7 +23,7 @@ interface Props {
   getCases: () => void;
 }
 
-const TarjetaDeCasoCerrado = ({
+const TarjetaDeCasoCerradoEspecialista = ({
   caso,
   dentroCaso,
   casoEscogido,
@@ -78,16 +78,10 @@ const TarjetaDeCasoCerrado = ({
           >
             Ver retroalimentaciones
           </IonButton> */}
-          <IonButton fill="outline" onClick={reopenCase} color="tertiary">
-            Reabrir
-          </IonButton>
-          <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
-            Hacer público
-          </IonButton>
         </IonButtons>
       </IonToolbar>
     </IonCard>
   );
 };
 
-export default TarjetaDeCasoCerrado;
+export default TarjetaDeCasoCerradoEspecialista;

@@ -53,6 +53,10 @@ const mapFeedbackArray = async (c: any): Promise<Feedback> => {
     hora: DateTime.fromISO(c.createdAt).toFormat("HH:mm"),
     texto: c.text,
     autor: user.fullName,
+    rol:
+      user.userType === "rural professional"
+        ? "profesional rural"
+        : "especialista",
   };
 };
 

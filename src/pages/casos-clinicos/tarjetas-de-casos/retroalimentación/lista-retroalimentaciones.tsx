@@ -13,7 +13,6 @@ import {
   IonList,
 } from "@ionic/react";
 import { getCaseFeedback } from "../../../../api/feedback";
-import moment from "moment";
 import React, { useState, useEffect } from "react";
 import { Feedback } from "../../types";
 import { OneFeedback } from "./retroalimentacion-individual";

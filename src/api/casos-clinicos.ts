@@ -222,7 +222,7 @@ export const getAllClosedCasesCurrentUser = async () => {
 
 export const getRequiredCurrentSpecialistCases = async (
   page: number = 1,
-  size: number = 10
+  size: number = 99999
 ) => {
   try {
     const token = localStorage.getItem("token");
@@ -235,8 +235,26 @@ export const getRequiredCurrentSpecialistCases = async (
       }
     );
 
+    const { data: openCasesFromBackend } = await axios.get(
+      `${SERVER}/clinical-cases/open/current-user?page=${page}&size=${size}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const requiredCasesWithoutOpenOnes = (
+      requiredCasesFromBackend as Array<ClinicalCaseResponse>
+    ).filter(
+      (r) =>
+        !(openCasesFromBackend as Array<ClinicalCaseResponse>).some(
+          (o) => o.id === r.id
+        )
+    );
+
     const requiredCases: CasoClinico[] = await Promise.all(
-      (requiredCasesFromBackend as Array<any>).map(
+      (requiredCasesWithoutOpenOnes as Array<ClinicalCaseResponse>).map(
         async (c) => await mapClinicalCaseToCasoClinico(c)
       )
     );
@@ -489,6 +507,32 @@ export const reopenClinicalCase = async (id: number) => {
     const token = localStorage.getItem("token");
 
     await axios.patch(`${SERVER}/clinical-cases/reopen/${id}`, undefined, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+export const mentorCase = async (id: number) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.post(`${SERVER}/clinical-cases/mentor/${id}`, undefined, {
       headers: {
         Authorization: "Bearer " + token,
       },

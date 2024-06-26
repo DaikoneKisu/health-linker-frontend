@@ -80,7 +80,7 @@ const Especialista: React.FC = () => {
                       alert("Usuario registrado satisfactoriamente.");
                       router.push("/login");
                     } else {
-                      alert("No se ha podido registrar al profesional rural.");
+                      alert("No se ha podido registrar al especialista.");
                     }
                     setSubmitting(false);
                   });

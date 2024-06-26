@@ -11,29 +11,35 @@ import {
   IonCardSubtitle,
   IonInfiniteScroll,
   IonInput,
+  IonContent,
+  IonPage,
+  IonCardContent,
+  useIonRouter,
 } from "@ionic/react";
 import { getCaseFeedback, submitFeedback } from "../../../../api/feedback";
-import moment from "moment";
 import React, { useState, useEffect } from "react";
 import { Feedback } from "../../types";
 import { FeedbackList } from "./lista-retroalimentaciones";
 import "./styles.css";
+import { RouteComponentProps } from "react-router";
+import LogoHeader from "../../../../components/logo-header/logo-header";
+import otherStyles from "../../casos-clinicos.module.css";
 
-interface Props {
-  caseId: number;
+interface Props extends RouteComponentProps<{ id: string }> {
   isFeedback: (answer: boolean) => void;
 }
 
-export const FeedbackRender: React.FC<Props> = ({ caseId, isFeedback }) => {
+export const FeedbackRender: React.FC<Props> = ({ match, isFeedback }) => {
   const [feedbackList, setFeedbackList] = useState<Feedback[]>([]);
   const [refresher, setRefresher] = useState(false);
   const [texto, setTexto] = useState("");
+  const router = useIonRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const data = await submitFeedback(texto, caseId);
+      const data = await submitFeedback(texto, Number(match.params.id));
       if (data.success) {
         alert("Retroalimentación enviada exitosamente");
         refreshing();
@@ -47,7 +53,7 @@ export const FeedbackRender: React.FC<Props> = ({ caseId, isFeedback }) => {
   };
 
   const gettingFeedbacks = async () => {
-    const response = await getCaseFeedback(caseId);
+    const response = await getCaseFeedback(Number(match.params.id));
     if (response.success) {
       setFeedbackList(response.data!);
     } else {
@@ -64,22 +70,43 @@ export const FeedbackRender: React.FC<Props> = ({ caseId, isFeedback }) => {
   }, [refresher]);
 
   return (
-    <div className="init-div-style">
-      <IonText> bienvenido a la retroalimentación :' D</IonText>
-      <IonButton
-        onClick={() => {
-          isFeedback(false);
-        }}
-      >
-        Volver al contenido
-      </IonButton>
-      <FeedbackList feedbacks={feedbackList} />
-      <form onSubmit={handleSubmit}>
-        <IonInput onIonChange={(e) => setTexto(e.detail.value!)}>
-          chat:{" "}
-        </IonInput>
-        <IonButton type="submit">Acceder</IonButton>
-      </form>
-    </div>
+    <IonPage>
+      <LogoHeader />
+      <IonContent>
+        <IonCard>
+          <IonCardHeader>
+            <IonCardTitle>Retroalimentaciones</IonCardTitle>
+          </IonCardHeader>
+          <IonCardContent>
+            <FeedbackList feedbacks={feedbackList} />
+          </IonCardContent>
+        </IonCard>
+        <div className="init-div-style"></div>
+      </IonContent>
+      <IonFooter className="ion-no-border">
+        <IonCard>
+          <IonCardContent>
+            <form onSubmit={handleSubmit}>
+              <IonInput
+                onIonInput={(e) => setTexto(e.detail.value!)}
+                style={{ marginBottom: "10px" }}
+              >
+                Retroalimentación:
+              </IonInput>
+              <IonButton type="submit">Enviar</IonButton>
+            </form>
+          </IonCardContent>
+        </IonCard>
+        <IonButton
+          className={`${otherStyles.button}`}
+          style={{ margin: "0 auto", display: "block", marginBottom: "10px" }}
+          onClick={() => {
+            router.push("/casos-clinicos");
+          }}
+        >
+          Volver a casos clínicos
+        </IonButton>
+      </IonFooter>
+    </IonPage>
   );
 };
