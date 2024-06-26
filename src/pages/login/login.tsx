@@ -33,7 +33,7 @@ const Login: React.FC = () => {
           >
             <IonHeader className={`${styles.loginBgColor} ion-no-border`}>
               <div className={styles.heroImgContainer}>
-                <IonImg src="/public/login.png" alt="Imagen de healthlinker" />
+                <IonImg src="/login.png" alt="Imagen de healthlinker" />
               </div>
               <IonTitle color="light" className={`${styles.header}`}>
                 Inicia sesión para continuar

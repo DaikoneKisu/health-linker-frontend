@@ -14,7 +14,7 @@ const LogoHeader = ({ children, primary }: Props) => (
   >
     <div className={styles.headerImgContainer}>
       <IonImg
-        src={primary ? "/public/header-white.png" : "/public/header-black.png"}
+        src={primary ? "/header-white.png" : "/header-black.png"}
         alt="Healthlinker logo"
         className={styles.headerImg}
       />
