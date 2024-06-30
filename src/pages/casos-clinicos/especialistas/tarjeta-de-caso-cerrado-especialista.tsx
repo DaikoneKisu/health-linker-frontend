@@ -71,13 +71,13 @@ const TarjetaDeCasoCerradoEspecialista = ({
           >
             Ver
           </IonButton>
-          {/* <IonButton
+          <IonButton
             fill="outline"
             routerLink={`/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/${caso.id}`}
             color="tertiary"
           >
             Ver retroalimentaciones
-          </IonButton> */}
+          </IonButton>
         </IonButtons>
       </IonToolbar>
     </IonCard>
