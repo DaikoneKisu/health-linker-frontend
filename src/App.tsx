@@ -38,6 +38,7 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import CasoClinico from "./pages/casos-clinicos/caso-clinico/caso-clinico";
 import { FeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentacion-pacientes";
+import { ClosedFeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentafion-pacientes-cerrada";
 
 setupIonicReact({ mode: "md" });
 
@@ -62,7 +63,7 @@ const App: React.FC = () => (
         />
         <Route
           path="/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/:id"
-          component={FeedbackRender}
+          component={ClosedFeedbackRender}
         />
         <Route path="/dashboard" component={Dashboard} exact={true} />
         <Route path="/foros" component={Foros} exact={true} />
