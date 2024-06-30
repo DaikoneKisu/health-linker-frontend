@@ -108,7 +108,6 @@ const CrearCasoClinico = () => {
           }
           validationSchema={crearCasoClinicoSchema}
           onSubmit={(values, { setSubmitting }) => {
-            console.log(values);
             createClinicalCase(values).then((data) => {
               if (data.success) {
                 alert("Caso clínico creado satisfactoriamente");
