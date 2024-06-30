@@ -3,7 +3,6 @@ import {
   IonHeader,
   IonPage,
   IonTitle,
-  IonItem,
   IonInput,
   IonButton,
   IonFooter,
@@ -16,6 +15,21 @@ import WithUnAuth from "../../components/WithUnAuth";
 import styles from "./login.module.css";
 import { Form, Formik, Field, FieldProps } from "formik";
 import ResetOnLeave from "../../components/helpers/reset-on-leave";
+import * as Yup from "yup";
+
+const loginSchema = Yup.object({
+  document: Yup.string()
+    .trim()
+    .required("Es obligario ingresar una cédula")
+    .matches(/^\d+$/, {
+      excludeEmptyString: true,
+      message: "La cédula debe contener solo números",
+    })
+    .length(10, "La cédula debe tener exactamente 10 números"),
+  password: Yup.string()
+    .trim()
+    .required("Es obligatorio ingresar una contraseña"),
+});
 
 const Login: React.FC = () => {
   const router = useIonRouter();
@@ -41,6 +55,7 @@ const Login: React.FC = () => {
             </IonHeader>
             <Formik
               initialValues={{ document: "", password: "" }}
+              validationSchema={loginSchema}
               onSubmit={(values, { setSubmitting }) => {
                 signin(values.document, values.password).then((data) => {
                   if (data.success) {
@@ -54,46 +69,57 @@ const Login: React.FC = () => {
                 });
               }}
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, errors, touched }) => (
                 <Form className={`${styles.loginForm}`}>
                   <Field name="document">
                     {({ field }: FieldProps) => (
-                      <IonItem
+                      <div
                         className={`${styles.loginBgColor} ion-padding-horizontal ${styles.item}`}
                       >
                         <IonInput
-                          className={`${styles.textColorLight}`}
+                          className={`${styles.textColorLight} ${
+                            touched.document ? "ion-touched" : ""
+                          } ${errors.document ? "ion-invalid" : "ion-valid"}`}
                           label="Cédula"
                           value={field.value}
-                          onIonChange={field.onChange}
+                          onIonInput={field.onChange}
                           onIonBlur={field.onBlur}
                           name={field.name}
                           color="light"
+                          helperText="Ingresa tu cédula de identidad, debe tener 10 números"
+                          errorText={errors.document}
+                          placeholder="1713175071"
                         />
-                      </IonItem>
+                      </div>
                     )}
                   </Field>
                   <Field name="password">
                     {({ field }: FieldProps) => (
-                      <IonItem
+                      <div
                         className={`${styles.loginBgColor} ion-padding-horizontal ${styles.item}`}
                       >
                         <IonInput
-                          className={`${styles.textColorLight}`}
+                          className={`${styles.textColorLight} ${
+                            touched.password ? "ion-touched" : ""
+                          } ${errors.password ? "ion-invalid" : "ion-valid"}`}
                           label="Contraseña"
                           type="password"
                           value={field.value}
-                          onIonChange={field.onChange}
+                          onIonInput={field.onChange}
                           onIonBlur={field.onBlur}
                           name={field.name}
                           color="light"
+                          helperText="Ingresa tu contraseña"
+                          errorText={errors.password}
+                          placeholder="********"
+                          clearOnEdit={false}
                         >
                           <IonInputPasswordToggle
                             slot="end"
                             color="light"
                           ></IonInputPasswordToggle>
                         </IonInput>
-                      </IonItem>
+                      </div>
                     )}
                   </Field>
                   <IonButton

@@ -12,6 +12,7 @@ import {
   IonSelect,
   IonSelectOption,
   useIonViewWillEnter,
+  IonNote,
 } from "@ionic/react";
 import { useState } from "react";
 import { registerSpecialist, getSpecialities } from "../../../api/register";
@@ -21,6 +22,50 @@ import commonStyles from "../common.module.css";
 import { Field, FieldProps, Form, Formik } from "formik";
 import ResetOnLeave from "../../../components/helpers/reset-on-leave";
 import WithUnAuth from "../../../components/WithUnAuth";
+import * as Yup from "yup";
+
+const especialistaSchema = Yup.object({
+  fullName: Yup.string()
+    .trim()
+    .required("Es obligario ingresar un nombre")
+    .max(100, "El nombre completo está limitado a 100 caracteres"),
+  document: Yup.string()
+    .trim()
+    .required("Es obligario ingresar una cédula")
+    .matches(/^\d+$/, {
+      excludeEmptyString: true,
+      message: "La cédula debe contener solo números",
+    })
+    .length(10, "La cédula debe tener exactamente 10 números"),
+  email: Yup.string()
+    .trim()
+    .required("Es obligario ingresar un correo")
+    .email(
+      "El correo debe seguir el formato de un correo electrónico (correo@email.com)"
+    )
+    .max(254, "El correo está limitado a 254 caracteres"),
+  password: Yup.string()
+    .trim()
+    .required("Es obligatorio ingresar una contraseña")
+    .matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+      excludeEmptyString: true,
+      message:
+        "La contraseña debe contener al menos una letra mayúscula, una letra minúscula y un número",
+    })
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .max(60, "La contraseña está limitada a 60 caracteres"),
+  confirmPassword: Yup.string()
+    .trim()
+    .required("Es obligatorio confirmar la contraseña")
+    .equals(
+      [Yup.ref("password")],
+      "La confirmación de la contraseña no coincide con la contraseña ingresada"
+    ),
+  specialtyId: Yup.number()
+    .required("Es obligario seleccionar una especialidad")
+    .integer("Es obligario seleccionar una especialidad")
+    .positive("Es obligario seleccionar una especialidad"),
+});
 
 const Especialista: React.FC = () => {
   const [listaEspecialista, setListaEspecialista] = useState<Especialidad[]>(
@@ -68,6 +113,7 @@ const Especialista: React.FC = () => {
                   confirmPassword: "",
                   specialtyId: 1,
                 }}
+                validationSchema={especialistaSchema}
                 onSubmit={(values, { setSubmitting }) => {
                   registerSpecialist(
                     values.specialtyId,
@@ -86,66 +132,85 @@ const Especialista: React.FC = () => {
                   });
                 }}
               >
-                {({ isSubmitting }) => (
+                {({ isSubmitting, errors, touched }) => (
                   <Form className={`${commonStyles.form}`}>
                     <Field name="fullName">
                       {({ field }: FieldProps) => (
-                        <IonItem
+                        <div
                           className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
                         >
                           <IonInput
-                            className={`${commonStyles.textColorLight}`}
+                            className={`${commonStyles.textColorLight} ${
+                              touched.fullName ? "ion-touched" : ""
+                            } ${errors.fullName ? "ion-invalid" : "ion-valid"}`}
                             label="Nombre Completo"
                             value={field.value}
-                            onIonChange={field.onChange}
+                            onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
                             name={field.name}
                             color="light"
+                            helperText="Ingresa tu nombre completo"
+                            errorText={errors.fullName}
+                            placeholder="Juan Marcelo Perez Lopez"
                           />
-                        </IonItem>
+                        </div>
                       )}
                     </Field>
                     <Field name="document">
                       {({ field }: FieldProps) => (
-                        <IonItem
+                        <div
                           className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
                         >
                           <IonInput
-                            className={`${commonStyles.textColorLight}`}
+                            className={`${commonStyles.textColorLight} ${
+                              touched.document ? "ion-touched" : ""
+                            } ${errors.document ? "ion-invalid" : "ion-valid"}`}
                             label="Cédula"
                             value={field.value}
-                            onIonChange={field.onChange}
+                            onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
                             name={field.name}
                             color="light"
+                            helperText="Ingresa tu cédula de identidad, debe tener 10 números"
+                            errorText={errors.document}
+                            placeholder="1713175071"
                           ></IonInput>
-                        </IonItem>
+                        </div>
                       )}
                     </Field>
                     <Field name="email">
                       {({ field }: FieldProps) => (
-                        <IonItem
+                        <div
                           className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
                         >
                           <IonInput
-                            className={`${commonStyles.textColorLight}`}
+                            className={`${commonStyles.textColorLight} ${
+                              touched.email ? "ion-touched" : ""
+                            } ${errors.email ? "ion-invalid" : "ion-valid"}`}
                             label="Correo"
                             value={field.value}
-                            onIonChange={field.onChange}
+                            onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
                             name={field.name}
                             color="light"
+                            helperText="Ingresa tu correo"
+                            errorText={errors.email}
+                            placeholder="miCorreo@email.com"
                           ></IonInput>
-                        </IonItem>
+                        </div>
                       )}
                     </Field>
                     <Field name="specialtyId">
                       {({ field }: FieldProps) => (
-                        <IonItem
+                        <div
                           className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
                         >
                           <IonSelect
-                            className={`${commonStyles.textColorLight}`}
+                            className={`${commonStyles.textColorLight} ${
+                              touched.specialtyId ? "ion-touched" : ""
+                            } ${
+                              errors.specialtyId ? "ion-invalid" : "ion-valid"
+                            }`}
                             label="Especialidad"
                             interface="popover"
                             name={field.name}
@@ -160,53 +225,95 @@ const Especialista: React.FC = () => {
                               </IonSelectOption>
                             ))}
                           </IonSelect>
-                        </IonItem>
+                          <div
+                            style={{
+                              paddingTop: "5px",
+                              paddingBottom: 0,
+                              display: "flex",
+                              justifyContent: "space-between",
+                              borderTop: `1px solid ${
+                                errors.specialtyId
+                                  ? "var(--ion-color-danger)"
+                                  : "var(--ion-item-border-color, var(--ion-border-color, var(--ion-color-step-150, var(--ion-background-color-step-150, rgba(0, 0, 0, 0.13)))))"
+                              }`,
+                            }}
+                          >
+                            <IonNote
+                              style={{
+                                fontSize: "0.75rem",
+                                color: errors.specialtyId
+                                  ? "var(--ion-color-danger)"
+                                  : "var(--ion-text-color-step-450)",
+                              }}
+                            >
+                              {errors.specialtyId
+                                ? errors.specialtyId
+                                : "Selecciona tu especialidad"}
+                            </IonNote>
+                          </div>
+                        </div>
                       )}
                     </Field>
                     <Field name="password">
                       {({ field }: FieldProps) => (
-                        <IonItem
+                        <div
                           className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
                         >
                           <IonInput
-                            className={`${commonStyles.textColorLight}`}
+                            className={`${commonStyles.textColorLight} ${
+                              touched.password ? "ion-touched" : ""
+                            } ${errors.password ? "ion-invalid" : "ion-valid"}`}
                             label="Contraseña"
                             type="password"
                             value={field.value}
-                            onIonChange={field.onChange}
+                            onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
                             name={field.name}
                             color="light"
+                            helperText="Ingresa tu contraseña. Debe contener un número, una letra minúscula y una letra mayúscula"
+                            errorText={errors.password}
+                            placeholder="********"
+                            clearOnEdit={false}
                           >
                             <IonInputPasswordToggle
                               slot="end"
                               color="light"
                             ></IonInputPasswordToggle>
                           </IonInput>
-                        </IonItem>
+                        </div>
                       )}
                     </Field>
                     <Field name="confirmPassword">
                       {({ field }: FieldProps) => (
-                        <IonItem
+                        <div
                           className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
                         >
                           <IonInput
-                            className={`${commonStyles.textColorLight}`}
+                            className={`${commonStyles.textColorLight} ${
+                              touched.confirmPassword ? "ion-touched" : ""
+                            } ${
+                              errors.confirmPassword
+                                ? "ion-invalid"
+                                : "ion-valid"
+                            }`}
                             label="Confirmar contraseña"
                             type="password"
                             value={field.value}
-                            onIonChange={field.onChange}
+                            onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
                             name={field.name}
                             color="light"
+                            helperText="Vuelve a ingresar tu contraseña"
+                            errorText={errors.confirmPassword}
+                            placeholder="********"
+                            clearOnEdit={false}
                           >
                             <IonInputPasswordToggle
                               slot="end"
                               color="light"
                             ></IonInputPasswordToggle>
                           </IonInput>
-                        </IonItem>
+                        </div>
                       )}
                     </Field>
                     <IonButton
