@@ -39,8 +39,8 @@ const profesionalRuralSchema = Yup.object({
     .max(254, "El correo está limitado a 254 caracteres"),
   zone: Yup.string()
     .trim()
-    .required("Es obligatorio ingresar una zona")
-    .max(256, "La zona está limitada a 256 caracteres"),
+    .required("Es obligatorio ingresar un centro de salud")
+    .max(256, "El centro de salud está limitado a 256 caracteres"),
   password: Yup.string()
     .trim()
     .required("Es obligatorio ingresar una contraseña")
@@ -186,13 +186,13 @@ const ProfesionalRural: React.FC = () => {
                             className={`${commonStyles.textColorLight} ${
                               touched.zone ? "ion-touched" : ""
                             } ${errors.zone ? "ion-invalid" : "ion-valid"}`}
-                            label="Zona"
+                            label="Centro de salud"
                             value={field.value}
                             onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
                             name={field.name}
                             color="light"
-                            helperText="Ingresa la zona en que estás haciendo la rural"
+                            helperText="Ingresa el centro de salud en que estás haciendo la rural"
                             errorText={errors.zone}
                             placeholder="Hospital Rural San José"
                           ></IonInput>

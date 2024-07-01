@@ -90,6 +90,8 @@ export const FeedbackRender: React.FC<Props> = ({ match, isFeedback }) => {
               <IonInput
                 onIonInput={(e) => setTexto(e.detail.value!)}
                 style={{ marginBottom: "10px" }}
+                required
+                helperText="Ingresa tu retroalimentacion aquí"
               >
                 Retroalimentación:
               </IonInput>
