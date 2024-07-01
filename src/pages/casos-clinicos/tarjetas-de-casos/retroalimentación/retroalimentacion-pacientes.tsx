@@ -15,6 +15,7 @@ import {
   IonPage,
   IonCardContent,
   useIonRouter,
+  useIonViewDidLeave,
 } from "@ionic/react";
 import { getCaseFeedback, submitFeedback } from "../../../../api/feedback";
 import React, { useState, useEffect } from "react";
@@ -42,6 +43,7 @@ export const FeedbackRender: React.FC<Props> = ({ match, isFeedback }) => {
       const data = await submitFeedback(texto, Number(match.params.id));
       if (data.success) {
         alert("Retroalimentación enviada exitosamente");
+        setTexto("");
         refreshing();
       } else {
         throw new Error("Error al enviar la retroalimentación");
@@ -68,6 +70,10 @@ export const FeedbackRender: React.FC<Props> = ({ match, isFeedback }) => {
   useEffect(() => {
     gettingFeedbacks();
   }, [refresher]);
+
+  useIonViewDidLeave(() => {
+    setTexto("");
+  });
 
   return (
     <IonPage>
