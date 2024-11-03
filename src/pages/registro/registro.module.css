@@ -13,3 +13,9 @@
 .contentContainer {
   height: 100%;
 }
+
+.modalTitle {
+  padding-block: 1rem;
+  text-align: center;
+  font-weight: 700;
+}

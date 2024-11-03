@@ -8,6 +8,8 @@ import {
   IonInputPasswordToggle,
   IonFooter,
   useIonRouter,
+  useIonModal,
+  useIonToast,
 } from "@ionic/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { registerRuralProfessional } from "../../../api/register";
@@ -16,6 +18,8 @@ import commonStyles from "../common.module.css";
 import ResetOnLeave from "../../../components/helpers/reset-on-leave";
 import WithUnAuth from "../../../components/WithUnAuth";
 import * as Yup from "yup";
+import ConsentModal from "../ConsentModal";
+import { useRef } from "react";
 
 const profesionalRuralSchema = Yup.object({
   fullName: Yup.string()
@@ -60,8 +64,34 @@ const profesionalRuralSchema = Yup.object({
     ),
 });
 
-const ProfesionalRural: React.FC = () => {
+/**
+ * Sign up page for rural professional
+ */
+const ProfesionalRural = () => {
   const router = useIonRouter();
+
+  // Set up consent modal
+  const formRef = useRef(null);
+  const [presentModal, dismissModal] = useIonModal(ConsentModal, {
+    dismiss: (data: string, role: string) => dismissModal(data, role),
+    formRef: formRef,
+  });
+
+  function openModal() {
+    presentModal();
+  }
+
+  // Set up result toast
+  const [presentToast] = useIonToast();
+
+  function showToast(message: string, state: "success" | "error") {
+    presentToast({
+      message,
+      duration: 1500,
+      position: "top",
+      color: state === "error" ? "warning" : "success",
+    });
+  }
 
   return (
     <WithUnAuth>
@@ -81,7 +111,9 @@ const ProfesionalRural: React.FC = () => {
                   Registro de profesional rural
                 </IonTitle>
               </IonHeader>
+
               <Formik
+                innerRef={formRef}
                 initialValues={{
                   fullName: "",
                   document: "",
@@ -100,10 +132,18 @@ const ProfesionalRural: React.FC = () => {
                     values.password
                   ).then((data) => {
                     if (data.success) {
-                      alert("Usuario registrado satisfactoriamente.");
+                      // alert("Usuario registrado satisfactoriamente.");
+                      showToast(
+                        "Usuario registrado satisfactoriamente.",
+                        "success"
+                      );
                       router.push("/login");
                     } else {
-                      alert("No se ha podido registrar al profesional rural.");
+                      // alert("No se ha podido registrar al profesional rural.");
+                      showToast(
+                        "No se ha podido registrar al profesional rural.",
+                        "error"
+                      );
                     }
                     setSubmitting(false);
                   });
@@ -133,6 +173,7 @@ const ProfesionalRural: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="document">
                       {({ field }: FieldProps) => (
                         <div
@@ -146,6 +187,7 @@ const ProfesionalRural: React.FC = () => {
                             value={field.value}
                             onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
+                            id={field.name}
                             name={field.name}
                             color="light"
                             helperText="Ingresa tu cédula de identidad, debe tener 10 números"
@@ -155,6 +197,7 @@ const ProfesionalRural: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="email">
                       {({ field }: FieldProps) => (
                         <div
@@ -168,6 +211,7 @@ const ProfesionalRural: React.FC = () => {
                             value={field.value}
                             onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
+                            id={field.name}
                             name={field.name}
                             color="light"
                             helperText="Ingresa tu correo"
@@ -177,6 +221,7 @@ const ProfesionalRural: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="zone">
                       {({ field }: FieldProps) => (
                         <div
@@ -190,6 +235,7 @@ const ProfesionalRural: React.FC = () => {
                             value={field.value}
                             onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
+                            id={field.name}
                             name={field.name}
                             color="light"
                             helperText="Ingresa el centro de salud en que estás haciendo la rural"
@@ -199,6 +245,7 @@ const ProfesionalRural: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="password">
                       {({ field }: FieldProps) => (
                         <div
@@ -213,6 +260,7 @@ const ProfesionalRural: React.FC = () => {
                             value={field.value}
                             onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
+                            id={field.name}
                             name={field.name}
                             color="light"
                             helperText="Ingresa tu contraseña. Debe contener un número, una letra minúscula y una letra mayúscula"
@@ -223,11 +271,13 @@ const ProfesionalRural: React.FC = () => {
                             <IonInputPasswordToggle
                               slot="end"
                               color="light"
-                            ></IonInputPasswordToggle>
+                              id="togglePassword"
+                            />
                           </IonInput>
                         </div>
                       )}
                     </Field>
+
                     <Field name="confirmPassword">
                       {({ field }: FieldProps) => (
                         <div
@@ -246,6 +296,7 @@ const ProfesionalRural: React.FC = () => {
                             value={field.value}
                             onIonInput={field.onChange}
                             onIonBlur={field.onBlur}
+                            id={field.name}
                             name={field.name}
                             color="light"
                             helperText="Vuelve a ingresar tu contraseña"
@@ -256,18 +307,21 @@ const ProfesionalRural: React.FC = () => {
                             <IonInputPasswordToggle
                               slot="end"
                               color="light"
-                            ></IonInputPasswordToggle>
+                              id="toggleConfirm"
+                            />
                           </IonInput>
                         </div>
                       )}
                     </Field>
+
                     <IonButton
                       className={`${commonStyles.lightButton}`}
-                      type="submit"
+                      type="button"
                       color="light"
                       fill="solid"
                       disabled={isSubmitting}
                       style={{ paddingTop: "20px" }}
+                      onClick={openModal}
                     >
                       Registrarte
                     </IonButton>
@@ -276,6 +330,7 @@ const ProfesionalRural: React.FC = () => {
                 )}
               </Formik>
             </main>
+            
             <IonFooter className={`${commonStyles.footer} ion-no-border`}>
               <IonTitle color="light" className={`${commonStyles.header}`}>
                 ¿Ya tienes cuenta?

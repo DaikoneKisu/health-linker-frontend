@@ -8,13 +8,14 @@ import {
   IonInputPasswordToggle,
   IonFooter,
   useIonRouter,
-  IonItem,
   IonSelect,
   IonSelectOption,
   useIonViewWillEnter,
   IonNote,
+  useIonModal,
+  useIonToast,
 } from "@ionic/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { registerSpecialist, getSpecialities } from "../../../api/register";
 import { Especialidad } from "../../casos-clinicos/types";
 import LogoHeader from "../../../components/logo-header/logo-header";
@@ -23,6 +24,7 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import ResetOnLeave from "../../../components/helpers/reset-on-leave";
 import WithUnAuth from "../../../components/WithUnAuth";
 import * as Yup from "yup";
+import ConsentModal from "../ConsentModal";
 
 const especialistaSchema = Yup.object({
   fullName: Yup.string()
@@ -67,11 +69,37 @@ const especialistaSchema = Yup.object({
     .positive("Es obligario seleccionar una especialidad"),
 });
 
-const Especialista: React.FC = () => {
+/**
+ * Sign up page for specialist
+ */
+const Especialista = () => {
   const [listaEspecialista, setListaEspecialista] = useState<Especialidad[]>(
     []
   );
   const router = useIonRouter();
+
+  // Set up consent modal
+  const formRef = useRef(null);
+  const [presentModal, dismissModal] = useIonModal(ConsentModal, {
+    dismiss: (data: string, role: string) => dismissModal(data, role),
+    formRef: formRef,
+  });
+
+  function openModal() {
+    presentModal();
+  }
+
+  // Set up result toast
+  const [presentToast] = useIonToast();
+
+  function showToast(message: string, state: "success" | "error") {
+    presentToast({
+      message,
+      duration: 1500,
+      position: "top",
+      color: state === "error" ? "warning" : "success",
+    });
+  }
 
   useIonViewWillEnter(() => {
     const fetchData = async () => {
@@ -105,6 +133,7 @@ const Especialista: React.FC = () => {
                 </IonTitle>
               </IonHeader>
               <Formik
+                innerRef={formRef}
                 initialValues={{
                   fullName: "",
                   document: "",
@@ -123,10 +152,18 @@ const Especialista: React.FC = () => {
                     values.password
                   ).then((data) => {
                     if (data.success) {
-                      alert("Usuario registrado satisfactoriamente.");
+                      // alert("Usuario registrado satisfactoriamente.");
+                      showToast(
+                        "Usuario registrado satisfactoriamente.",
+                        "success"
+                      );
                       router.push("/login");
                     } else {
-                      alert("No se ha podido registrar al especialista.");
+                      // alert("No se ha podido registrar al especialista.");
+                      showToast(
+                        "No se ha podido registrar al especialista.",
+                        "error"
+                      );
                     }
                     setSubmitting(false);
                   });
@@ -156,6 +193,7 @@ const Especialista: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="document">
                       {({ field }: FieldProps) => (
                         <div
@@ -178,6 +216,7 @@ const Especialista: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="email">
                       {({ field }: FieldProps) => (
                         <div
@@ -200,6 +239,7 @@ const Especialista: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="specialtyId">
                       {({ field }: FieldProps) => (
                         <div
@@ -254,6 +294,7 @@ const Especialista: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="password">
                       {({ field }: FieldProps) => (
                         <div
@@ -278,11 +319,13 @@ const Especialista: React.FC = () => {
                             <IonInputPasswordToggle
                               slot="end"
                               color="light"
-                            ></IonInputPasswordToggle>
+                              id="togglePassword"
+                            />
                           </IonInput>
                         </div>
                       )}
                     </Field>
+
                     <Field name="confirmPassword">
                       {({ field }: FieldProps) => (
                         <div
@@ -311,18 +354,21 @@ const Especialista: React.FC = () => {
                             <IonInputPasswordToggle
                               slot="end"
                               color="light"
-                            ></IonInputPasswordToggle>
+                              id="toggleConfirm"
+                            />
                           </IonInput>
                         </div>
                       )}
                     </Field>
+
                     <IonButton
                       className={`${commonStyles.lightButton}`}
-                      type="submit"
+                      type="button"
                       color="light"
                       fill="solid"
                       disabled={isSubmitting}
                       style={{ paddingTop: "20px" }}
+                      onClick={openModal}
                     >
                       Registrarte
                     </IonButton>
@@ -331,6 +377,7 @@ const Especialista: React.FC = () => {
                 )}
               </Formik>
             </main>
+
             <IonFooter className={`${commonStyles.footer} ion-no-border`}>
               <IonTitle color="light" className={`${commonStyles.header}`}>
                 ¿Ya tienes cuenta?

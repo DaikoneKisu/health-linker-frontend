@@ -13,6 +13,7 @@ import {
 import { signin } from "../../api/auth";
 import WithUnAuth from "../../components/WithUnAuth";
 import styles from "./login.module.css";
+import "./login.css";
 import { Form, Formik, Field, FieldProps } from "formik";
 import ResetOnLeave from "../../components/helpers/reset-on-leave";
 import * as Yup from "yup";
@@ -31,7 +32,7 @@ const loginSchema = Yup.object({
     .required("Es obligatorio ingresar una contraseña"),
 });
 
-const Login: React.FC = () => {
+const Login = () => {
   const router = useIonRouter();
 
   return (
