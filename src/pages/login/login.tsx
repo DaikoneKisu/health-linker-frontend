@@ -9,6 +9,7 @@ import {
   IonInputPasswordToggle,
   IonImg,
   useIonRouter,
+  useIonToast,
 } from "@ionic/react";
 import { signin } from "../../api/auth";
 import WithUnAuth from "../../components/WithUnAuth";
@@ -35,6 +36,18 @@ const loginSchema = Yup.object({
 const Login = () => {
   const router = useIonRouter();
 
+  // Set up result toast
+  const [presentToast] = useIonToast();
+
+  function showToast(message: string, state: "success" | "error") {
+    presentToast({
+      message,
+      duration: 1500,
+      position: "top",
+      color: state === "error" ? "danger" : "success",
+    });
+  }
+
   return (
     <WithUnAuth>
       <IonPage>
@@ -60,11 +73,13 @@ const Login = () => {
               onSubmit={(values, { setSubmitting }) => {
                 signin(values.document, values.password).then((data) => {
                   if (data.success) {
-                    alert("Inicio de sesión exitoso");
+                    // alert("Inicio de sesión exitoso");
+                    showToast("Inicio de sesión exitoso", "success");
                     localStorage.setItem("token", data.token);
                     router.push("/casos-clinicos");
                   } else {
-                    alert("Error al iniciar sesión");
+                    // alert("Error al iniciar sesión");
+                    showToast("Error al iniciar sesión", "error");
                   }
                   setSubmitting(false);
                 });

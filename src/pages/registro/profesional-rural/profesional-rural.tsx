@@ -102,7 +102,7 @@ const ProfesionalRural = () => {
       message,
       duration: 1500,
       position: "top",
-      color: state === "error" ? "warning" : "success",
+      color: state === "error" ? "danger" : "success",
     });
   }
 
