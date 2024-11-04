@@ -10,6 +10,7 @@ import {
   useIonRouter,
   useIonModal,
   useIonToast,
+  IonText,
 } from "@ionic/react";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { registerRuralProfessional } from "../../../api/register";
@@ -21,6 +22,9 @@ import * as Yup from "yup";
 import ConsentModal from "../ConsentModal";
 import { useRef } from "react";
 
+/**
+ * Validation schema for rural professional registration
+ */
 const profesionalRuralSchema = Yup.object({
   fullName: Yup.string()
     .trim()
@@ -62,6 +66,15 @@ const profesionalRuralSchema = Yup.object({
       [Yup.ref("password")],
       "La confirmación de la contraseña no coincide con la contraseña ingresada"
     ),
+  phoneNumber: Yup.string()
+    .trim()
+    .required("Es obligatorio ingresar su número de teléfono")
+    .matches(/^\d+$/, {
+      excludeEmptyString: true,
+      message: "El teléfono debe contener solo números",
+    })
+    .min(9, "El número debe tener al menos 9 caracteres")
+    .max(15, "El número no puede superar los 15 caracteres"),
 });
 
 /**
@@ -118,6 +131,7 @@ const ProfesionalRural = () => {
                   fullName: "",
                   document: "",
                   email: "",
+                  phoneNumber: "",
                   zone: "",
                   password: "",
                   confirmPassword: "",
@@ -129,7 +143,8 @@ const ProfesionalRural = () => {
                     values.document,
                     values.email,
                     values.fullName,
-                    values.password
+                    values.password,
+                    values.phoneNumber
                   ).then((data) => {
                     if (data.success) {
                       // alert("Usuario registrado satisfactoriamente.");
@@ -218,6 +233,37 @@ const ProfesionalRural = () => {
                             errorText={errors.email}
                             placeholder="miCorreo@email.com"
                           ></IonInput>
+                        </div>
+                      )}
+                    </Field>
+
+                    <Field name="phoneNumber">
+                      {({ field }: FieldProps) => (
+                        <div
+                          className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
+                        >
+                          <IonInput
+                            className={`${commonStyles.textColorLight} ${
+                              touched.phoneNumber ? "ion-touched" : ""
+                            } ${errors.phoneNumber ? "ion-invalid" : "ion-valid"}`}
+                            label="Número de teléfono"
+                            value={field.value}
+                            onIonInput={field.onChange}
+                            onIonBlur={field.onBlur}
+                            id={field.name}
+                            name={field.name}
+                            color="light"
+                            helperText="Ingresa tu número de teléfono (sin el código de país)"
+                            errorText={errors.phoneNumber}
+                            placeholder="112223333"
+                          >
+                            <IonText
+                              slot="start"
+                              className={commonStyles.countryCodeItem}
+                            >
+                              <img src="ecuador.svg" height="16px"></img> (+593)
+                            </IonText>
+                          </IonInput>
                         </div>
                       )}
                     </Field>
@@ -330,7 +376,7 @@ const ProfesionalRural = () => {
                 )}
               </Formik>
             </main>
-            
+
             <IonFooter className={`${commonStyles.footer} ion-no-border`}>
               <IonTitle color="light" className={`${commonStyles.header}`}>
                 ¿Ya tienes cuenta?

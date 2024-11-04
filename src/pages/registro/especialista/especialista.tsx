@@ -14,6 +14,7 @@ import {
   IonNote,
   useIonModal,
   useIonToast,
+  IonText,
 } from "@ionic/react";
 import { useRef, useState } from "react";
 import { registerSpecialist, getSpecialities } from "../../../api/register";
@@ -26,6 +27,9 @@ import WithUnAuth from "../../../components/WithUnAuth";
 import * as Yup from "yup";
 import ConsentModal from "../ConsentModal";
 
+/**
+ * Validation schema for specialist
+ */
 const especialistaSchema = Yup.object({
   fullName: Yup.string()
     .trim()
@@ -67,6 +71,15 @@ const especialistaSchema = Yup.object({
     .required("Es obligario seleccionar una especialidad")
     .integer("Es obligario seleccionar una especialidad")
     .positive("Es obligario seleccionar una especialidad"),
+  phoneNumber: Yup.string()
+    .trim()
+    .required("Es obligatorio ingresar su número de teléfono")
+    .matches(/^\d+$/, {
+      excludeEmptyString: true,
+      message: "El teléfono debe contener solo números",
+    })
+    .min(9, "El número debe tener al menos 9 caracteres")
+    .max(15, "El número no puede superar los 15 caracteres"),
 });
 
 /**
@@ -132,6 +145,7 @@ const Especialista = () => {
                   Registro de especialista
                 </IonTitle>
               </IonHeader>
+
               <Formik
                 innerRef={formRef}
                 initialValues={{
@@ -141,6 +155,7 @@ const Especialista = () => {
                   password: "",
                   confirmPassword: "",
                   specialtyId: 1,
+                  phoneNumber: "",
                 }}
                 validationSchema={especialistaSchema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -149,7 +164,8 @@ const Especialista = () => {
                     values.document,
                     values.email,
                     values.fullName,
-                    values.password
+                    values.password,
+                    values.phoneNumber
                   ).then((data) => {
                     if (data.success) {
                       // alert("Usuario registrado satisfactoriamente.");
@@ -236,6 +252,39 @@ const Especialista = () => {
                             errorText={errors.email}
                             placeholder="miCorreo@email.com"
                           ></IonInput>
+                        </div>
+                      )}
+                    </Field>
+
+                    <Field name="phoneNumber">
+                      {({ field }: FieldProps) => (
+                        <div
+                          className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
+                        >
+                          <IonInput
+                            className={`${commonStyles.textColorLight} ${
+                              touched.phoneNumber ? "ion-touched" : ""
+                            } ${
+                              errors.phoneNumber ? "ion-invalid" : "ion-valid"
+                            }`}
+                            label="Número de teléfono"
+                            value={field.value}
+                            onIonInput={field.onChange}
+                            onIonBlur={field.onBlur}
+                            id={field.name}
+                            name={field.name}
+                            color="light"
+                            helperText="Ingresa tu número de teléfono (sin el código de país)"
+                            errorText={errors.phoneNumber}
+                            placeholder="112223333"
+                          >
+                            <IonText
+                              slot="start"
+                              className={commonStyles.countryCodeItem}
+                            >
+                              <img src="ecuador.svg" height="16px"></img> (+593)
+                            </IonText>
+                          </IonInput>
                         </div>
                       )}
                     </Field>
