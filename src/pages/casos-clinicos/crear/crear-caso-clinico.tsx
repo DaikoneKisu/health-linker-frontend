@@ -37,17 +37,17 @@ const crearCasoClinicoSchema = Yup.object({
   descripcionCaso: Yup.string()
     .trim()
     .required("Es obligatorio ingresar una descripción para el caso")
-    .max(500, "La descripción del caso está limitada a 500 caracteres"),
+    .max(800, "La descripción del caso está limitada a 800 caracteres"),
   valoracionPaciente: Yup.string()
     .trim()
     .required(
       "Es obligatorio ingresar una valoración del paciente para el caso"
     )
-    .max(500, "La valoración del paciente está limitada a 500 caracteres"),
+    .max(800, "La valoración del paciente está limitada a 800 caracteres"),
   motivoMentoria: Yup.string()
     .trim()
     .required("Es obligatorio ingresar un motivo de mentoría para el caso")
-    .max(500, "El motivo de mentoría está limitado a 500 caracteres"),
+    .max(800, "El motivo de mentoría está limitado a 800 caracteres"),
   especialidadRequerida: Yup.number()
     .required("Es obligatorio ingresar una especialidad requerida para el caso")
     .integer("Es obligatorio ingresar una especialidad requerida para el caso")
@@ -65,7 +65,7 @@ const crearCasoClinicoSchema = Yup.object({
   motivoPaciente: Yup.string()
     .trim()
     .required("Es obligatorio ingresar un motivo del paciente para el caso")
-    .max(500, "El motivo del paciente está limitado a 500 caracteres"),
+    .max(800, "El motivo del paciente está limitado a 800 caracteres"),
   archivosAsociados: Yup.array().of(Yup.mixed()).nullable(),
 });
 
@@ -141,7 +141,7 @@ const CrearCasoClinico = () => {
                           label="Descripción"
                           helperText="Indica una descripción breve del caso"
                           counter={true}
-                          maxlength={500}
+                          maxlength={800}
                           rows={1}
                           autoGrow
                           name={field.name}
@@ -168,7 +168,7 @@ const CrearCasoClinico = () => {
                           helperText="Indica la valoración objetiva que se le da al paciente"
                           counter={true}
                           rows={1}
-                          maxlength={500}
+                          maxlength={800}
                           autoGrow
                           name={field.name}
                           onIonInput={field.onChange}
@@ -192,7 +192,7 @@ const CrearCasoClinico = () => {
                           helperText="Indica la razón por la cual se solicita mentoría"
                           counter={true}
                           rows={1}
-                          maxlength={500}
+                          maxlength={800}
                           autoGrow
                           name={field.name}
                           onIonInput={field.onChange}
@@ -380,7 +380,7 @@ const CrearCasoClinico = () => {
                           helperText="Indica la razón por la cual el paciente asistió a consulta en un principio"
                           counter={true}
                           rows={1}
-                          maxlength={500}
+                          maxlength={800}
                           autoGrow
                           name={field.name}
                           onIonInput={field.onChange}
