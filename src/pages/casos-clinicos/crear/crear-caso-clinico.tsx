@@ -32,7 +32,11 @@ import { createClinicalCase } from "../../../api/casos-clinicos";
 import ResetOnLeave from "../../../components/helpers/reset-on-leave";
 import LogoHeader from "../../../components/logo-header/logo-header";
 import * as Yup from "yup";
+import { useCommonToast } from "../../../hooks/useCommonToast";
 
+/**
+ * Clinical case schema
+ */
 const crearCasoClinicoSchema = Yup.object({
   descripcionCaso: Yup.string()
     .trim()
@@ -69,10 +73,17 @@ const crearCasoClinicoSchema = Yup.object({
   archivosAsociados: Yup.array().of(Yup.mixed()).nullable(),
 });
 
+
+/**
+ * Clinical case form
+ */
 const CrearCasoClinico = () => {
   const [specialties, setSpecialties] = useState<Especialidad[]>([]);
   const datetimeId = useId();
   const router = useIonRouter();
+
+  // For API response toast
+  const [showToast] = useCommonToast();
 
   useIonViewWillEnter(() => {
     const fetchData = async () => {
@@ -110,10 +121,12 @@ const CrearCasoClinico = () => {
           onSubmit={(values, { setSubmitting }) => {
             createClinicalCase(values).then((data) => {
               if (data.success) {
-                alert("Caso clínico creado satisfactoriamente");
+                // alert("Caso clínico creado satisfactoriamente");
+                showToast("Caso clínico creado satisfactoriamente", "success");
                 router.push("/casos-clinicos");
               } else {
-                alert("Error al crear el caso clínico");
+                // alert("Error al crear el caso clínico");
+                showToast("Error al crear el caso clínico", "error");
               }
               setSubmitting(false);
             });
@@ -124,7 +137,9 @@ const CrearCasoClinico = () => {
               <header>
                 <h2>Crear caso clínico</h2>
               </header>
-              <IonCard>
+
+              {/* Case data */}
+              <IonCard className="form-card">
                 <IonCardHeader>
                   <IonCardTitle>Datos del caso</IonCardTitle>
                 </IonCardHeader>
@@ -261,7 +276,9 @@ const CrearCasoClinico = () => {
                   </Field>
                 </IonCardContent>
               </IonCard>
-              <IonCard>
+
+              {/* Patient data */}
+              <IonCard className="form-card">
                 <IonCardHeader>
                   <IonCardTitle>Datos del paciente</IonCardTitle>
                 </IonCardHeader>
@@ -393,7 +410,9 @@ const CrearCasoClinico = () => {
                   </Field>
                 </IonCardContent>
               </IonCard>
-              <IonCard>
+
+              {/* Files */}
+              <IonCard className="form-card">
                 <IonCardHeader>
                   <IonCardTitle>Archivos asociados</IonCardTitle>
                 </IonCardHeader>
@@ -404,6 +423,14 @@ const CrearCasoClinico = () => {
                 </IonCardContent>
               </IonCard>
               <div className="form-actions">
+                <IonButton
+                  type="submit"
+                  className="save-button"
+                  fill="solid"
+                  disabled={isSubmitting}
+                >
+                  Guardar
+                </IonButton>
                 <IonButton
                   type="button"
                   className="cancel-button"
@@ -417,14 +444,6 @@ const CrearCasoClinico = () => {
                   }}
                 >
                   Cancelar
-                </IonButton>
-                <IonButton
-                  type="submit"
-                  className="save-button"
-                  fill="solid"
-                  disabled={isSubmitting}
-                >
-                  Guardar
                 </IonButton>
               </div>
               <ResetOnLeave />

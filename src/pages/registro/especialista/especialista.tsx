@@ -13,7 +13,6 @@ import {
   useIonViewWillEnter,
   IonNote,
   useIonModal,
-  useIonToast,
   IonText,
 } from "@ionic/react";
 import { useRef, useState } from "react";
@@ -26,6 +25,7 @@ import ResetOnLeave from "../../../components/helpers/reset-on-leave";
 import WithUnAuth from "../../../components/WithUnAuth";
 import * as Yup from "yup";
 import ConsentModal from "../ConsentModal";
+import { useCommonToast } from "../../../hooks/useCommonToast";
 
 /**
  * Validation schema for specialist
@@ -103,16 +103,7 @@ const Especialista = () => {
   }
 
   // Set up result toast
-  const [presentToast] = useIonToast();
-
-  function showToast(message: string, state: "success" | "error") {
-    presentToast({
-      message,
-      duration: 1500,
-      position: "top",
-      color: state === "error" ? "danger" : "success",
-    });
-  }
+  const [showToast] = useCommonToast();
 
   useIonViewWillEnter(() => {
     const fetchData = async () => {

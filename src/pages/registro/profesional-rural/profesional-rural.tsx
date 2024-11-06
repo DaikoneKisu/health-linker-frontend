@@ -9,7 +9,6 @@ import {
   IonFooter,
   useIonRouter,
   useIonModal,
-  useIonToast,
   IonText,
 } from "@ionic/react";
 import { Field, FieldProps, Form, Formik } from "formik";
@@ -21,6 +20,7 @@ import WithUnAuth from "../../../components/WithUnAuth";
 import * as Yup from "yup";
 import ConsentModal from "../ConsentModal";
 import { useRef } from "react";
+import { useCommonToast } from "../../../hooks/useCommonToast";
 
 /**
  * Validation schema for rural professional registration
@@ -95,16 +95,7 @@ const ProfesionalRural = () => {
   }
 
   // Set up result toast
-  const [presentToast] = useIonToast();
-
-  function showToast(message: string, state: "success" | "error") {
-    presentToast({
-      message,
-      duration: 1500,
-      position: "top",
-      color: state === "error" ? "danger" : "success",
-    });
-  }
+  const [showToast] = useCommonToast();
 
   return (
     <WithUnAuth>

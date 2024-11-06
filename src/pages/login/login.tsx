@@ -9,7 +9,6 @@ import {
   IonInputPasswordToggle,
   IonImg,
   useIonRouter,
-  useIonToast,
 } from "@ionic/react";
 import { signin } from "../../api/auth";
 import WithUnAuth from "../../components/WithUnAuth";
@@ -18,6 +17,7 @@ import "./login.css";
 import { Form, Formik, Field, FieldProps } from "formik";
 import ResetOnLeave from "../../components/helpers/reset-on-leave";
 import * as Yup from "yup";
+import { useCommonToast } from "../../hooks/useCommonToast";
 
 const loginSchema = Yup.object({
   document: Yup.string()
@@ -37,16 +37,7 @@ const Login = () => {
   const router = useIonRouter();
 
   // Set up result toast
-  const [presentToast] = useIonToast();
-
-  function showToast(message: string, state: "success" | "error") {
-    presentToast({
-      message,
-      duration: 1500,
-      position: "top",
-      color: state === "error" ? "danger" : "success",
-    });
-  }
+  const [showToast] = useCommonToast();
 
   return (
     <WithUnAuth>

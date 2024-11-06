@@ -10,7 +10,6 @@ ion-textarea {
 .cancel-button,
 .upload-button {
   margin: 0;
-  width: 170px;
 }
 
 .upload-button {
@@ -19,6 +18,16 @@ ion-textarea {
 
 .form-actions {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   padding: 15px 10px;
+  gap: 0.6rem;
+}
+
+.form-card {
+  background-color: white;
+}
+
+ion-datetime-button::part(native) {
+  background-color: #e9d5ff;
 }
