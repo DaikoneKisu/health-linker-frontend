@@ -1,15 +1,9 @@
 import {
-  IonHeader,
-  IonTitle,
   IonCard,
   IonButton,
-  IonText,
   IonFooter,
-  IonIcon,
   IonCardHeader,
   IonCardTitle,
-  IonCardSubtitle,
-  IonInfiniteScroll,
   IonInput,
   IonContent,
   IonPage,
@@ -25,6 +19,7 @@ import "./styles.css";
 import { RouteComponentProps } from "react-router";
 import LogoHeader from "../../../../components/logo-header/logo-header";
 import otherStyles from "../../casos-clinicos.module.css";
+import { useCommonToast } from "../../../../hooks/useCommonToast";
 
 interface Props extends RouteComponentProps<{ id: string }> {
   isFeedback: (answer: boolean) => void;
@@ -36,13 +31,17 @@ export const FeedbackRender: React.FC<Props> = ({ match, isFeedback }) => {
   const [texto, setTexto] = useState("");
   const router = useIonRouter();
 
+  // For API responses
+  const [showToast] = useCommonToast();
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
       const data = await submitFeedback(texto, Number(match.params.id));
       if (data.success) {
-        alert("Retroalimentación enviada exitosamente");
+        // alert("Retroalimentación enviada exitosamente");
+        showToast("Retroalimentación enviada exitosamente", "success");
         setTexto("");
         refreshing();
       } else {
@@ -50,7 +49,8 @@ export const FeedbackRender: React.FC<Props> = ({ match, isFeedback }) => {
       }
     } catch (error) {
       console.error("Error:", error);
-      alert(error);
+      // alert(error);
+      showToast("Error al enviar la retroalimentación", "error");
     }
   };
 
