@@ -1,5 +1,6 @@
 import { IonAlert } from "@ionic/react";
 import { deleteClinicalCase } from "../../api/casos-clinicos";
+import { useCommonToast } from "../../hooks/useCommonToast";
 
 interface Props {
   caseId: number;
@@ -12,14 +13,25 @@ const ConfirmCaseDelete = ({
   afterDelete,
   triggerElementId,
 }: Props) => {
+
+  // Use toast for improved ux
+  const [showToast] = useCommonToast();
+
   const deleteCase = async () => {
-    await deleteClinicalCase(caseId).then((data) => {
+    try {
+      const data = await deleteClinicalCase(caseId);
       if (data.success) {
-        alert("Caso eliminado");
+        showToast("Caso eliminado", "success");
+        if (afterDelete) {
+          afterDelete();
+        }
       } else {
-        alert("Error al intentar eliminar el caso");
+        showToast("Error al intentar eliminar el caso", "error");
+        
       }
-    });
+    } catch (error) {
+      showToast("Error al intentar eliminar el caso", "error");
+    }
   };
 
   return (

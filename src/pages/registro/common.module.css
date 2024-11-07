@@ -41,3 +41,9 @@
   width: min(100%, 410px);
   margin: 0 auto;
 }
+
+.countryCodeItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}

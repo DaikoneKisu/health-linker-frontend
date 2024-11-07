@@ -13,9 +13,11 @@ import {
 import { signin } from "../../api/auth";
 import WithUnAuth from "../../components/WithUnAuth";
 import styles from "./login.module.css";
+import "./login.css";
 import { Form, Formik, Field, FieldProps } from "formik";
 import ResetOnLeave from "../../components/helpers/reset-on-leave";
 import * as Yup from "yup";
+import { useCommonToast } from "../../hooks/useCommonToast";
 
 const loginSchema = Yup.object({
   document: Yup.string()
@@ -31,8 +33,11 @@ const loginSchema = Yup.object({
     .required("Es obligatorio ingresar una contraseña"),
 });
 
-const Login: React.FC = () => {
+const Login = () => {
   const router = useIonRouter();
+
+  // Set up result toast
+  const [showToast] = useCommonToast();
 
   return (
     <WithUnAuth>
@@ -59,11 +64,13 @@ const Login: React.FC = () => {
               onSubmit={(values, { setSubmitting }) => {
                 signin(values.document, values.password).then((data) => {
                   if (data.success) {
-                    alert("Inicio de sesión exitoso");
+                    // alert("Inicio de sesión exitoso");
+                    showToast("Inicio de sesión exitoso", "success");
                     localStorage.setItem("token", data.token);
                     router.push("/casos-clinicos");
                   } else {
-                    alert("Error al iniciar sesión");
+                    // alert("Error al iniciar sesión");
+                    showToast("Error al iniciar sesión", "error");
                   }
                   setSubmitting(false);
                 });

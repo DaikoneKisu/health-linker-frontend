@@ -8,13 +8,14 @@ import {
   IonInputPasswordToggle,
   IonFooter,
   useIonRouter,
-  IonItem,
   IonSelect,
   IonSelectOption,
   useIonViewWillEnter,
   IonNote,
+  useIonModal,
+  IonText,
 } from "@ionic/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { registerSpecialist, getSpecialities } from "../../../api/register";
 import { Especialidad } from "../../casos-clinicos/types";
 import LogoHeader from "../../../components/logo-header/logo-header";
@@ -23,7 +24,12 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import ResetOnLeave from "../../../components/helpers/reset-on-leave";
 import WithUnAuth from "../../../components/WithUnAuth";
 import * as Yup from "yup";
+import ConsentModal from "../ConsentModal";
+import { useCommonToast } from "../../../hooks/useCommonToast";
 
+/**
+ * Validation schema for specialist
+ */
 const especialistaSchema = Yup.object({
   fullName: Yup.string()
     .trim()
@@ -65,13 +71,39 @@ const especialistaSchema = Yup.object({
     .required("Es obligario seleccionar una especialidad")
     .integer("Es obligario seleccionar una especialidad")
     .positive("Es obligario seleccionar una especialidad"),
+  phoneNumber: Yup.string()
+    .trim()
+    .required("Es obligatorio ingresar su número de teléfono")
+    .matches(/^\d+$/, {
+      excludeEmptyString: true,
+      message: "El teléfono debe contener solo números",
+    })
+    .min(9, "El número debe tener al menos 9 caracteres")
+    .max(15, "El número no puede superar los 15 caracteres"),
 });
 
-const Especialista: React.FC = () => {
+/**
+ * Sign up page for specialist
+ */
+const Especialista = () => {
   const [listaEspecialista, setListaEspecialista] = useState<Especialidad[]>(
     []
   );
   const router = useIonRouter();
+
+  // Set up consent modal
+  const formRef = useRef(null);
+  const [presentModal, dismissModal] = useIonModal(ConsentModal, {
+    dismiss: (data: string, role: string) => dismissModal(data, role),
+    formRef: formRef,
+  });
+
+  function openModal() {
+    presentModal();
+  }
+
+  // Set up result toast
+  const [showToast] = useCommonToast();
 
   useIonViewWillEnter(() => {
     const fetchData = async () => {
@@ -104,7 +136,9 @@ const Especialista: React.FC = () => {
                   Registro de especialista
                 </IonTitle>
               </IonHeader>
+
               <Formik
+                innerRef={formRef}
                 initialValues={{
                   fullName: "",
                   document: "",
@@ -112,6 +146,7 @@ const Especialista: React.FC = () => {
                   password: "",
                   confirmPassword: "",
                   specialtyId: 1,
+                  phoneNumber: "",
                 }}
                 validationSchema={especialistaSchema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -120,13 +155,22 @@ const Especialista: React.FC = () => {
                     values.document,
                     values.email,
                     values.fullName,
-                    values.password
+                    values.password,
+                    values.phoneNumber
                   ).then((data) => {
                     if (data.success) {
-                      alert("Usuario registrado satisfactoriamente.");
+                      // alert("Usuario registrado satisfactoriamente.");
+                      showToast(
+                        "Usuario registrado satisfactoriamente.",
+                        "success"
+                      );
                       router.push("/login");
                     } else {
-                      alert("No se ha podido registrar al especialista.");
+                      // alert("No se ha podido registrar al especialista.");
+                      showToast(
+                        "No se ha podido registrar al especialista.",
+                        "error"
+                      );
                     }
                     setSubmitting(false);
                   });
@@ -156,6 +200,7 @@ const Especialista: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="document">
                       {({ field }: FieldProps) => (
                         <div
@@ -178,6 +223,7 @@ const Especialista: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="email">
                       {({ field }: FieldProps) => (
                         <div
@@ -200,6 +246,40 @@ const Especialista: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
+                    <Field name="phoneNumber">
+                      {({ field }: FieldProps) => (
+                        <div
+                          className={`${commonStyles.bgPrimary} ion-padding-horizontal ${commonStyles.item}`}
+                        >
+                          <IonInput
+                            className={`${commonStyles.textColorLight} ${
+                              touched.phoneNumber ? "ion-touched" : ""
+                            } ${
+                              errors.phoneNumber ? "ion-invalid" : "ion-valid"
+                            }`}
+                            label="Número de teléfono"
+                            value={field.value}
+                            onIonInput={field.onChange}
+                            onIonBlur={field.onBlur}
+                            id={field.name}
+                            name={field.name}
+                            color="light"
+                            helperText="Ingresa tu número de teléfono (sin el código de país)"
+                            errorText={errors.phoneNumber}
+                            placeholder="112223333"
+                          >
+                            <IonText
+                              slot="start"
+                              className={commonStyles.countryCodeItem}
+                            >
+                              <img src="ecuador.svg" height="16px"></img> (+593)
+                            </IonText>
+                          </IonInput>
+                        </div>
+                      )}
+                    </Field>
+
                     <Field name="specialtyId">
                       {({ field }: FieldProps) => (
                         <div
@@ -254,6 +334,7 @@ const Especialista: React.FC = () => {
                         </div>
                       )}
                     </Field>
+
                     <Field name="password">
                       {({ field }: FieldProps) => (
                         <div
@@ -278,11 +359,13 @@ const Especialista: React.FC = () => {
                             <IonInputPasswordToggle
                               slot="end"
                               color="light"
-                            ></IonInputPasswordToggle>
+                              id="togglePassword"
+                            />
                           </IonInput>
                         </div>
                       )}
                     </Field>
+
                     <Field name="confirmPassword">
                       {({ field }: FieldProps) => (
                         <div
@@ -311,18 +394,21 @@ const Especialista: React.FC = () => {
                             <IonInputPasswordToggle
                               slot="end"
                               color="light"
-                            ></IonInputPasswordToggle>
+                              id="toggleConfirm"
+                            />
                           </IonInput>
                         </div>
                       )}
                     </Field>
+
                     <IonButton
                       className={`${commonStyles.lightButton}`}
-                      type="submit"
+                      type="button"
                       color="light"
                       fill="solid"
                       disabled={isSubmitting}
                       style={{ paddingTop: "20px" }}
+                      onClick={openModal}
                     >
                       Registrarte
                     </IonButton>
@@ -331,6 +417,7 @@ const Especialista: React.FC = () => {
                 )}
               </Formik>
             </main>
+
             <IonFooter className={`${commonStyles.footer} ion-no-border`}>
               <IonTitle color="light" className={`${commonStyles.header}`}>
                 ¿Ya tienes cuenta?

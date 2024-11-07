@@ -8,7 +8,8 @@ export const registerRuralProfessional = async (
   document: string,
   email: string,
   fullName: string,
-  password: string
+  password: string,
+  phoneNumber: string,
 ) => {
   try {
     const response = await axios.post(`${SERVER}${SINGUP}/rural-professional`, {
@@ -17,6 +18,7 @@ export const registerRuralProfessional = async (
       email,
       fullName,
       zone,
+      phoneNumber: "593" + phoneNumber,
     });
 
     const token = response.data;
@@ -43,7 +45,8 @@ export const registerSpecialist = async (
   document: string,
   email: string,
   fullName: string,
-  password: string
+  password: string,
+  phoneNumber: string,
 ) => {
   try {
     const response = await axios.post(`${SERVER}${SINGUP}/specialist`, {
@@ -52,6 +55,7 @@ export const registerSpecialist = async (
       email,
       fullName,
       password,
+      phoneNumber: "593" + phoneNumber,
     });
 
     return {
