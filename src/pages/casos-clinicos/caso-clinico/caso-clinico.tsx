@@ -5,36 +5,49 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonContent,
+  IonImg,
   IonLabel,
+  IonList,
+  IonModal,
   IonPage,
   IonText,
   useIonLoading,
   useIonRouter,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { type CasoClinico } from "../types";
 import LogoHeader from "../../../components/logo-header/logo-header";
 import { getCase } from "../../../api/casos-clinicos";
-import { DateTime } from "luxon";
+import { useCommonToast } from "../../../hooks/useCommonToast";
+import "./caso-clinico.css";
+import CaseFileItem from "./case-file";
 
 interface Props extends RouteComponentProps<{ id: string }> {}
 
-const CasoClinico: React.FC<Props> = ({ match }) => {
+const CasoClinico = ({ match }: Props) => {
   const [caso, setCaso] = useState<CasoClinico | null>(null);
   const router = useIonRouter();
   const [present, dismiss] = useIonLoading();
 
+  // For API response messages
+  const [showToast] = useCommonToast();
+
+  // For image preview
+  const [previewUrl, setPreviewUrl] = useState("");
+  const modal = useRef<HTMLIonModalElement>(null);
+
   useIonViewWillEnter(() => {
-    present({ spinner: "circles" });
+    // present({ spinner: "circles" });
     getCase(Number(match.params.id)).then((data) => {
-      dismiss();
+      // dismiss();
       if (data.success) {
         setCaso(data.data!);
       } else {
         router.canGoBack() ? router.goBack() : router.push("/casos-clinicos");
-        alert("Error al cargar el caso clínico");
+        // alert("Error al cargar el caso clínico");
+        showToast("Error al cargar el caso clínico", "error");
       }
     });
   });
@@ -63,6 +76,7 @@ const CasoClinico: React.FC<Props> = ({ match }) => {
       <IonContent>
         {!(caso == null) && (
           <>
+            {/* Sobre el caso */}
             <IonCard>
               <IonCardHeader>
                 <IonCardTitle>Datos del caso</IonCardTitle>
@@ -91,12 +105,16 @@ const CasoClinico: React.FC<Props> = ({ match }) => {
                 <br />
                 <IonText>
                   <h3>
-                    <strong>Especialidad requerida:</strong>{" "}
+                    <strong className="sc-ion-label-md">
+                      Especialidad requerida:
+                    </strong>{" "}
                     {caso.especialidadRequerida}
                   </h3>
                 </IonText>
               </IonCardContent>
             </IonCard>
+
+            {/* Sobre el paciente */}
             <IonCard>
               <IonCardHeader>
                 <IonCardTitle>Datos del paciente</IonCardTitle>
@@ -104,13 +122,17 @@ const CasoClinico: React.FC<Props> = ({ match }) => {
               <IonCardContent>
                 <IonText>
                   <h3>
-                    <strong>Fecha de nacimiento:</strong> {caso.fechaNacimiento}
+                    <strong className="sc-ion-label-md">
+                      Fecha de nacimiento:
+                    </strong>{" "}
+                    {caso.fechaNacimiento}
                   </h3>
                 </IonText>
                 <br />
                 <IonText>
                   <h3>
-                    <strong>Género:</strong> {caso.genero}
+                    <strong className="sc-ion-label-md">Género:</strong>{" "}
+                    {caso.genero}
                   </h3>
                 </IonText>
                 <br />
@@ -124,10 +146,13 @@ const CasoClinico: React.FC<Props> = ({ match }) => {
                 </IonText>
               </IonCardContent>
             </IonCard>
+
+            {/* Archivos */}
             <IonCard style={{ paddingBottom: "10px" }}>
               <IonCardHeader>
                 <IonCardTitle>Archivos asociados</IonCardTitle>
               </IonCardHeader>
+
               <IonCardContent>
                 {(caso.archivosAsociados == null ||
                   caso.archivosAsociados.length === 0) && (
@@ -135,26 +160,61 @@ const CasoClinico: React.FC<Props> = ({ match }) => {
                 )}
                 {caso.archivosAsociados != null &&
                   caso.archivosAsociados.length > 0 && (
-                    <IonButton
-                      onClick={() => {
-                        present({ spinner: "circles" });
-                        for (const archivo of caso.archivosAsociados!) {
-                          downloadFile(
-                            archivo.enlace.split("/").pop()!,
-                            archivo.enlace
-                          );
-                        }
-                        dismiss();
-                      }}
-                      color="primary"
-                      style={{
-                        margin: "0 auto",
-                        display: "block",
-                        width: "min(300px, 80%)",
-                      }}
-                    >
-                      Descargar
-                    </IonButton>
+                    <>
+                      {/* Display list of files and allow preview */}
+                      <IonList>
+                        {caso.archivosAsociados.map((archivo, i) => (
+                          <CaseFileItem
+                            key={i}
+                            fileExtension={archivo.enlace.split(".").pop()!}
+                            fileName={archivo.enlace.split("/").pop()!}
+                            onClickPreview={() => {
+                              setPreviewUrl(archivo.enlace);
+                              modal.current?.present();
+                            }}
+                          />
+                        ))}
+                      </IonList>
+
+                      {/* Modal to display preview */}
+                      <IonModal ref={modal}>
+                        <IonContent className="ion-padding">
+                          <h3 id="previewModalHeader">Vista Previa de Archivo</h3>
+                          <IonImg src={previewUrl} alt="Vista previa del archivo" />
+                          <IonButton
+                            id="previewModalClose"
+                            onClick={() => {
+                              setPreviewUrl("");
+                              modal.current?.dismiss();
+                            }}
+                          >
+                            Cerrar
+                          </IonButton>
+                        </IonContent>
+                      </IonModal>
+
+                      {/* Download button */}
+                      <IonButton
+                        onClick={() => {
+                          present({ spinner: "circles" });
+                          for (const archivo of caso.archivosAsociados!) {
+                            downloadFile(
+                              archivo.enlace.split("/").pop()!,
+                              archivo.enlace
+                            );
+                          }
+                          dismiss();
+                        }}
+                        color="primary"
+                        style={{
+                          margin: "0 auto",
+                          display: "block",
+                          width: "min(300px, 80%)",
+                        }}
+                      >
+                        Descargar
+                      </IonButton>
+                    </>
                   )}
               </IonCardContent>
             </IonCard>
