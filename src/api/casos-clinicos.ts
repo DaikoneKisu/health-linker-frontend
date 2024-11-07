@@ -382,10 +382,14 @@ export const editClinicalCase = async (
     }
   }
 };
-
+//en vez de borrar marca la etiqueta fechaBorrado con la fecha actual
 export const deleteClinicalCase = async (id: number) => {
   try {
     const token = localStorage.getItem("token");
+
+    if (!token) {
+      throw new Error("Token de autenticación no encontrado");
+    }
 
     const { data: feedbacks } = await axios.get(
       `${SERVER}/clinical-cases-feedbacks/by-clinical-case/${id}`,
