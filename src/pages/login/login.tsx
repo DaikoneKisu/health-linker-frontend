@@ -18,6 +18,8 @@ import { Form, Formik, Field, FieldProps } from "formik";
 import ResetOnLeave from "../../components/helpers/reset-on-leave";
 import * as Yup from "yup";
 import { useCommonToast } from "../../hooks/useCommonToast";
+import { useAppDispatch } from "../../store/hooks";
+import { setAuth } from "../../store/slices/auth";
 
 const loginSchema = Yup.object({
   document: Yup.string()
@@ -35,6 +37,8 @@ const loginSchema = Yup.object({
 
 const Login = () => {
   const router = useIonRouter();
+
+  const dispatch = useAppDispatch();
 
   // Set up result toast
   const [showToast] = useCommonToast();
@@ -65,6 +69,7 @@ const Login = () => {
                 signin(values.document, values.password).then((data) => {
                   if (data.success) {
                     // alert("Inicio de sesión exitoso");
+                    dispatch(setAuth(true));
                     showToast("Inicio de sesión exitoso", "success");
                     localStorage.setItem("token", data.token);
                     router.push("/casos-clinicos");

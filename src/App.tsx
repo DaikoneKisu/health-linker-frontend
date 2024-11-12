@@ -1,17 +1,20 @@
 import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
+  IonIcon,
+  IonLabel,
   IonRouterOutlet,
   IonTabBar,
+  IonTabButton,
   IonTabs,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import CasosClinicos from "./pages/casos-clinicos/casos-clinicos";
 import Login from "./pages/login/login";
-import Dashboard from "./pages/dashboard";
-import Foros from "./pages/foros/foros";
-import ForoX from "./pages/foros/foroX";
+// import Dashboard from "./pages/dashboard";
+// import Foros from "./pages/foros/foros";
+// import ForoX from "./pages/foros/foroX";
 import Registro from "./pages/registro/registro";
 import RegistroProfesionalRural from "./pages/registro/profesional-rural/profesional-rural";
 import RegistroEspecialista from "./pages/registro/especialista/especialista";
@@ -39,19 +42,26 @@ import "./theme/variables.css";
 import CasoClinico from "./pages/casos-clinicos/caso-clinico/caso-clinico";
 import { FeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentacion-pacientes";
 import { ClosedFeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentafion-pacientes-cerrada";
+import { chatbox, documentText } from "ionicons/icons";
+import { useAppSelector } from "./store/hooks";
 
 setupIonicReact({ mode: "md" });
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
+/**
+ * Tabs when logged in
+ */
+function MainTabs() {
+  return (
+    <IonTabs>
+      {/* Route definition */}
       <IonRouterOutlet>
-        <Route path="/login" component={Login} exact={true} />
-        <Route path="/casos-clinicos" component={CasosClinicos} exact={true} />
+        <Redirect exact path="/" to="/casos-clinicos" />
+        <Redirect exact path="/login" to="/casos-clinicos" />
+        <Route path="/casos-clinicos" component={CasosClinicos} exact />
         <Route
           path="/casos-clinicos/crear"
           component={CrearCasoClinico}
-          exact={true}
+          exact
         />
         <Route
           path="/casos-clinicos/caso-clinico/:id"
@@ -65,29 +75,56 @@ const App: React.FC = () => (
           path="/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/:id"
           component={ClosedFeedbackRender}
         />
-        <Route path="/dashboard" component={Dashboard} exact={true} />
-        <Route path="/foros" component={Foros} exact={true} />
-        <Route path="/foro-x" component={ForoX} exact={true} />
-        <Route path="/registro" component={Registro} exact={true} />
-        <Route
-          path="/registro/especialista"
-          component={RegistroEspecialista}
-          exact={true}
-        />
-        <Route
-          path="/registro/profesional-rural"
-          component={RegistroProfesionalRural}
-          exact={true}
-        />
-        <Route
-          path="/"
-          render={() => <Redirect to="/login" />} //hacer un if de si no está logeado y uno que lleva a homepage si lo está
-          exact={true}
-        />
+        {/* <Route path="/dashboard" component={Dashboard} exact />
+        <Route path="/foros" component={Foros} exact />
+        <Route path="/foro-x" component={ForoX} exact /> */}
         <Route component={NotFound} />
       </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
-);
+
+      {/* Tabs */}
+      <IonTabBar slot="bottom">
+        <IonTabButton tab="casos-clinicos" href="/casos-clinicos">
+          <IonIcon icon={documentText} />
+          <IonLabel>Casos Clínicos</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="chat" href="/chat">
+          <IonIcon icon={chatbox} />
+          <IonLabel>Chat</IonLabel>
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
+  );
+}
+
+const App = () => {
+  const auth = useAppSelector((state) => state.auth);
+
+  return (
+    <IonApp>
+      <IonReactRouter>
+        {auth.auth ? (
+          <MainTabs />
+        ) : (
+          <IonRouterOutlet>
+            <Route path="/login" component={Login} exact />
+            <Route path="/registro" component={Registro} exact />
+            <Route
+              path="/registro/especialista"
+              component={RegistroEspecialista}
+              exact
+            />
+            <Route
+              path="/registro/profesional-rural"
+              component={RegistroProfesionalRural}
+              exact
+            />
+            <Route path="/" exact component={auth.auth ? MainTabs : Login} />
+            <Route component={NotFound} />
+          </IonRouterOutlet>
+        )}
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;
