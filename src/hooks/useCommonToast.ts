@@ -15,5 +15,5 @@ export function useCommonToast() {
     });
   }
 
-  return [showToast];
+  return [showToast] as const;
 }

@@ -44,6 +44,7 @@ import { FeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroal
 import { ClosedFeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentafion-pacientes-cerrada";
 import { chatbox, documentText } from "ionicons/icons";
 import { useAppSelector } from "./store/hooks";
+import ChatRoomsList from "./pages/chat/chat-rooms/chat-rooms-list";
 
 setupIonicReact({ mode: "md" });
 
@@ -75,6 +76,7 @@ function MainTabs() {
           path="/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/:id"
           component={ClosedFeedbackRender}
         />
+        <Route path="/chat" component={ChatRoomsList} />
         {/* <Route path="/dashboard" component={Dashboard} exact />
         <Route path="/foros" component={Foros} exact />
         <Route path="/foro-x" component={ForoX} exact /> */}

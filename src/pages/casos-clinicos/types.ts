@@ -50,6 +50,21 @@ export interface Feedback {
   rol: string;
 }
 
+export interface ChatRoom {
+  id: number;
+  roomName: string;
+  ownerDocument: string;
+  lastMessageContent: string | null;
+  lastMessageType: "text" | "image" | "audio" | null;
+  lastMessageCreated: string | null;
+}
+
+export interface ChatRoomCreated {
+  id: number;
+  roomName: string;
+  ownerDocument: string;
+}
+
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 
 género del paciente, 
 motivo de consulta del paciente, 
