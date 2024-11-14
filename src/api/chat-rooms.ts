@@ -1,6 +1,11 @@
 import axios from "axios";
 import { SERVER } from "./server";
-import { ChatRoom, ChatRoomCreated } from "../pages/casos-clinicos/types";
+import {
+  ChatMessage,
+  ChatRoom,
+  ChatRoomCreated,
+} from "../pages/casos-clinicos/types";
+import { getPaginatedChatMessages } from "./chat-messages";
 
 /**
  * Get list of available chat rooms
@@ -29,6 +34,44 @@ export async function getChatRooms() {
     } else {
       console.error("Error inesperado:", error);
       return { success: false, error: "Error inesperado" };
+    }
+  }
+}
+
+export async function getInitialChatData(id: string) {
+  try {
+    const token = localStorage.getItem("token");
+    const chatDataPromise = axios.get(`${SERVER}/chat-rooms/${id}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    const messagesPromise = getPaginatedChatMessages(1, 20, parseInt(id));
+
+    const [chatDataResponse, messagesResponse] = await Promise.all([
+      chatDataPromise,
+      messagesPromise,
+    ]);
+
+    const chatData = chatDataResponse.data as ChatRoomCreated;
+    const messages = messagesResponse.data as ChatMessage[];
+
+    return {
+      success: true,
+      data: {
+        chatData,
+        messages,
+      },
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: "Error obteniendo la sala de chat",
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error obteniendo la sala de chat" };
     }
   }
 }

@@ -5,10 +5,25 @@
 }
 
 .roomItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
   padding: 10px;
+}
+
+.roomItem:active, .roomItemContent:active {
+  background-color: #f0f0f0;
+}
+
+.roomItemContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.roomTitle {
+  font-size: 1.2rem;
+}
+
+.roomSubtext {
+  color: #666;
+  margin-block: 3px;
 }
 
 .emptyMessage {

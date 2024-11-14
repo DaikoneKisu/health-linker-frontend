@@ -2,6 +2,7 @@ import {
   IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -23,6 +24,7 @@ import { createChatRoom, getChatRooms } from "../../../api/chat-rooms";
 import { ChatRoom } from "../../casos-clinicos/types";
 import { useCommonToast } from "../../../hooks/useCommonToast";
 import { getMe } from "../../../api/auth";
+import { chevronForward } from "ionicons/icons";
 
 function ChatRoomsList() {
   // Loading state
@@ -131,14 +133,26 @@ function ChatRoomsList() {
           {!!chatRooms.length ? (
             <IonList>
               {chatRooms.map((room) => (
-                <IonItem className={`${styles.roomItem}`}>
-                  <div>
+                <IonItem
+                  key={room.id}
+                  className={`${styles.roomItem}`}
+                  onClick={() => router.push(`/chat/${room.id}`)}
+                >
+                  <div className={`${styles.roomItemContent}`}>
                     <IonLabel>
-                      <strong>{room.roomName}</strong>
+                      <strong className={`${styles.roomTitle}`}>
+                        {room.roomName}
+                      </strong>
                     </IonLabel>
-                    <IonText>{room.lastMessageContent}</IonText>
+                    <IonText className={`${styles.roomSubtext}`}>
+                      {room.lastMessageContent}
+                    </IonText>
+                    <IonText className={`${styles.roomSubtext}`}>
+                      {!!room.lastMessageCreated &&
+                        new Date(room.lastMessageCreated).toLocaleTimeString()}
+                    </IonText>
                   </div>
-                  <IonText>{room.lastMessageCreated}</IonText>
+                  <IonIcon slot="end" icon={chevronForward} />
                 </IonItem>
               ))}
             </IonList>
