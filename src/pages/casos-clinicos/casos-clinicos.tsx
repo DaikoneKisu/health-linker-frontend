@@ -14,6 +14,7 @@ import {
   useIonViewWillLeave,
   IonToolbar,
   IonInput,
+  useIonRouter,
 } from "@ionic/react";
 import { add, search } from "ionicons/icons";
 import "./styles.css";
