@@ -31,10 +31,8 @@ import styles from "./casos-clinicos.module.css";
 import { getMe } from "../../api/auth";
 import ListaDeCasosEspecialistas from "./lista-de-casos-especialistas";
 import { Field, FieldProps, Form, Formik } from "formik";
-
-const logOut = () => {
-  localStorage.removeItem("token");
-};
+import { useAppDispatch } from "../../store/hooks";
+import { setAuth } from "../../store/slices/auth";
 
 const CasosClinicos = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
@@ -47,6 +45,15 @@ const CasosClinicos = () => {
   const [caseState, setCaseState] = useState<
     "abiertos" | "cerrados" | "mentoreables"
   >("abiertos");
+
+  const dispatch = useAppDispatch();
+  const router = useIonRouter();
+
+  const logOut = () => {
+    localStorage.removeItem("token");
+    dispatch(setAuth(false));
+    router.push("/login");
+  };
 
   const casoEscogido = (caso: CasoClinico) => {
     setCurrentCase(caso);
