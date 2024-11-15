@@ -15,3 +15,19 @@
   font-weight: bold;
   width: min(300px, 80%);
 }
+
+.searchContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.search {
+  width: min(380px, 90%);
+}
+
+.caseCount {
+  padding-left: 1.35rem;
+  color: #555;
+}

@@ -7,27 +7,20 @@ import {
   IonButton,
   IonFab,
   IonFabButton,
-  IonFooter,
   IonIcon,
   IonText,
   useIonViewWillEnter,
-  useIonViewDidEnter,
-  useIonViewDidLeave,
-  useIonLoading,
   IonLoading,
-  useIonRouter,
   useIonViewWillLeave,
   IonToolbar,
+  IonInput,
 } from "@ionic/react";
-import { home, chatbox, folder, mail, person, add } from "ionicons/icons";
+import { add, search } from "ionicons/icons";
 import "./styles.css";
 import { CasoClinico } from "./types";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import WithAuth from "../../components/WithAuth";
-import { Redirect } from "react-router";
-import { CasoIndividual } from "./tarjetas-de-casos/contenido-caso";
 import {
-  getCases,
   getClosedCasesCurrentUser,
   getOpenCasesCurrentUser,
   getRequiredCurrentSpecialistCases,
@@ -37,25 +30,23 @@ import LogoHeader from "../../components/logo-header/logo-header";
 import styles from "./casos-clinicos.module.css";
 import { getMe } from "../../api/auth";
 import ListaDeCasosEspecialistas from "./lista-de-casos-especialistas";
+import { Field, FieldProps, Form, Formik } from "formik";
 
-interface Props {
-  children: JSX.Element;
-}
+const logOut = () => {
+  localStorage.removeItem("token");
+};
 
 const CasosClinicos = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
-  const [cerrado, setCerrado] = useState(false);
   const [dentro, setDentro] = useState(false);
   const [page, setPage] = useState(1);
   const [currentCase, setCurrentCase] = useState<CasoClinico>();
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [mentorear, setMentorear] = useState(false);
-
-  const logOut = () => {
-    localStorage.removeItem("token");
-  };
+  const [caseState, setCaseState] = useState<
+    "abiertos" | "cerrados" | "mentoreables"
+  >("abiertos");
 
   const casoEscogido = (caso: CasoClinico) => {
     setCurrentCase(caso);
@@ -65,9 +56,9 @@ const CasosClinicos = () => {
     setDentro(answer);
   };
 
-  const getOpenCases = async () => {
+  const getOpenCases = async (currentSearch?: string) => {
     startLoading();
-    const response = await getOpenCasesCurrentUser(page);
+    const response = await getOpenCasesCurrentUser(page, 100, currentSearch);
     if (response.success) {
       setCasosClinicos(response.data!);
     } else {
@@ -76,9 +67,9 @@ const CasosClinicos = () => {
     finishLoading();
   };
 
-  const getClosedCases = async () => {
+  const getClosedCases = async (currentSearch?: string) => {
     startLoading();
-    const response = await getClosedCasesCurrentUser(page);
+    const response = await getClosedCasesCurrentUser(page, 100, currentSearch);
     if (response.success) {
       setCasosClinicos(response.data!);
     } else {
@@ -87,9 +78,13 @@ const CasosClinicos = () => {
     finishLoading();
   };
 
-  const getRequiredCurrentSpecialist = async () => {
+  const getRequiredCurrentSpecialist = async (currentSearch?: string) => {
     startLoading();
-    const response = await getRequiredCurrentSpecialistCases();
+    const response = await getRequiredCurrentSpecialistCases(
+      page,
+      100,
+      currentSearch
+    );
     if (response.success) {
       setCasosClinicos(response.data!);
     } else {
@@ -109,7 +104,10 @@ const CasosClinicos = () => {
   useEffect(() => {
     if (user == null) return;
     if (user.userType === "rural professional") {
-      if (cerrado && !(localStorage.getItem("token") == null)) {
+      if (
+        caseState === "cerrados" &&
+        !(localStorage.getItem("token") == null)
+      ) {
         getClosedCases().then(() => setPageLoaded(true));
       } else {
         getOpenCases().then(() => setPageLoaded(true));
@@ -120,17 +118,18 @@ const CasosClinicos = () => {
   useEffect(() => {
     if (user == null) return;
     if (user.userType === "specialist") {
-      if (!mentorear && cerrado && !(localStorage.getItem("token") == null)) {
+      if (
+        caseState === "cerrados" &&
+        !(localStorage.getItem("token") == null)
+      ) {
         getClosedCases().then(() => setPageLoaded(true));
       } else if (
-        !mentorear &&
-        !cerrado &&
+        caseState === "abiertos" &&
         !(localStorage.getItem("token") == null)
       ) {
         getOpenCases().then(() => setPageLoaded(true));
       } else if (
-        mentorear &&
-        !cerrado &&
+        caseState === "mentoreables" &&
         !(localStorage.getItem("token") == null)
       ) {
         getRequiredCurrentSpecialist().then(() => setPageLoaded(true));
@@ -146,47 +145,90 @@ const CasosClinicos = () => {
         console.error("Error:", data.error);
       }
     });
-  });
+  }, []);
 
   useEffect(() => {
     if (user == null) return;
     if (user.userType === "rural professional") {
       if (pageLoaded && !(localStorage.getItem("token") == null)) {
-        if (cerrado) {
+        if (caseState === "cerrados") {
           getClosedCases();
         } else {
           getOpenCases();
         }
       }
     }
-  }, [cerrado]);
+  }, [caseState]);
 
   useEffect(() => {
     if (user == null) return;
     if (user.userType === "specialist") {
       if (pageLoaded && !(localStorage.getItem("token") == null)) {
-        if (!mentorear && cerrado && !(localStorage.getItem("token") == null)) {
+        if (
+          caseState === "cerrados" &&
+          !(localStorage.getItem("token") == null)
+        ) {
           getClosedCases();
         } else if (
-          !mentorear &&
-          !cerrado &&
+          caseState === "abiertos" &&
           !(localStorage.getItem("token") == null)
         ) {
           getOpenCases();
         } else if (
-          mentorear &&
-          !cerrado &&
+          caseState === "mentoreables" &&
           !(localStorage.getItem("token") == null)
         ) {
           getRequiredCurrentSpecialist();
         }
       }
     }
-  }, [cerrado, mentorear]);
+  }, [caseState]);
 
   useIonViewWillLeave(() => {
     setPageLoaded(false);
-  });
+  }, []);
+
+  const onSearch = (value: string) => {
+    if (caseState === "cerrados") {
+      return getClosedCases(value);
+    } else if (caseState === "abiertos") {
+      return getOpenCases(value);
+    } else {
+      return getRequiredCurrentSpecialist(value);
+    }
+  };
+
+  const SearchInput = () => (
+    <Formik
+      initialValues={{ currentSearch: "" }}
+      onSubmit={(values) => {
+        onSearch(values.currentSearch);
+      }}
+    >
+      {() => (
+        <Form className={`${styles.searchContainer}`}>
+          <Field name="currentSearch">
+            {({ field }: FieldProps) => (
+              <IonInput
+                className={`${styles.search}`}
+                label="Buscar casos"
+                labelPlacement="stacked"
+                placeholder="Especialidad, diagnóstico, síntomas"
+                fill="outline"
+                type="search"
+                value={field.value}
+                name={field.name}
+                onIonBlur={field.onBlur}
+                onIonInput={field.onChange}
+              >
+                <IonIcon slot="start" icon={search} />
+              </IonInput>
+            )}
+          </Field>
+        </Form>
+      )}
+    </Formik>
+  );
 
   return (
     <WithAuth>
@@ -203,20 +245,24 @@ const CasosClinicos = () => {
                     <IonButton
                       className={`${styles.button}`}
                       onClick={() => {
-                        setCerrado(true);
+                        if (caseState !== "cerrados") {
+                          setCaseState("cerrados");
+                        }
                       }}
                       color="primary"
-                      fill={cerrado ? "solid" : "outline"}
+                      fill={caseState === "cerrados" ? "solid" : "outline"}
                     >
                       Mis casos cerrados
                     </IonButton>
                     <IonButton
                       className={`${styles.button}`}
                       onClick={() => {
-                        setCerrado(false);
+                        if (caseState !== "abiertos") {
+                          setCaseState("abiertos");
+                        }
                       }}
                       color="primary"
-                      fill={!cerrado ? "solid" : "outline"}
+                      fill={caseState === "abiertos" ? "solid" : "outline"}
                     >
                       Mis casos abiertos
                     </IonButton>
@@ -230,6 +276,10 @@ const CasosClinicos = () => {
                       Cerrar Sesion
                     </IonButton>
                   </IonButtons>
+                  <SearchInput />
+                  <IonText className={`${styles.caseCount}`}>
+                    Casos encontrados: {casosClinicos.length}
+                  </IonText>
                 </IonToolbar>
               </IonHeader>
             </LogoHeader>
@@ -239,8 +289,10 @@ const CasosClinicos = () => {
                 casos={isLoading ? [] : casosClinicos}
                 dentroCaso={dentroCaso}
                 casoEscogido={casoEscogido}
-                cerrado={cerrado}
-                getCases={cerrado ? getClosedCases : getOpenCases}
+                cerrado={caseState === "cerrados"}
+                getCases={
+                  caseState === "cerrados" ? getClosedCases : getOpenCases
+                }
               />
               <IonFab slot="fixed" horizontal="end" vertical="bottom">
                 <IonFabButton
@@ -265,33 +317,36 @@ const CasosClinicos = () => {
                     <IonButton
                       className={`${styles.button}`}
                       onClick={() => {
-                        setCerrado(true);
-                        setMentorear(false);
+                        if (caseState !== "cerrados") {
+                          setCaseState("cerrados");
+                        }
                       }}
                       color="primary"
-                      fill={!mentorear && cerrado ? "solid" : "outline"}
+                      fill={caseState === "cerrados" ? "solid" : "outline"}
                     >
                       Casos cerrados
                     </IonButton>
                     <IonButton
                       className={`${styles.button}`}
                       onClick={() => {
-                        setCerrado(false);
-                        setMentorear(false);
+                        if (caseState !== "abiertos") {
+                          setCaseState("abiertos");
+                        }
                       }}
                       color="primary"
-                      fill={!mentorear && !cerrado ? "solid" : "outline"}
+                      fill={caseState === "abiertos" ? "solid" : "outline"}
                     >
                       Casos abiertos
                     </IonButton>
                     <IonButton
                       className={`${styles.button}`}
                       onClick={() => {
-                        setCerrado(false);
-                        setMentorear(true);
+                        if (caseState !== "mentoreables") {
+                          setCaseState("mentoreables");
+                        }
                       }}
                       color="primary"
-                      fill={mentorear && !cerrado ? "solid" : "outline"}
+                      fill={caseState === "mentoreables" ? "solid" : "outline"}
                     >
                       Casos mentoreables
                     </IonButton>
@@ -305,6 +360,7 @@ const CasosClinicos = () => {
                       Cerrar Sesion
                     </IonButton>
                   </IonButtons>
+                  <SearchInput />
                 </IonToolbar>
               </IonHeader>
             </LogoHeader>
@@ -314,17 +370,17 @@ const CasosClinicos = () => {
                 casos={isLoading ? [] : casosClinicos}
                 dentroCaso={dentroCaso}
                 casoEscogido={casoEscogido}
-                cerrado={cerrado}
+                cerrado={caseState === "cerrados"}
                 getCases={
-                  !mentorear && cerrado
+                  caseState === "cerrados"
                     ? getClosedCases
-                    : !mentorear && !cerrado
+                    : caseState === "abiertos"
                     ? getOpenCases
-                    : mentorear && !cerrado
+                    : caseState === "mentoreables"
                     ? getRequiredCurrentSpecialist
                     : () => {}
                 }
-                mentorear={mentorear}
+                mentorear={caseState === "mentoreables"}
               />
             </IonContent>
           </>
