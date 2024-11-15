@@ -37,6 +37,8 @@ import LogoHeader from "../../components/logo-header/logo-header";
 import styles from "./casos-clinicos.module.css";
 import { getMe } from "../../api/auth";
 import ListaDeCasosEspecialistas from "./lista-de-casos-especialistas";
+import { useAppDispatch } from "../../store/hooks";
+import { setAuth } from "../../store/slices/auth";
 
 interface Props {
   children: JSX.Element;
@@ -53,8 +55,13 @@ const CasosClinicos = () => {
   const [user, setUser] = useState<any>(null);
   const [mentorear, setMentorear] = useState(false);
 
+  const dispatch = useAppDispatch();
+  const router = useIonRouter();
+
   const logOut = () => {
     localStorage.removeItem("token");
+    dispatch(setAuth(false));
+    router.push("/login");
   };
 
   const casoEscogido = (caso: CasoClinico) => {
