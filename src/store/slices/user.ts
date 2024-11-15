@@ -1,12 +1,15 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { useAppDispatch } from "../hooks";
 
-export interface UserState {
-  document: string;
+export interface UserState extends AdminState {
+  document?: string;
+  password?: string;
+  type?: "rural professional" | "specialist" | "";
+}
+
+interface AdminState {
   email: string;
   fullName: string;
-  password: string;
-  type: "rural professional" | "specialist" | "";
+  role?: "admin" | "regular" | null;
 }
 
 export interface SpecialistState extends UserState {
@@ -17,19 +20,17 @@ export interface RuralProfessionalState extends UserState {
   zone: string;
 }
 
-const initialState: UserState = {
-  document: "",
+const initialState = {
   email: "",
   fullName: "",
-  password: "",
-  type: "",
+  role: null,
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserState>) => {
+    setUser: (state, action: PayloadAction<any>) => {
       state = action.payload;
     },
     clearUser: () => initialState,

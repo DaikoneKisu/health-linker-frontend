@@ -13,8 +13,12 @@ const WithUnAuth = ({ children }: PropsWithChildren) => {
   const dispatch = useAppDispatch();
 
   const getUser = async (user: any) => {
-    const userData = await getOneUser(user!.document);
-    dispatch(setUser(userData.user!));
+    if (user && user.document) {
+      const userData = await getOneUser(user!.document);
+      dispatch(setUser({ ...userData.user!, role: "regular" }));
+    } else {
+      dispatch(setUser({ ...user, role: "admin" }));
+    }
   };
 
   useIonViewWillEnter(() => {

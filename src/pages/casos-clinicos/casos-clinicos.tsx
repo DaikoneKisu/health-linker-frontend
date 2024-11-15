@@ -148,7 +148,7 @@ const CasosClinicos = () => {
   useIonViewWillEnter(() => {
     getMe().then((data) => {
       if (data.success) {
-        setUser(data.user);
+        setUser({ ...data.user, role: "regular" });
       } else {
         console.error("Error:", data.error);
       }

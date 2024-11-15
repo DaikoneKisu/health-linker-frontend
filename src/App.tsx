@@ -46,6 +46,7 @@ import { chatbox, documentText } from "ionicons/icons";
 import { useAppSelector } from "./store/hooks";
 import ChatRoomsList from "./pages/chat/chat-rooms/chat-rooms-list";
 import Chat from "./pages/chat/in-chat/chat";
+import AdminLogin from "./pages/admin/login/admin-login";
 
 setupIonicReact({ mode: "md" });
 
@@ -100,8 +101,41 @@ function MainTabs() {
   );
 }
 
+/**
+ * Tabs when logged in as admin
+ */
+function AdminTabs() {
+  return (
+    <IonTabs>
+      {/* Route definition */}
+      <IonRouterOutlet>
+        <Redirect exact path="/" to="/dashboard" />
+        <Redirect exact path="/admin" to="/dashboard" />
+        <Route path="/chat" exact component={ChatRoomsList} />
+        <Route path="/chat/:id" component={Chat} />
+        <Route component={NotFound} />
+      </IonRouterOutlet>
+
+      {/* Tabs */}
+      <IonTabBar slot="bottom">
+        <IonTabButton tab="casos-clinicos" href="/casos-clinicos">
+          <IonIcon icon={documentText} />
+          <IonLabel>Casos Clínicos</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="chat" href="/chat">
+          <IonIcon icon={chatbox} />
+          <IonLabel>Chat</IonLabel>
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
+  );
+}
+
 const App = () => {
-  const auth = useAppSelector((state) => state.auth);
+  const { auth, user } = useAppSelector((state) => ({
+    auth: state.auth,
+    user: state.user,
+  }));
 
   return (
     <IonApp>
@@ -122,7 +156,22 @@ const App = () => {
               component={RegistroProfesionalRural}
               exact
             />
-            <Route path="/" exact component={auth.auth ? MainTabs : Login} />
+            <Route
+              path="/admin"
+              exact
+              component={auth.auth ? MainTabs : AdminLogin}
+            />
+            <Route
+              path="/"
+              exact
+              component={
+                auth.auth
+                  ? user.role === "regular"
+                    ? MainTabs
+                    : AdminTabs
+                  : Login
+              }
+            />
             <Route component={NotFound} />
           </IonRouterOutlet>
         )}
