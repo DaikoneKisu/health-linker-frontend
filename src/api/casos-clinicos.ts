@@ -3,7 +3,7 @@ import { SERVER } from "./server";
 import {
   CasoClinico,
   CrearCasoClinico,
-  EditarCasoClinico,
+  EditCasoClinico,
 } from "../pages/casos-clinicos/types";
 
 export const getCase = async (id: number) => {
@@ -328,17 +328,16 @@ export const createClinicalCase = async (caso: CrearCasoClinico) => {
   }
 };
 
-export const editClinicalCase = async (
-  id: number,
-  caso: EditarCasoClinico,
-  files?: File[]
+export const updateClinicalCase = async (
+  caso: EditCasoClinico
 ) => {
   try {
     const token = localStorage.getItem("token");
 
     await axios.patch(
-      `${SERVER}/clinical-cases/${id}`,
+      `${SERVER}/clinical-cases/${caso.id}`,
       {
+        id: caso.id,
         description: caso.descripcionCaso,
         reason: caso.motivoMentoria,
         patientBirthdate: caso.fechaNacimiento,
@@ -352,7 +351,7 @@ export const editClinicalCase = async (
         },
       }
     );
-
+  /** 
     if (files) {
       await Promise.all(
         files.map(async (archivo) => {
@@ -366,7 +365,7 @@ export const editClinicalCase = async (
         })
       );
     }
-
+  */
     return {
       success: true,
     };
