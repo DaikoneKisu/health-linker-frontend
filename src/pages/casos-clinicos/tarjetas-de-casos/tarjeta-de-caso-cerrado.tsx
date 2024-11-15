@@ -8,13 +8,18 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonToolbar,
-  useIonRouter,
+  useIonLoading,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
 import {
   publicizeClinicalCase,
   reopenClinicalCase,
 } from "../../../api/casos-clinicos";
+import { useCommonToast } from "../../../hooks/useCommonToast";
+import { getCaseDataForPdf } from "./utils";
+import { pdf } from "@react-pdf/renderer";
+import PdfCaso from "./pdf-caso";
+import { saveAs } from "file-saver";
 
 interface Props {
   caso: CasoClinico;
@@ -29,12 +34,34 @@ const TarjetaDeCasoCerrado = ({
   casoEscogido,
   getCases,
 }: Props) => {
+  const [showToast] = useCommonToast();
+  const [present, dismiss] = useIonLoading();
+
+  const downloadPdf = async () => {
+    const fileData = await getCaseDataForPdf(caso.id);
+    if (!fileData.success) {
+      showToast(fileData.message, "error");
+      dismiss();
+      return;
+    }
+    const blob = await pdf(
+      <PdfCaso
+        medicalCase={fileData.medicalCase!}
+        feedbackList={fileData.feedback!}
+      />
+    ).toBlob();
+    const fileName = `documento-caso-nro-${caso.id}.pdf`;
+    saveAs(blob, fileName);
+    dismiss();
+  };
+
   const publicizeCase = () => {
     publicizeClinicalCase(caso.id).then((data) => {
       if (data.success) {
         getCases();
       } else {
-        alert("Error al hacer público el caso");
+        // alert("Error al hacer público el caso");
+        showToast("Error al hacer público el caso", "error");
       }
     });
   };
@@ -45,6 +72,7 @@ const TarjetaDeCasoCerrado = ({
         getCases();
       } else {
         alert("Error al reabrir el caso");
+        showToast("Error al reabrir el caso", "error");
       }
     });
   };
@@ -83,6 +111,16 @@ const TarjetaDeCasoCerrado = ({
           </IonButton>
           <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
             Hacer público
+          </IonButton>
+          <IonButton
+            fill="outline"
+            color="tertiary"
+            onClick={() => {
+              present({ spinner: "circles" });
+              downloadPdf();
+            }}
+          >
+            Descargar como PDF
           </IonButton>
         </IonButtons>
       </IonToolbar>
