@@ -111,12 +111,13 @@ export const getCasesCurrentUser = async () => {
 
 export const getOpenCasesCurrentUser = async (
   page: number = 1,
-  size: number = 10
+  size: number = 100,
+  query = ""
 ) => {
   try {
     const token = localStorage.getItem("token");
     const { data: openCasesFromBackend } = await axios.get(
-      `${SERVER}/clinical-cases/open/current-user?page=${page}&size=${size}`,
+      `${SERVER}/clinical-cases/open/current-user?page=${page}&size=${size}&query=${query}`,
       {
         headers: {
           Authorization: "Bearer " + token,
@@ -149,12 +150,13 @@ export const getOpenCasesCurrentUser = async (
 
 export const getClosedCasesCurrentUser = async (
   page: number = 1,
-  size: number = 10
+  size: number = 10,
+  query = ""
 ) => {
   try {
     const token = localStorage.getItem("token");
     const { data: closedClinicalCasesFromBackend } = await axios.get(
-      `${SERVER}/clinical-cases/closed/current-user-record?page=${page}&size=${size}`,
+      `${SERVER}/clinical-cases/closed/current-user-record?page=${page}&size=${size}&query=${query}`,
       {
         headers: {
           Authorization: "Bearer " + token,
@@ -222,12 +224,13 @@ export const getAllClosedCasesCurrentUser = async () => {
 
 export const getRequiredCurrentSpecialistCases = async (
   page: number = 1,
-  size: number = 99999
+  size: number = 99999,
+  query = ""
 ) => {
   try {
     const token = localStorage.getItem("token");
     const { data: requiredCasesFromBackend } = await axios.get(
-      `${SERVER}/clinical-cases/open/required-current-specialist?page=${page}&size=${size}`,
+      `${SERVER}/clinical-cases/open/required-current-specialist?page=${page}&size=${size}&query=${query}`,
       {
         headers: {
           Authorization: "Bearer " + token,
