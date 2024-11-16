@@ -351,12 +351,12 @@ export const updateClinicalCase = async (
         },
       }
     );
-  /** 
-    if (files) {
+  
+    if (!(caso.archivosAsociados == null)) {
       await Promise.all(
-        files.map(async (archivo) => {
+        caso.archivosAsociados.map(async (archivo) => {
           const form = new FormData();
-          form.append("clinicalCaseId", id.toString());
+          form.append("clinicalCaseId", caso.id.toString());
           form.append("file", archivo);
 
           await axios.post(`${SERVER}/clinical-cases-files`, form, {
@@ -365,7 +365,7 @@ export const updateClinicalCase = async (
         })
       );
     }
-  */
+  
     return {
       success: true,
     };
