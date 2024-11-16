@@ -39,7 +39,7 @@ const TarjetaDeCasoAbierto = ({
       }
     });
   };
-
+  
   return (
     <IonCard>
       <IonCardHeader>
@@ -83,6 +83,15 @@ const TarjetaDeCasoAbierto = ({
             afterDelete={() => getCases()}
             triggerElementId={deleteButtonId}
           />
+          { caso.editable && (
+            <IonButton
+              fill="outline"
+              routerLink={`/casos-clinicos/caso-clinico/editar/${caso.id}`}
+              color="tertiary"
+            >
+              Editar
+            </IonButton>
+          )}
         </IonButtons>
       </IonToolbar>
     </IonCard>

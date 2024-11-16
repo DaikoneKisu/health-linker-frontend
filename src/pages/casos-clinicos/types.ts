@@ -8,6 +8,7 @@ export interface CasoClinico {
   descripcionCaso: string;
   motivoPaciente: string;
   archivosAsociados: Archivo[] | null;
+  editable: boolean;
 }
 
 export interface EditCasoClinico {

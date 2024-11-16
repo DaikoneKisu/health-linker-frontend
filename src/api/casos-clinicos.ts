@@ -589,6 +589,7 @@ const mapClinicalCaseToCasoClinico = async (
     descripcionCaso: c.description,
     motivoPaciente: c.patientReason,
     archivosAsociados: files.map((f) => ({ id: f.id, enlace: f.link })),
+    editable: c.editable
   };
 };
 
@@ -601,6 +602,7 @@ type ClinicalCaseResponse = {
   patientReason: string;
   patientAssessment: string;
   requiredSpecialtyId: number;
+  editable: boolean;
 };
 
 type ClinicalCasePost = {

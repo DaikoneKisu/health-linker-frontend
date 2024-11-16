@@ -113,7 +113,7 @@ const EditarCasoClinico: React.FC<Props> = ({ match }) => {
       } finally {
         dismiss();
         setLoading(false);
-        console.log('si')
+        
       }
     };
 
@@ -128,9 +128,17 @@ const EditarCasoClinico: React.FC<Props> = ({ match }) => {
 
   // For API response toast
   const [showToast] = useCommonToast();
-  //console.log(caso);
-  if (!caso) {
-    console.log("es nulo")// O un spinner de carga
+  
+  const parseFechaNacimiento = (fecha: string): string => {
+    const formatos = ['d/M/yyyy, HH:mm:ss', 'dd/MM/yyyy, HH:mm:ss'];
+    for (const formato of formatos) {
+      const dt = DateTime.fromFormat(fecha, formato);
+      if (dt.isValid) return dt.toISO();
+    }
+
+    return DateTime.now()
+    .set({ second: 0, millisecond: 0 })
+    .toISO()
   }
 
   return (
@@ -148,8 +156,7 @@ const EditarCasoClinico: React.FC<Props> = ({ match }) => {
               valoracionPaciente: caso?.valoracionPaciente || "",
               motivoMentoria: caso?.motivoMentoria || "",
               especialidadRequerida: specialties.find(specialty => specialty.name === caso?.especialidadRequerida)?.id || 1,
-              fechaNacimiento: DateTime.fromFormat(caso.fechaNacimiento, 'MM/dd/yyyy, HH:mm:ss').toISO()
-                || /*DateTime.now().set({ second: 0, millisecond: 0 }).toISO()*/ "2024",
+              fechaNacimiento: parseFechaNacimiento(caso.fechaNacimiento),
               genero: caso?.genero || "masculino",
               motivoPaciente: caso?.motivoPaciente || "",
               archivosAsociados: null,
