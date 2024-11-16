@@ -1,15 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-export interface UserState extends AdminState {
-  document?: string;
-  password?: string;
-  type?: "rural professional" | "specialist" | "";
-}
-
-interface AdminState {
+export interface UserState {
   email: string;
   fullName: string;
-  role?: "admin" | "regular" | null;
+  document: string;
+  password: string;
+  type: "rural professional" | "specialist" | "";
+  role: "admin" | "regular" | "";
 }
 
 export interface SpecialistState extends UserState {
@@ -20,17 +17,20 @@ export interface RuralProfessionalState extends UserState {
   zone: string;
 }
 
-const initialState = {
+const initialState: UserState = {
   email: "",
   fullName: "",
-  role: null,
+  document: "",
+  password: "",
+  type: "",
+  role: "",
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<any>) => {
+    setUser: (state, action: PayloadAction<UserState>) => {
       state = action.payload;
     },
     clearUser: () => initialState,

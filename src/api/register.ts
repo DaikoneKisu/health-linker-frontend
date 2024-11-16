@@ -9,7 +9,7 @@ export const registerRuralProfessional = async (
   email: string,
   fullName: string,
   password: string,
-  phoneNumber: string,
+  phoneNumber: string
 ) => {
   try {
     const response = await axios.post(`${SERVER}${SINGUP}/rural-professional`, {
@@ -46,7 +46,7 @@ export const registerSpecialist = async (
   email: string,
   fullName: string,
   password: string,
-  phoneNumber: string,
+  phoneNumber: string
 ) => {
   try {
     const response = await axios.post(`${SERVER}${SINGUP}/specialist`, {
@@ -78,7 +78,7 @@ export const getSpecialities = async () => {
   try {
     const response = await axios.get(`${SERVER}/specialties/all`);
 
-    const specialties = response.data;
+    const specialties = response.data as { name: string }[];
 
     return {
       success: true,

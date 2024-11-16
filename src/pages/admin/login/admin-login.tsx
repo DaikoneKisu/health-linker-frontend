@@ -70,6 +70,9 @@ const AdminLogin = () => {
                       setUser({
                         email: values.email,
                         fullName: data.fullName,
+                        document: "",
+                        password: "",
+                        type: "",
                         role: "admin",
                       })
                     );
