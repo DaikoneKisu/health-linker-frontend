@@ -73,6 +73,31 @@ export interface ChatMessage {
   createdAt: string;
 }
 
+export interface User {
+  document: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  isVerified: boolean;
+  userType: "specialist" | "rural professional";
+}
+
+export interface SpecialistAdmin {
+  fullName: string;
+  document: string;
+  speciality: string;
+  email: string;
+  feedbackCount: number;
+}
+
+export interface RuralProfessionalsAdmin {
+  fullName: string;
+  document: string;
+  zone: string;
+  email: string;
+  caseCount: number;
+}
+
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 
 género del paciente, 
 motivo de consulta del paciente, 

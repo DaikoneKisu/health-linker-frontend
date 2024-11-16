@@ -1,0 +1,10 @@
+.userItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 6px;
+}
+
+.userTitle {
+  font-size: 1.2rem;
+}

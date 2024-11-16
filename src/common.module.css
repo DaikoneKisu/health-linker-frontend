@@ -3,3 +3,26 @@
   text-align: center;
   font-size: 1.5rem;
 }
+
+.centerButtons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.centerButton {
+  font-weight: bold;
+  width: min(300px, 80%);
+}
+
+.searchContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.search {
+  width: min(380px, 90%);
+}

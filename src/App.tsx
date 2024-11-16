@@ -42,13 +42,14 @@ import "./theme/variables.css";
 import CasoClinico from "./pages/casos-clinicos/caso-clinico/caso-clinico";
 import { FeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentacion-pacientes";
 import { ClosedFeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentafion-pacientes-cerrada";
-import { chatbox, documentText, flask } from "ionicons/icons";
+import { chatbox, documentText, flask, person } from "ionicons/icons";
 import { useAppSelector } from "./store/hooks";
 import ChatRoomsList from "./pages/chat/chat-rooms/chat-rooms-list";
 import Chat from "./pages/chat/in-chat/chat";
 import AdminLogin from "./pages/admin/login/admin-login";
 import AdminEspecialidades from "./pages/admin/especialidades/especialidades";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AdminUsuarios } from "./pages/admin/usuarios/usuarios";
 
 setupIonicReact({ mode: "md" });
 
@@ -108,8 +109,9 @@ function AdminTabs() {
     <IonTabs>
       {/* Route definition */}
       <IonRouterOutlet>
-        <Redirect exact path="/" to="/dashboard" />
-        <Redirect exact path="/admin" to="/dashboard" />
+        <Redirect exact path="/" to="/usuarios" />
+        <Redirect exact path="/admin" to="/usuarios" />
+        <Route exact path="/usuarios" component={AdminUsuarios} />
         <Route exact path="/especialidades" component={AdminEspecialidades} />
         <Route path="/chat" exact component={ChatRoomsList} />
         <Route path="/chat/:id" component={Chat} />
@@ -118,13 +120,17 @@ function AdminTabs() {
 
       {/* Tabs */}
       <IonTabBar slot="bottom">
-        <IonTabButton tab="chat" href="/chat">
-          <IonIcon icon={chatbox} />
-          <IonLabel>Chat</IonLabel>
+        <IonTabButton tab="users" href="/usuarios">
+          <IonIcon icon={person} />
+          <IonLabel>Usuarios</IonLabel>
         </IonTabButton>
         <IonTabButton tab="especialidades" href="/especialidades">
           <IonIcon icon={flask} />
           <IonLabel>Especialidades</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="chat" href="/chat">
+          <IonIcon icon={chatbox} />
+          <IonLabel>Chat</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonTabs>

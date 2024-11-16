@@ -73,6 +73,7 @@ export const signupRuralProfessional = async (
       email,
       fullName,
       zone,
+      isVerified: true,
     });
 
     return {

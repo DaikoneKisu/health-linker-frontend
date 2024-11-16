@@ -13,10 +13,8 @@ import {
   IonLoading,
   useIonViewWillLeave,
   IonToolbar,
-  IonInput,
-  useIonRouter,
 } from "@ionic/react";
-import { add, search } from "ionicons/icons";
+import { add } from "ionicons/icons";
 import "./styles.css";
 import { CasoClinico } from "./types";
 import { useState, useEffect } from "react";
@@ -31,9 +29,8 @@ import LogoHeader from "../../components/logo-header/logo-header";
 import styles from "./casos-clinicos.module.css";
 import { getMe } from "../../api/auth";
 import ListaDeCasosEspecialistas from "./lista-de-casos-especialistas";
-import { Field, FieldProps, Form, Formik } from "formik";
-import { useAppDispatch } from "../../store/hooks";
-import { setAuth } from "../../store/slices/auth";
+import SearchInput from "../../components/SearchInput";
+import { useLogOut } from "../../hooks/useLogOut";
 
 const CasosClinicos = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
@@ -47,14 +44,7 @@ const CasosClinicos = () => {
     "abiertos" | "cerrados" | "mentoreables"
   >("abiertos");
 
-  const dispatch = useAppDispatch();
-  const router = useIonRouter();
-
-  const logOut = () => {
-    localStorage.removeItem("token");
-    dispatch(setAuth(false));
-    router.push("/login");
-  };
+  const logOut = useLogOut();
 
   const casoEscogido = (caso: CasoClinico) => {
     setCurrentCase(caso);
@@ -206,38 +196,6 @@ const CasosClinicos = () => {
     }
   };
 
-  const SearchInput = () => (
-    <Formik
-      initialValues={{ currentSearch: "" }}
-      onSubmit={(values) => {
-        onSearch(values.currentSearch);
-      }}
-    >
-      {() => (
-        <Form className={`${styles.searchContainer}`}>
-          <Field name="currentSearch">
-            {({ field }: FieldProps) => (
-              <IonInput
-                className={`${styles.search}`}
-                label="Buscar casos"
-                labelPlacement="stacked"
-                placeholder="Especialidad, diagnóstico, síntomas"
-                fill="outline"
-                type="search"
-                value={field.value}
-                name={field.name}
-                onIonBlur={field.onBlur}
-                onIonInput={field.onChange}
-              >
-                <IonIcon slot="start" icon={search} />
-              </IonInput>
-            )}
-          </Field>
-        </Form>
-      )}
-    </Formik>
-  );
-
   return (
     <WithAuth>
       <IonPage>
@@ -284,7 +242,11 @@ const CasosClinicos = () => {
                       Cerrar Sesion
                     </IonButton>
                   </IonButtons>
-                  <SearchInput />
+                  <SearchInput
+                    onSearch={onSearch}
+                    label="Buscar casos"
+                    placeholder="Especialidad, diagnóstico, síntomas"
+                  />
                   <IonText className={`${styles.caseCount}`}>
                     Casos encontrados: {casosClinicos.length}
                   </IonText>
@@ -368,7 +330,11 @@ const CasosClinicos = () => {
                       Cerrar Sesion
                     </IonButton>
                   </IonButtons>
-                  <SearchInput />
+                  <SearchInput
+                    onSearch={onSearch}
+                    label="Buscar casos"
+                    placeholder="Especialidad, diagnóstico, síntomas"
+                  />
                 </IonToolbar>
               </IonHeader>
             </LogoHeader>

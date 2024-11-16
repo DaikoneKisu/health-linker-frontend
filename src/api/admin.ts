@@ -1,5 +1,6 @@
 import axios from "axios";
 import { SERVER } from "./server";
+import { RuralProfessionalsAdmin, SpecialistAdmin, User } from "../pages/casos-clinicos/types";
 
 export async function adminSignIn(email: string, password: string) {
   try {
@@ -60,3 +61,64 @@ export async function addSpeciality(name: string) {
     }
   }
 }
+
+export async function getSpecialistsAdmin(query: string) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      `${SERVER}/specialists/all/admin?query=${query}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data as SpecialistAdmin[];
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Error inesperado" };
+    }
+  }
+}
+
+export async function getRuralsAdmin(query: string) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      `${SERVER}/rural-professionals/all/admin?query=${query}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data as RuralProfessionalsAdmin[];
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Error inesperado" };
+    }
+  }
+}
+
