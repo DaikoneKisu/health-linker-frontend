@@ -81,18 +81,18 @@ export const getSpecialities = async () => {
     const specialties = response.data as { name: string }[];
 
     return {
-      success: true,
+      success: true as const,
       specialties,
     };
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return {
-        success: false,
+        success: false as const,
         error: error,
       };
     } else {
       console.error("Error inesperado:", error);
-      return { success: false, error: "Error inesperado" };
+      return { success: false as const, error: "Error inesperado" };
     }
   }
 };

@@ -50,6 +50,8 @@ import AdminLogin from "./pages/admin/login/admin-login";
 import AdminEspecialidades from "./pages/admin/especialidades/especialidades";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AdminUsuarios } from "./pages/admin/usuarios/usuarios";
+import EspecialistasAdmin from "./pages/admin/usuarios/especialistas";
+import RuralesAdmin from "./pages/admin/usuarios/rurales";
 
 setupIonicReact({ mode: "md" });
 
@@ -112,6 +114,8 @@ function AdminTabs() {
         <Redirect exact path="/" to="/usuarios" />
         <Redirect exact path="/admin" to="/usuarios" />
         <Route exact path="/usuarios" component={AdminUsuarios} />
+        <Route path="/especialistas/:document" component={EspecialistasAdmin} />
+        <Route path="/profesionales-rurales/:document" component={RuralesAdmin} />
         <Route exact path="/especialidades" component={AdminEspecialidades} />
         <Route path="/chat" exact component={ChatRoomsList} />
         <Route path="/chat/:id" component={Chat} />
@@ -145,7 +149,13 @@ function NavTabs() {
   return <AdminTabs />;
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      networkMode: "offlineFirst",
+    },
+  },
+});
 
 const App = () => {
   const auth = useAppSelector((state) => state.auth);

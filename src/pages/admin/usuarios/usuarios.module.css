@@ -8,3 +8,13 @@
 .userTitle {
   font-size: 1.2rem;
 }
+
+.userSection * {
+  text-align: start;
+}
+
+.userDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

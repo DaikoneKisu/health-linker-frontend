@@ -3,6 +3,7 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -11,6 +12,7 @@ import {
   IonText,
   IonTitle,
   IonToolbar,
+  useIonRouter,
 } from "@ionic/react";
 import WithAuth from "../../../components/WithAuth";
 import LogoHeader from "../../../components/logo-header/logo-header";
@@ -23,6 +25,7 @@ import {
   useRuralProfessionalsAdmins,
   useSpecialistAdmins,
 } from "../../../hooks/queries/admin";
+import { chevronForward } from "ionicons/icons";
 
 export function AdminUsuarios() {
   const [page, setPage] = useState<"specialist" | "rural">("specialist");
@@ -30,6 +33,8 @@ export function AdminUsuarios() {
 
   const specialists = useSpecialistAdmins(searchQuery);
   const ruralProfessionals = useRuralProfessionalsAdmins(searchQuery);
+
+  const router = useIonRouter();
 
   const logOut = useLogOut();
 
@@ -100,6 +105,9 @@ export function AdminUsuarios() {
                   <IonItem
                     key={specialist.document}
                     style={{ paddingRight: 6 }}
+                    onClick={() =>
+                      router.push(`/especialistas/${specialist.document}`)
+                    }
                   >
                     <div className={`${styles.userItem}`}>
                       <IonLabel>
@@ -114,6 +122,7 @@ export function AdminUsuarios() {
                         Casos retroalimentados: {specialist.feedbackCount}
                       </IonText>
                     </div>
+                    <IonIcon slot="end" icon={chevronForward} />
                   </IonItem>
                 ))}
               </IonList>
@@ -124,7 +133,14 @@ export function AdminUsuarios() {
             <div>
               <IonList>
                 {ruralProfessionals.data?.data?.map((ruralProfessional) => (
-                  <IonItem key={ruralProfessional.document}>
+                  <IonItem
+                    key={ruralProfessional.document}
+                    onClick={() =>
+                      router.push(
+                        `/profesionales-rurales/${ruralProfessional.document}`
+                      )
+                    }
+                  >
                     <div className={`${styles.userItem}`}>
                       <IonLabel>
                         <strong className={`${styles.userTitle}`}>
@@ -140,6 +156,7 @@ export function AdminUsuarios() {
                         Casos creados: {ruralProfessional.caseCount}
                       </IonText>
                     </div>
+                    <IonIcon slot="end" icon={chevronForward} />
                   </IonItem>
                 ))}
               </IonList>

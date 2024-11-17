@@ -37,7 +37,7 @@ export interface Archivo {
 }
 
 export interface Especialidad {
-  id: number;
+  id?: number;
   name: string;
 }
 
