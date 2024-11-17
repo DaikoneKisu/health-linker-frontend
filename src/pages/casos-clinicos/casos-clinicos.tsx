@@ -13,8 +13,9 @@ import {
   IonLoading,
   useIonViewWillLeave,
   IonToolbar,
+  useIonModal,
 } from "@ionic/react";
-import { add } from "ionicons/icons";
+import { add, helpOutline } from "ionicons/icons";
 import "./styles.css";
 import { CasoClinico } from "./types";
 import { useState, useEffect } from "react";
@@ -31,6 +32,7 @@ import { getMe } from "../../api/auth";
 import ListaDeCasosEspecialistas from "./lista-de-casos-especialistas";
 import SearchInput from "../../components/SearchInput";
 import { useLogOut } from "../../hooks/useLogOut";
+import { FaqModal } from "../../components/FaqModal";
 
 const CasosClinicos = () => {
   const [casosClinicos, setCasosClinicos] = useState<CasoClinico[]>([]);
@@ -45,6 +47,11 @@ const CasosClinicos = () => {
   >("abiertos");
 
   const logOut = useLogOut();
+
+  // For showing the faq modal
+  const [presentFaq, dismissFaq] = useIonModal(FaqModal, {
+    dismiss: (data: string, role: string) => dismissFaq(data, role),
+  });
 
   const casoEscogido = (caso: CasoClinico) => {
     setCurrentCase(caso);
@@ -265,6 +272,9 @@ const CasosClinicos = () => {
                 }
               />
               <IonFab slot="fixed" horizontal="end" vertical="bottom">
+                <IonFabButton color="medium" onClick={() => presentFaq()}>
+                  <IonIcon icon={helpOutline} />
+                </IonFabButton>
                 <IonFabButton
                   color="primary"
                   routerLink="/casos-clinicos/crear"
@@ -356,6 +366,11 @@ const CasosClinicos = () => {
                 }
                 mentorear={caseState === "mentoreables"}
               />
+              <IonFab slot="fixed" horizontal="end" vertical="bottom">
+                <IonFabButton color="medium" onClick={() => presentFaq()}>
+                  <IonIcon icon={helpOutline} />
+                </IonFabButton>
+              </IonFab>
             </IonContent>
           </>
         )}

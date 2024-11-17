@@ -2,10 +2,8 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonTitle,
   IonInput,
   IonButton,
-  IonFooter,
   IonInputPasswordToggle,
   IonImg,
   useIonRouter,
@@ -56,9 +54,9 @@ const AdminLogin = () => {
               <div className={styles.heroImgContainer}>
                 <IonImg src="/login.png" alt="Imagen de healthlinker" />
               </div>
-              <IonTitle color="light" className={`${styles.header}`}>
+              <h1 color="light" className={`${styles.header}`}>
                 Inicia sesión como administrador
-              </IonTitle>
+              </h1>
             </IonHeader>
             <Formik
               initialValues={{ email: "", password: "" }}

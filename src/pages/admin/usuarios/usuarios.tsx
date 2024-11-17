@@ -14,6 +14,7 @@ import {
   IonText,
   IonTitle,
   IonToolbar,
+  useIonModal,
   useIonRouter,
 } from "@ionic/react";
 import WithAuth from "../../../components/WithAuth";
@@ -28,13 +29,19 @@ import {
   useRuralProfessionalsAdmins,
   useSpecialistAdmins,
 } from "../../../hooks/queries/admin";
-import { add, chevronForward } from "ionicons/icons";
+import { add, chevronForward, helpOutline } from "ionicons/icons";
+import { FaqModal } from "../../../components/FaqModal";
 
 export function AdminUsuarios() {
   const [page, setPage] = useState<"specialist" | "rural" | "admin">(
     "specialist"
   );
   const [searchQuery, setSearchQuery] = useState("");
+
+  // For showing the faq modal
+  const [presentFaq, dismissFaq] = useIonModal(FaqModal, {
+    dismiss: (data: string, role: string) => dismissFaq(data, role),
+  });
 
   const specialists = useSpecialistAdmins(searchQuery);
   const ruralProfessionals = useRuralProfessionalsAdmins(searchQuery);
@@ -215,6 +222,12 @@ export function AdminUsuarios() {
               </IonFab>
             </div>
           )}
+
+          <IonFab slot="fixed" horizontal="end" vertical="bottom">
+            <IonFabButton color="medium" onClick={() => presentFaq()}>
+              <IonIcon icon={helpOutline} />
+            </IonFabButton>
+          </IonFab>
         </IonContent>
       </IonPage>
     </WithAuth>
