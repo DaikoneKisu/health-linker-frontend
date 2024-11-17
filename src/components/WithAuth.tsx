@@ -5,6 +5,7 @@ import { getOneUser } from "../api/auth";
 import { PropsWithChildren } from "react";
 import { useIonViewWillEnter } from "@ionic/react";
 import { setAuth } from "../store/slices/auth";
+import { setRole } from "../store/slices/role";
 
 export const parseJwt = (token: string) => {
   try {
@@ -34,9 +35,11 @@ const WithAuth = ({ children }: PropsWithChildren) => {
   const getUser = async (user: any) => {
     if (user && user.document) {
       const userData = await getOneUser(user!.document);
-      dispatch(setUser({ ...userData.user!, role: "regular" }));
+      dispatch(setUser(userData.user!));
+      dispatch(setRole("regular"));
     } else {
-      dispatch(setUser({ ...user, role: "admin" }));
+      dispatch(setUser(user));
+      dispatch(setRole("admin"));
     }
   };
 

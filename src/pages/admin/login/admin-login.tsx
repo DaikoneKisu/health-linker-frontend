@@ -21,6 +21,7 @@ import { setAuth } from "../../../store/slices/auth";
 import ResetOnLeave from "../../../components/helpers/reset-on-leave";
 import { adminSignIn } from "../../../api/admin";
 import { setUser } from "../../../store/slices/user";
+import { setRole } from "../../../store/slices/role";
 
 const adminLoginSchema = Yup.object({
   email: Yup.string()
@@ -73,9 +74,9 @@ const AdminLogin = () => {
                         document: "",
                         password: "",
                         type: "",
-                        role: "admin",
                       })
                     );
+                    dispatch(setRole("admin"));
                     showToast("Inicio de sesión exitoso", "success");
                     localStorage.setItem("token", data.token);
                     router.push("/dashboard");

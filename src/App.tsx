@@ -115,7 +115,10 @@ function AdminTabs() {
         <Redirect exact path="/admin" to="/usuarios" />
         <Route exact path="/usuarios" component={AdminUsuarios} />
         <Route path="/especialistas/:document" component={EspecialistasAdmin} />
-        <Route path="/profesionales-rurales/:document" component={RuralesAdmin} />
+        <Route
+          path="/profesionales-rurales/:document"
+          component={RuralesAdmin}
+        />
         <Route exact path="/especialidades" component={AdminEspecialidades} />
         <Route path="/chat" exact component={ChatRoomsList} />
         <Route path="/chat/:id" component={Chat} />
@@ -142,8 +145,8 @@ function AdminTabs() {
 }
 
 function NavTabs() {
-  const user = useAppSelector((state) => state.user);
-  if (user.role === "regular") {
+  const role = useAppSelector((state) => state.role);
+  if (role === "regular") {
     return <MainTabs />;
   }
   return <AdminTabs />;

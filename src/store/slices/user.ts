@@ -6,7 +6,6 @@ export interface UserState {
   document: string;
   password: string;
   type: "rural professional" | "specialist" | "";
-  role: "admin" | "regular" | "";
 }
 
 export interface SpecialistState extends UserState {
@@ -23,7 +22,6 @@ const initialState: UserState = {
   document: "",
   password: "",
   type: "",
-  role: "",
 };
 
 export const userSlice = createSlice({

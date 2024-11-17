@@ -20,6 +20,7 @@ import * as Yup from "yup";
 import { useCommonToast } from "../../hooks/useCommonToast";
 import { useAppDispatch } from "../../store/hooks";
 import { setAuth } from "../../store/slices/auth";
+import { setRole } from "../../store/slices/role";
 
 const loginSchema = Yup.object({
   document: Yup.string()
@@ -70,6 +71,10 @@ const Login = () => {
                   if (data.success) {
                     // alert("Inicio de sesión exitoso");
                     dispatch(setAuth(true));
+
+                    // Set user type
+                    dispatch(setRole("regular"));
+
                     showToast("Inicio de sesión exitoso", "success");
                     localStorage.setItem("token", data.token);
                     router.push("/casos-clinicos");
