@@ -2,6 +2,8 @@ import {
   IonButton,
   IonButtons,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
   IonIcon,
   IonItem,
@@ -22,17 +24,21 @@ import { useState } from "react";
 import SearchInput from "../../../components/SearchInput";
 import { useLogOut } from "../../../hooks/useLogOut";
 import {
+  useAdmins,
   useRuralProfessionalsAdmins,
   useSpecialistAdmins,
 } from "../../../hooks/queries/admin";
-import { chevronForward } from "ionicons/icons";
+import { add, chevronForward } from "ionicons/icons";
 
 export function AdminUsuarios() {
-  const [page, setPage] = useState<"specialist" | "rural">("specialist");
+  const [page, setPage] = useState<"specialist" | "rural" | "admin">(
+    "specialist"
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   const specialists = useSpecialistAdmins(searchQuery);
   const ruralProfessionals = useRuralProfessionalsAdmins(searchQuery);
+  const admins = useAdmins(searchQuery);
 
   const router = useIonRouter();
 
@@ -79,6 +85,19 @@ export function AdminUsuarios() {
                 </IonButton>
                 <IonButton
                   className={`${commonStyles.centerButton}`}
+                  onClick={() => {
+                    if (page !== "admin") {
+                      setPage("admin");
+                      setSearchQuery("");
+                    }
+                  }}
+                  color="primary"
+                  fill={page === "admin" ? "solid" : "outline"}
+                >
+                  Administradores
+                </IonButton>
+                <IonButton
+                  className={`${commonStyles.centerButton}`}
                   routerLink="/login"
                   onClick={logOut}
                   color="dark"
@@ -97,7 +116,13 @@ export function AdminUsuarios() {
         </LogoHeader>
 
         <IonContent>
-          <IonLoading isOpen={specialists.isLoading} />
+          <IonLoading
+            isOpen={
+              specialists.isLoading ||
+              ruralProfessionals.isLoading ||
+              admins.isLoading
+            }
+          />
           {page === "specialist" && (
             <div>
               <IonList>
@@ -160,6 +185,34 @@ export function AdminUsuarios() {
                   </IonItem>
                 ))}
               </IonList>
+            </div>
+          )}
+
+          {page === "admin" && (
+            <div>
+              <IonList>
+                {admins.data?.data?.map((admin) => (
+                  <IonItem
+                    key={admin.email}
+                    onClick={() => router.push(`/admins/${admin.email}`)}
+                  >
+                    <div className={`${styles.userItem}`}>
+                      <IonLabel>
+                        <strong className={`${styles.userTitle}`}>
+                          {admin.fullName}
+                        </strong>
+                      </IonLabel>
+                      <IonText>Correo: {admin.email}</IonText>
+                    </div>
+                    <IonIcon slot="end" icon={chevronForward} />
+                  </IonItem>
+                ))}
+              </IonList>
+              <IonFab slot="fixed" horizontal="end" vertical="bottom">
+                <IonFabButton color="primary" routerLink="/admins/crear">
+                  <IonIcon icon={add}></IonIcon>
+                </IonFabButton>
+              </IonFab>
             </div>
           )}
         </IonContent>

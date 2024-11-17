@@ -1,9 +1,9 @@
 import axios from "axios";
 import { SERVER } from "./server";
 import {
+  Admin,
   RuralProfessionalsAdmin,
   SpecialistAdmin,
-  User,
 } from "../pages/casos-clinicos/types";
 
 export async function adminSignIn(email: string, password: string) {
@@ -126,6 +126,36 @@ export async function getRuralsAdmin(query: string) {
   }
 }
 
+export async function getAdmins(query: string) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${SERVER}/admins/all?query=${query}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const data = response.data as Admin[];
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: "Error obteniendo administradores",
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return {
+        success: false as const,
+        error: "Error obteniendo administradores",
+      };
+    }
+  }
+}
+
 export async function getSpecialist(document: string) {
   try {
     const token = localStorage.getItem("token");
@@ -244,6 +274,118 @@ export async function updateRuralPassword({
     );
 
     const data = response.data as RuralProfessionalsAdmin;
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: "Ocurrió un error",
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Ocurrió un error" };
+    }
+  }
+}
+
+export async function getAdmin(email: string) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${SERVER}/admins/${email}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const data = response.data as Admin;
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: "Error obteniendo administrador",
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return {
+        success: false as const,
+        error: "Error obteniendo administrador",
+      };
+    }
+  }
+}
+
+export async function updateAdminPassword({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.patch(
+      `${SERVER}/admins/${email}`,
+      {
+        password,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data as Admin;
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: "Ocurrió un error",
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Ocurrió un error" };
+    }
+  }
+}
+
+export async function createAdmin({
+  email,
+  fullName,
+  password,
+}: {
+  email: string;
+  fullName: string;
+  password: string;
+}) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(
+      `${SERVER}/admins/`,
+      {
+        email,
+        fullName,
+        password,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data as Admin;
     return {
       success: true as const,
       data,

@@ -52,6 +52,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AdminUsuarios } from "./pages/admin/usuarios/usuarios";
 import EspecialistasAdmin from "./pages/admin/usuarios/especialistas";
 import RuralesAdmin from "./pages/admin/usuarios/rurales";
+import AdminEdit from "./pages/admin/usuarios/admins";
+import AdminCreate from "./pages/admin/usuarios/crear-admin";
 
 setupIonicReact({ mode: "md" });
 
@@ -119,6 +121,8 @@ function AdminTabs() {
           path="/profesionales-rurales/:document"
           component={RuralesAdmin}
         />
+        <Route path="/admins/:email" component={AdminEdit} />
+        <Route exact path="/admins/crear" component={AdminCreate} />
         <Route exact path="/especialidades" component={AdminEspecialidades} />
         <Route path="/chat" exact component={ChatRoomsList} />
         <Route path="/chat/:id" component={Chat} />

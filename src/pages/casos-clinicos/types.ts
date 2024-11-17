@@ -82,6 +82,11 @@ export interface User {
   userType: "specialist" | "rural professional";
 }
 
+export interface Admin {
+  email: string;
+  fullName: string;
+}
+
 export interface SpecialistAdmin {
   fullName: string;
   document: string;
