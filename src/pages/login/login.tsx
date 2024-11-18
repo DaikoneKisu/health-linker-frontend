@@ -21,6 +21,7 @@ import { useCommonToast } from "../../hooks/useCommonToast";
 import { useAppDispatch } from "../../store/hooks";
 import { setAuth } from "../../store/slices/auth";
 import { setRole } from "../../store/slices/role";
+import { setUser } from "../../store/slices/user";
 
 const loginSchema = Yup.object({
   document: Yup.string()
@@ -74,6 +75,16 @@ const Login = () => {
 
                     // Set user type
                     dispatch(setRole("regular"));
+
+                    dispatch(
+                      setUser({
+                        document: values.document,
+                        email: "",
+                        fullName: "",
+                        password: values.password,
+                        type: data.type,
+                      })
+                    );
 
                     showToast("Inicio de sesión exitoso", "success");
                     localStorage.setItem("token", data.token);

@@ -145,7 +145,7 @@ const CasosClinicos = () => {
   useIonViewWillEnter(() => {
     getMe().then((data) => {
       if (data.success) {
-        setUser(data.user);
+        setUser({ ...data.user, type: data.user.userType });
       } else {
         console.error("Error:", data.error);
       }
@@ -272,7 +272,7 @@ const CasosClinicos = () => {
                 }
               />
               <IonFab slot="fixed" horizontal="end" vertical="bottom">
-                <IonFabButton color="medium" onClick={() => presentFaq()}>
+                <IonFabButton color="medium" onClick={() => presentFaq()} style={{ marginBottom: 6 }}>
                   <IonIcon icon={helpOutline} />
                 </IonFabButton>
                 <IonFabButton

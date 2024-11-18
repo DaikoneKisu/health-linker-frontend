@@ -8,11 +8,12 @@ export const signin = async (document: string, password: string) => {
       password,
     });
 
-    const token = response.data;
+    const { token, type } = response.data;
 
     return {
       success: true,
       token,
+      type,
     };
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {

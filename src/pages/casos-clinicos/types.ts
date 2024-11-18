@@ -103,6 +103,17 @@ export interface RuralProfessionalsAdmin {
   caseCount: number;
 }
 
+export interface EducationalResource {
+  id: number;
+  title: string;
+  content: string;
+  authorEmail: string | null;
+  authorDocument: string | null;
+  createdAt: string;
+  adminName: string | null;
+  specialistName: string | null;
+}
+
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 
 género del paciente, 
 motivo de consulta del paciente, 

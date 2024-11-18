@@ -35,7 +35,7 @@ const WithAuth = ({ children }: PropsWithChildren) => {
   const getUser = async (user: any) => {
     if (user && user.document) {
       const userData = await getOneUser(user!.document);
-      dispatch(setUser(userData.user!));
+      dispatch(setUser({ ...userData.user!, type: userData.user.userType }));
       dispatch(setRole("regular"));
     } else {
       dispatch(setUser(user));

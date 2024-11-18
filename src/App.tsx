@@ -42,7 +42,7 @@ import "./theme/variables.css";
 import CasoClinico from "./pages/casos-clinicos/caso-clinico/caso-clinico";
 import { FeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentacion-pacientes";
 import { ClosedFeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentafion-pacientes-cerrada";
-import { chatbox, documentText, flask, person } from "ionicons/icons";
+import { chatbox, documentText, flask, person, school } from "ionicons/icons";
 import { useAppSelector } from "./store/hooks";
 import ChatRoomsList from "./pages/chat/chat-rooms/chat-rooms-list";
 import Chat from "./pages/chat/in-chat/chat";
@@ -54,6 +54,8 @@ import EspecialistasAdmin from "./pages/admin/usuarios/especialistas";
 import RuralesAdmin from "./pages/admin/usuarios/rurales";
 import AdminEdit from "./pages/admin/usuarios/admins";
 import AdminCreate from "./pages/admin/usuarios/crear-admin";
+import RecursosEducativos from "./pages/recursos-educativos/recursos";
+import CrearRecurso from "./pages/recursos-educativos/crear-recurso";
 
 setupIonicReact({ mode: "md" });
 
@@ -87,6 +89,8 @@ function MainTabs() {
         />
         <Route path="/chat" exact component={ChatRoomsList} />
         <Route path="/chat/:id" component={Chat} />
+        <Route path="/recursos" exact component={RecursosEducativos} />
+        <Route path="/recursos/nuevo" exact component={CrearRecurso} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -95,6 +99,10 @@ function MainTabs() {
         <IonTabButton tab="casos-clinicos" href="/casos-clinicos">
           <IonIcon icon={documentText} />
           <IonLabel>Casos Clínicos</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="recursos" href="/recursos">
+          <IonIcon icon={school} />
+          <IonLabel>Recursos Educativos</IonLabel>
         </IonTabButton>
         <IonTabButton tab="chat" href="/chat">
           <IonIcon icon={chatbox} />
@@ -126,6 +134,8 @@ function AdminTabs() {
         <Route exact path="/especialidades" component={AdminEspecialidades} />
         <Route path="/chat" exact component={ChatRoomsList} />
         <Route path="/chat/:id" component={Chat} />
+        <Route path="/recursos" exact component={RecursosEducativos} />
+        <Route path="/recursos/nuevo" exact component={CrearRecurso} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 
