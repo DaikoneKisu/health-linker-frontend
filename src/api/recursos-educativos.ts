@@ -98,3 +98,74 @@ export async function createResource({
     }
   }
 }
+
+export async function updateResource({
+  id,
+  title,
+  content,
+}: {
+  id: string;
+  title: string;
+  content: string;
+}) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.patch(
+      `${SERVER}/educational-resources/${id}`,
+      { title, content },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data as EducationalResource;
+
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: "Ocurrió un error",
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Ocurrió un error" };
+    }
+  }
+}
+
+export async function deleteResource(id: string) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.delete(
+      `${SERVER}/educational-resources/${id}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data as EducationalResource;
+
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: "Ocurrió un error",
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Ocurrió un error" };
+    }
+  }
+}

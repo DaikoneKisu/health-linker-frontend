@@ -10,12 +10,21 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { EducationalResource } from "../casos-clinicos/types";
+import { useAppSelector } from "../../store/hooks";
 
 export default function TarjetaRecurso({
   recurso,
+  onClickDelete,
 }: {
   recurso: EducationalResource;
+  onClickDelete: () => void;
 }) {
+  const user = useAppSelector((state) => state.user);
+
+  const isAuthor =
+    user.document === recurso.authorDocument ||
+    user.email === recurso.authorEmail;
+
   return (
     <IonCard>
       <IonCardHeader>
@@ -36,8 +45,22 @@ export default function TarjetaRecurso({
             routerLink={`/recursos/${recurso.id}`}
             color="primary"
           >
-            Ver recurso
+            Leer
           </IonButton>
+          {isAuthor && (
+            <IonButton
+              fill="outline"
+              color="tertiary"
+              routerLink={`/recursos/editar/${recurso.id}`}
+            >
+              Editar
+            </IonButton>
+          )}
+          {isAuthor && (
+            <IonButton fill="outline" color="danger" onClick={onClickDelete}>
+              Eliminar
+            </IonButton>
+          )}
         </IonButtons>
       </IonToolbar>
     </IonCard>
