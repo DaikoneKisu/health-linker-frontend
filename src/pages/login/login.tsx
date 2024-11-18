@@ -60,9 +60,9 @@ const Login = () => {
               <div className={styles.heroImgContainer}>
                 <IonImg src="/login.png" alt="Imagen de healthlinker" />
               </div>
-              <IonTitle color="light" className={`${styles.header}`}>
+              <h1 className={`${styles.header}`} style={{ color: "white" }}>
                 Inicia sesión para continuar
-              </IonTitle>
+              </h1>
             </IonHeader>
             <Formik
               initialValues={{ document: "", password: "" }}

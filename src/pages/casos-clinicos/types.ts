@@ -90,6 +90,7 @@ export interface Admin {
 export interface SpecialistAdmin {
   fullName: string;
   document: string;
+  specialtyId: number;
   speciality: string;
   email: string;
   feedbackCount: number;

@@ -6,19 +6,11 @@ import TarjetaDeCasoCerrado from "./tarjetas-de-casos/tarjeta-de-caso-cerrado";
 
 interface Props {
   casos: CasoClinico[];
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
   cerrado: boolean;
   getCases: () => void;
 }
 
-const ListaDeCasos = ({
-  casos,
-  dentroCaso,
-  casoEscogido,
-  cerrado,
-  getCases,
-}: Props) => {
+const ListaDeCasos = ({ casos, cerrado, getCases }: Props) => {
   return (
     <IonList>
       {casos.length === 0 && cerrado && (
@@ -29,22 +21,10 @@ const ListaDeCasos = ({
       )}
       {cerrado
         ? casos.map((c) => (
-            <TarjetaDeCasoCerrado
-              caso={c}
-              dentroCaso={dentroCaso}
-              casoEscogido={casoEscogido}
-              key={c.id}
-              getCases={getCases}
-            />
+            <TarjetaDeCasoCerrado caso={c} key={c.id} getCases={getCases} />
           ))
         : casos.map((c) => (
-            <TarjetaDeCasoAbierto
-              caso={c}
-              dentroCaso={dentroCaso}
-              casoEscogido={casoEscogido}
-              key={c.id}
-              getCases={getCases}
-            />
+            <TarjetaDeCasoAbierto caso={c} key={c.id} getCases={getCases} />
           ))}
     </IonList>
   );

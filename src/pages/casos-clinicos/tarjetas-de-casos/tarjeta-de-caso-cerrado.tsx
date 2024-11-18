@@ -23,17 +23,10 @@ import { saveAs } from "file-saver";
 
 interface Props {
   caso: CasoClinico;
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
   getCases: () => void;
 }
 
-const TarjetaDeCasoCerrado = ({
-  caso,
-  dentroCaso,
-  casoEscogido,
-  getCases,
-}: Props) => {
+const TarjetaDeCasoCerrado = ({ caso, getCases }: Props) => {
   const [showToast] = useCommonToast();
   const [present, dismiss] = useIonLoading();
 

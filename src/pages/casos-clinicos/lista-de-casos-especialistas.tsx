@@ -9,17 +9,13 @@ import TarjetaDeCasoMentoreableEspecialista from "./especialistas/tarjeta-de-cas
 
 interface Props {
   casos: CasoClinico[];
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
   cerrado: boolean;
-  getCases: () => void;
   mentorear: boolean;
+  getCases: () => void;
 }
 
 const ListaDeCasosEspecialistas = ({
   casos,
-  dentroCaso,
-  casoEscogido,
   cerrado,
   getCases,
   mentorear,
@@ -40,21 +36,13 @@ const ListaDeCasosEspecialistas = ({
       {!mentorear &&
         cerrado &&
         casos.map((c) => (
-          <TarjetaDeCasoCerradoEspecialista
-            caso={c}
-            dentroCaso={dentroCaso}
-            casoEscogido={casoEscogido}
-            key={c.id}
-            getCases={getCases}
-          />
+          <TarjetaDeCasoCerradoEspecialista caso={c} key={c.id} />
         ))}
       {!mentorear &&
         !cerrado &&
         casos.map((c) => (
           <TarjetaDeCasoAbiertoEspecialista
             caso={c}
-            dentroCaso={dentroCaso}
-            casoEscogido={casoEscogido}
             key={c.id}
             getCases={getCases}
           />
@@ -64,8 +52,6 @@ const ListaDeCasosEspecialistas = ({
         casos.map((c) => (
           <TarjetaDeCasoMentoreableEspecialista
             caso={c}
-            dentroCaso={dentroCaso}
-            casoEscogido={casoEscogido}
             key={c.id}
             getCases={getCases}
           />

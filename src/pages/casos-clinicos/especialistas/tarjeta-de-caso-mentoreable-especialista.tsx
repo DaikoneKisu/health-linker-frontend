@@ -8,26 +8,16 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonToolbar,
-  useIonRouter,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
-import ConfirmCaseDelete from "../../../components/confirm-case-delete/confirm-case-delete";
-import { useId } from "react";
-import { closeClinicalCase, mentorCase } from "../../../api/casos-clinicos";
+import { mentorCase } from "../../../api/casos-clinicos";
 
 interface Props {
   caso: CasoClinico;
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
   getCases: () => void;
 }
 
-const TarjetaDeCasoMentoreableEspecialista = ({
-  caso,
-  dentroCaso,
-  casoEscogido,
-  getCases,
-}: Props) => {
+const TarjetaDeCasoMentoreableEspecialista = ({ caso, getCases }: Props) => {
   const mentorClinicalCase = () => {
     mentorCase(caso.id).then((data) => {
       if (data.success) {

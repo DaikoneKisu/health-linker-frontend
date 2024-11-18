@@ -8,7 +8,6 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonToolbar,
-  useIonRouter,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
 import ConfirmCaseDelete from "../../../components/confirm-case-delete/confirm-case-delete";
@@ -17,17 +16,10 @@ import { closeClinicalCase } from "../../../api/casos-clinicos";
 
 interface Props {
   caso: CasoClinico;
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
   getCases: () => void;
 }
 
-const TarjetaDeCasoAbierto = ({
-  caso,
-  dentroCaso,
-  casoEscogido,
-  getCases,
-}: Props) => {
+const TarjetaDeCasoAbierto = ({ caso, getCases }: Props) => {
   const deleteButtonId = useId();
 
   const closeCase = async () => {
