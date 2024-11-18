@@ -33,6 +33,34 @@ export async function getResources(query: string) {
   }
 }
 
+export async function getResource(id: string) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${SERVER}/educational-resources/${id}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const data = response.data as EducationalResource;
+
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: "Error obteniendo recurso",
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Error obteniendo recurso" };
+    }
+  }
+}
+
 export async function createResource({
   title,
   content,

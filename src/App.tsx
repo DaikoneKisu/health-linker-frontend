@@ -56,6 +56,7 @@ import AdminEdit from "./pages/admin/usuarios/admins";
 import AdminCreate from "./pages/admin/usuarios/crear-admin";
 import RecursosEducativos from "./pages/recursos-educativos/recursos";
 import CrearRecurso from "./pages/recursos-educativos/crear-recurso";
+import DetalleRecurso from "./pages/recursos-educativos/detalle-recurso";
 
 setupIonicReact({ mode: "md" });
 
@@ -91,6 +92,7 @@ function MainTabs() {
         <Route path="/chat/:id" component={Chat} />
         <Route path="/recursos" exact component={RecursosEducativos} />
         <Route path="/recursos/nuevo" exact component={CrearRecurso} />
+        <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -136,6 +138,7 @@ function AdminTabs() {
         <Route path="/chat/:id" component={Chat} />
         <Route path="/recursos" exact component={RecursosEducativos} />
         <Route path="/recursos/nuevo" exact component={CrearRecurso} />
+        <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 

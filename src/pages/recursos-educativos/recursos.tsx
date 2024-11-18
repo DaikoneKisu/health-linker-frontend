@@ -19,6 +19,7 @@ import { useState } from "react";
 import { useResources } from "../../hooks/queries/educational-resources";
 import { useAppSelector } from "../../store/hooks";
 import { add } from "ionicons/icons";
+import TarjetaRecurso from "./tarjeta-recurso";
 
 export default function RecursosEducativos() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,7 +55,7 @@ export default function RecursosEducativos() {
 
           <IonList>
             {resources.data?.data?.map((resource) => (
-              <IonItem key={resource.id}></IonItem>
+              <TarjetaRecurso key={resource.id} recurso={resource} />
             ))}
           </IonList>
 
