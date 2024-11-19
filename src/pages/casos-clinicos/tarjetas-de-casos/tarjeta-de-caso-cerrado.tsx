@@ -20,22 +20,19 @@ import { getCaseDataForPdf } from "./utils";
 import { pdf } from "@react-pdf/renderer";
 import PdfCaso from "./pdf-caso";
 import { saveAs } from "file-saver";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   caso: CasoClinico;
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
   getCases: () => void;
+  isAdmin?: boolean;
 }
 
-const TarjetaDeCasoCerrado = ({
-  caso,
-  dentroCaso,
-  casoEscogido,
-  getCases,
-}: Props) => {
+const TarjetaDeCasoCerrado = ({ caso, getCases, isAdmin = false }: Props) => {
   const [showToast] = useCommonToast();
   const [present, dismiss] = useIonLoading();
+
+  const queryClient = useQueryClient();
 
   const downloadPdf = async () => {
     const fileData = await getCaseDataForPdf(caso.id);
@@ -59,6 +56,10 @@ const TarjetaDeCasoCerrado = ({
     publicizeClinicalCase(caso.id).then((data) => {
       if (data.success) {
         getCases();
+        queryClient.invalidateQueries({
+          queryKey: ["clinical-cases", "library"],
+        });
+        showToast("Caso hecho público", "success");
       } else {
         // alert("Error al hacer público el caso");
         showToast("Error al hacer público el caso", "error");
@@ -106,12 +107,16 @@ const TarjetaDeCasoCerrado = ({
           >
             Ver retroalimentaciones
           </IonButton>
-          <IonButton fill="outline" onClick={reopenCase} color="tertiary">
-            Reabrir
-          </IonButton>
-          <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
-            Hacer público
-          </IonButton>
+          {!isAdmin && (
+            <IonButton fill="outline" onClick={reopenCase} color="tertiary">
+              Reabrir
+            </IonButton>
+          )}
+          {!isAdmin && (
+            <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
+              Hacer público
+            </IonButton>
+          )}
           <IonButton
             fill="outline"
             color="tertiary"

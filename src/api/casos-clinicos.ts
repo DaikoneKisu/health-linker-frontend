@@ -148,6 +148,45 @@ export const getOpenCasesCurrentUser = async (
   }
 };
 
+export const getOpenCasesCurrentAdmin = async (
+  page: number = 1,
+  size: number = 100,
+  query = ""
+) => {
+  try {
+    const token = localStorage.getItem("token");
+    const { data: openCasesFromBackend } = await axios.get(
+      `${SERVER}/clinical-cases/open/current-admin?page=${page}&size=${size}&query=${query}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const openCases: CasoClinico[] = await Promise.all(
+      (openCasesFromBackend as Array<any>).map(
+        async (c) => await mapClinicalCaseToCasoClinico(c)
+      )
+    );
+
+    return {
+      success: true,
+      data: openCases,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
 export const getClosedCasesCurrentUser = async (
   page: number = 1,
   size: number = 10,
@@ -173,6 +212,45 @@ export const getClosedCasesCurrentUser = async (
     return {
       success: true,
       data: closedClinicalCases,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
+export const getClosedCasesCurrentAdmin = async (
+  page: number = 1,
+  size: number = 100,
+  query = ""
+) => {
+  try {
+    const token = localStorage.getItem("token");
+    const { data: openCasesFromBackend } = await axios.get(
+      `${SERVER}/clinical-cases/closed/current-admin?page=${page}&size=${size}&query=${query}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const openCases: CasoClinico[] = await Promise.all(
+      (openCasesFromBackend as Array<any>).map(
+        async (c) => await mapClinicalCaseToCasoClinico(c)
+      )
+    );
+
+    return {
+      success: true,
+      data: openCases,
     };
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -278,6 +356,41 @@ export const getRequiredCurrentSpecialistCases = async (
     }
   }
 };
+
+export async function getCasesLibrary(page = 1, size = 100, query = "") {
+  try {
+    const token = localStorage.getItem("token");
+    const { data: casesFromBackend } = await axios.get(
+      `${SERVER}/clinical-cases/library?page=${page}&size=${size}&query=${query}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const libraryCases = await Promise.all(
+      (casesFromBackend as Array<any>).map(
+        async (c) => await mapClinicalCaseToCasoClinico(c)
+      )
+    );
+
+    return {
+      success: true as const,
+      data: libraryCases,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error obteniendo casos:", error);
+      return { success: false as const, error: "Error obteniendo casos" };
+    }
+  }
+}
 
 export const createClinicalCase = async (caso: CrearCasoClinico) => {
   try {

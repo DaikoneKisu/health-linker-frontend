@@ -1,59 +1,29 @@
 import {
-  IonHeader,
-  IonTitle,
   IonCard,
   IonButton,
-  IonText,
   IonFooter,
-  IonIcon,
   IonCardHeader,
   IonCardTitle,
-  IonCardSubtitle,
-  IonInfiniteScroll,
-  IonInput,
   IonContent,
   IonPage,
   IonCardContent,
   useIonRouter,
 } from "@ionic/react";
-import { getCaseFeedback, submitFeedback } from "../../../../api/feedback";
-import React, { useState, useEffect } from "react";
-import { Feedback } from "../../types";
 import { FeedbackList } from "./lista-retroalimentaciones";
 import "./styles.css";
 import { RouteComponentProps } from "react-router";
 import LogoHeader from "../../../../components/logo-header/logo-header";
 import otherStyles from "../../casos-clinicos.module.css";
+import { useCaseFeedback } from "../../../../hooks/queries/feedback";
 
 interface Props extends RouteComponentProps<{ id: string }> {
   isFeedback: (answer: boolean) => void;
 }
 
-export const ClosedFeedbackRender: React.FC<Props> = ({
-  match,
-  isFeedback,
-}) => {
-  const [feedbackList, setFeedbackList] = useState<Feedback[]>([]);
-  const [refresher, setRefresher] = useState(false);
-  const [texto, setTexto] = useState("");
+export const ClosedFeedbackRender = ({ match, isFeedback }: Props) => {
   const router = useIonRouter();
 
-  const gettingFeedbacks = async () => {
-    const response = await getCaseFeedback(Number(match.params.id));
-    if (response.success) {
-      setFeedbackList(response.data!);
-    } else {
-      console.error("Error:", response.error);
-    }
-  };
-
-  const refreshing = () => {
-    setRefresher(!refresher);
-  };
-
-  useEffect(() => {
-    gettingFeedbacks();
-  }, [refresher]);
+  const { data: feedbacks } = useCaseFeedback(Number(match.params.id));
 
   return (
     <IonPage>
@@ -64,7 +34,7 @@ export const ClosedFeedbackRender: React.FC<Props> = ({
             <IonCardTitle>Retroalimentaciones</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
-            <FeedbackList feedbacks={feedbackList} />
+            <FeedbackList feedbacks={feedbacks?.data ?? []} />
           </IonCardContent>
         </IonCard>
         <div className="init-div-style"></div>

@@ -11,65 +11,51 @@ import {
   useIonRouter,
   useIonViewDidLeave,
 } from "@ionic/react";
-import { getCaseFeedback, submitFeedback } from "../../../../api/feedback";
-import React, { useState, useEffect } from "react";
-import { Feedback } from "../../types";
+import { submitFeedback } from "../../../../api/feedback";
+import React, { useState } from "react";
 import { FeedbackList } from "./lista-retroalimentaciones";
 import "./styles.css";
 import { RouteComponentProps } from "react-router";
 import LogoHeader from "../../../../components/logo-header/logo-header";
 import otherStyles from "../../casos-clinicos.module.css";
 import { useCommonToast } from "../../../../hooks/useCommonToast";
+import { useCaseFeedback } from "../../../../hooks/queries/feedback";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props extends RouteComponentProps<{ id: string }> {
   isFeedback: (answer: boolean) => void;
 }
 
-export const FeedbackRender: React.FC<Props> = ({ match, isFeedback }) => {
-  const [feedbackList, setFeedbackList] = useState<Feedback[]>([]);
-  const [refresher, setRefresher] = useState(false);
+export const FeedbackRender = ({ match, isFeedback }: Props) => {
   const [texto, setTexto] = useState("");
   const router = useIonRouter();
 
   // For API responses
   const [showToast] = useCommonToast();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const queryClient = useQueryClient();
 
-    try {
-      const data = await submitFeedback(texto, Number(match.params.id));
-      if (data.success) {
-        // alert("Retroalimentación enviada exitosamente");
+  const { data: feedbacks } = useCaseFeedback(Number(match.params.id));
+
+  const submitMutation = useMutation({
+    mutationFn: () => submitFeedback(texto, Number(match.params.id)),
+    onSuccess: ({ success }) => {
+      if (success) {
         showToast("Retroalimentación enviada exitosamente", "success");
         setTexto("");
-        refreshing();
+        queryClient.invalidateQueries({
+          queryKey: ["feedback", { caseId: Number(match.params.id) }],
+        });
       } else {
-        throw new Error("Error al enviar la retroalimentación");
+        showToast("Error al enviar la retroalimentación", "error");
       }
-    } catch (error) {
-      console.error("Error:", error);
-      // alert(error);
-      showToast("Error al enviar la retroalimentación", "error");
-    }
-  };
+    },
+  });
 
-  const gettingFeedbacks = async () => {
-    const response = await getCaseFeedback(Number(match.params.id));
-    if (response.success) {
-      setFeedbackList(response.data!);
-    } else {
-      console.error("Error:", response.error);
-    }
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    submitMutation.mutate();
   };
-
-  const refreshing = () => {
-    setRefresher(!refresher);
-  };
-
-  useEffect(() => {
-    gettingFeedbacks();
-  }, [refresher]);
 
   useIonViewDidLeave(() => {
     setTexto("");
@@ -84,7 +70,7 @@ export const FeedbackRender: React.FC<Props> = ({ match, isFeedback }) => {
             <IonCardTitle>Retroalimentaciones</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
-            <FeedbackList feedbacks={feedbackList} />
+            <FeedbackList feedbacks={feedbacks?.data ?? []} />
           </IonCardContent>
         </IonCard>
         <div className="init-div-style"></div>

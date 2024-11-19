@@ -20,6 +20,8 @@ import * as Yup from "yup";
 import { useCommonToast } from "../../hooks/useCommonToast";
 import { useAppDispatch } from "../../store/hooks";
 import { setAuth } from "../../store/slices/auth";
+import { setRole } from "../../store/slices/role";
+import { setUser } from "../../store/slices/user";
 
 const loginSchema = Yup.object({
   document: Yup.string()
@@ -58,9 +60,9 @@ const Login = () => {
               <div className={styles.heroImgContainer}>
                 <IonImg src="/login.png" alt="Imagen de healthlinker" />
               </div>
-              <IonTitle color="light" className={`${styles.header}`}>
+              <h1 className={`${styles.header}`} style={{ color: "white" }}>
                 Inicia sesión para continuar
-              </IonTitle>
+              </h1>
             </IonHeader>
             <Formik
               initialValues={{ document: "", password: "" }}
@@ -70,6 +72,20 @@ const Login = () => {
                   if (data.success) {
                     // alert("Inicio de sesión exitoso");
                     dispatch(setAuth(true));
+
+                    // Set user type
+                    dispatch(setRole("regular"));
+
+                    dispatch(
+                      setUser({
+                        document: values.document,
+                        email: "",
+                        fullName: "",
+                        password: values.password,
+                        type: data.type,
+                      })
+                    );
+
                     showToast("Inicio de sesión exitoso", "success");
                     localStorage.setItem("token", data.token);
                     router.push("/casos-clinicos");

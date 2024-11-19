@@ -19,9 +19,9 @@ const Registro: React.FC = () => (
         <div className={`${styles.contentContainer}`}>
           <main className={`${styles.mainContent}`}>
             <IonHeader className="ion-no-border">
-              <IonTitle color="light" className={`${commonStyles.header}`}>
+              <h1 color="light" className={`${commonStyles.header}`}>
                 ¿Con qué rol quieres registrarte?
-              </IonTitle>
+              </h1>
             </IonHeader>
             <IonButton
               type="button"

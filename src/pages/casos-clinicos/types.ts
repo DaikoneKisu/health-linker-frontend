@@ -37,7 +37,7 @@ export interface Archivo {
 }
 
 export interface Especialidad {
-  id: number;
+  id?: number;
   name: string;
 }
 
@@ -71,6 +71,48 @@ export interface ChatMessage {
   content: string;
   messageType: "text" | "image" | "audio";
   createdAt: string;
+}
+
+export interface User {
+  document: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  isVerified: boolean;
+  userType: "specialist" | "rural professional";
+}
+
+export interface Admin {
+  email: string;
+  fullName: string;
+}
+
+export interface SpecialistAdmin {
+  fullName: string;
+  document: string;
+  specialtyId: number;
+  speciality: string;
+  email: string;
+  feedbackCount: number;
+}
+
+export interface RuralProfessionalsAdmin {
+  fullName: string;
+  document: string;
+  zone: string;
+  email: string;
+  caseCount: number;
+}
+
+export interface EducationalResource {
+  id: number;
+  title: string;
+  content: string;
+  authorEmail: string | null;
+  authorDocument: string | null;
+  createdAt: string;
+  adminName: string | null;
+  specialistName: string | null;
 }
 
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 

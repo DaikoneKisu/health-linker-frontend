@@ -6,6 +6,7 @@ import { parseJwt } from "./WithAuth";
 import { Redirect } from "react-router";
 import { setAuth } from "../store/slices/auth";
 import { useIonViewWillEnter } from "@ionic/react";
+import { setRole } from "../store/slices/role";
 
 const WithUnAuth = ({ children }: PropsWithChildren) => {
   const auth = useAppSelector((state) => state.auth);
@@ -13,8 +14,14 @@ const WithUnAuth = ({ children }: PropsWithChildren) => {
   const dispatch = useAppDispatch();
 
   const getUser = async (user: any) => {
-    const userData = await getOneUser(user!.document);
-    dispatch(setUser(userData.user!));
+    if (user && user.document) {
+      const userData = await getOneUser(user!.document);
+      dispatch(setUser({ ...userData.user!, type: userData.user.userType }));
+      dispatch(setRole("regular"));
+    } else {
+      dispatch(setUser(user));
+      dispatch(setRole("admin"));
+    }
   };
 
   useIonViewWillEnter(() => {
