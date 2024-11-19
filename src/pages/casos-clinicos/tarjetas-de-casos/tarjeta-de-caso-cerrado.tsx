@@ -24,9 +24,10 @@ import { saveAs } from "file-saver";
 interface Props {
   caso: CasoClinico;
   getCases: () => void;
+  isAdmin?: boolean;
 }
 
-const TarjetaDeCasoCerrado = ({ caso, getCases }: Props) => {
+const TarjetaDeCasoCerrado = ({ caso, getCases, isAdmin = false }: Props) => {
   const [showToast] = useCommonToast();
   const [present, dismiss] = useIonLoading();
 
@@ -99,12 +100,16 @@ const TarjetaDeCasoCerrado = ({ caso, getCases }: Props) => {
           >
             Ver retroalimentaciones
           </IonButton>
-          <IonButton fill="outline" onClick={reopenCase} color="tertiary">
-            Reabrir
-          </IonButton>
-          <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
-            Hacer público
-          </IonButton>
+          {!isAdmin && (
+            <IonButton fill="outline" onClick={reopenCase} color="tertiary">
+              Reabrir
+            </IonButton>
+          )}
+          {!isAdmin && (
+            <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
+              Hacer público
+            </IonButton>
+          )}
           <IonButton
             fill="outline"
             color="tertiary"

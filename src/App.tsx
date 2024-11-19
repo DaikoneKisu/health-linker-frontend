@@ -58,6 +58,7 @@ import RecursosEducativos from "./pages/recursos-educativos/recursos";
 import CrearRecurso from "./pages/recursos-educativos/crear-recurso";
 import DetalleRecurso from "./pages/recursos-educativos/detalle-recurso";
 import EditarRecurso from "./pages/recursos-educativos/editar-recurso";
+import CasosClinicosAdmin from "./pages/admin/casos/casos-clinicos-admin";
 
 setupIonicReact({ mode: "md" });
 
@@ -127,6 +128,8 @@ function AdminTabs() {
       <IonRouterOutlet>
         <Redirect exact path="/" to="/usuarios" />
         <Redirect exact path="/admin" to="/usuarios" />
+        <Redirect exact path="/login" to="/usuarios" />
+        {/* Usuarios */}
         <Route exact path="/usuarios" component={AdminUsuarios} />
         <Route path="/especialistas/:document" component={EspecialistasAdmin} />
         <Route
@@ -135,13 +138,22 @@ function AdminTabs() {
         />
         <Route path="/admins/:email" component={AdminEdit} />
         <Route exact path="/admins/crear" component={AdminCreate} />
+        {/* Casos clínicos */}
+        <Route path="/casos-clinicos" exact component={CasosClinicosAdmin} />
+        <Route
+          path="/casos-clinicos/caso-clinico/:id"
+          component={CasoClinico}
+        />
+        {/* Especialidades */}
         <Route exact path="/especialidades" component={AdminEspecialidades} />
-        <Route path="/chat" exact component={ChatRoomsList} />
-        <Route path="/chat/:id" component={Chat} />
+        {/* Recursos educativos */}
         <Route path="/recursos" exact component={RecursosEducativos} />
         <Route path="/recursos/nuevo" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
+        {/* Chat */}
+        <Route path="/chat" exact component={ChatRoomsList} />
+        <Route path="/chat/:id" component={Chat} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -150,6 +162,10 @@ function AdminTabs() {
         <IonTabButton tab="users" href="/usuarios">
           <IonIcon icon={person} />
           <IonLabel>Usuarios</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="casos" href="/casos-clinicos">
+          <IonIcon icon={documentText} />
+          <IonLabel>Casos Clínicos</IonLabel>
         </IonTabButton>
         <IonTabButton tab="especialidades" href="/especialidades">
           <IonIcon icon={flask} />

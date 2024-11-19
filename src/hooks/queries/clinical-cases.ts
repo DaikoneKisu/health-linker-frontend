@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  getClosedCasesCurrentAdmin,
   getClosedCasesCurrentUser,
+  getOpenCasesCurrentAdmin,
   getOpenCasesCurrentUser,
   getRequiredCurrentSpecialistCases,
 } from "../../api/casos-clinicos";
@@ -24,6 +26,21 @@ export function useOpenCasesCurrentUser({
   });
 }
 
+export function useOpenCasesCurrentAdmin({
+  page = 1,
+  size = 100,
+  currentSearch = "",
+  email = "",
+  enabled = false,
+}) {
+  return useQuery({
+    queryKey: ["clinical-cases", "open", { page, size, currentSearch, email }],
+    queryFn: () => getOpenCasesCurrentAdmin(page, size, currentSearch),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled,
+  });
+}
+
 export function useClosedCasesCurrentUser({
   page = 1,
   size = 100,
@@ -38,6 +55,25 @@ export function useClosedCasesCurrentUser({
       { page, size, currentSearch, document },
     ],
     queryFn: () => getClosedCasesCurrentUser(page, size, currentSearch),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled,
+  });
+}
+
+export function useClosedCasesCurrentAdmin({
+  page = 1,
+  size = 100,
+  currentSearch = "",
+  email = "",
+  enabled = false,
+}) {
+  return useQuery({
+    queryKey: [
+      "clinical-cases",
+      "closed",
+      { page, size, currentSearch, email },
+    ],
+    queryFn: () => getClosedCasesCurrentAdmin(page, size, currentSearch),
     staleTime: 1000 * 60 * 5, // 5 minutes
     enabled,
   });

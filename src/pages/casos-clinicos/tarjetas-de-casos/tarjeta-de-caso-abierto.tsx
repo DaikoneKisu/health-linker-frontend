@@ -17,9 +17,10 @@ import { closeClinicalCase } from "../../../api/casos-clinicos";
 interface Props {
   caso: CasoClinico;
   getCases: () => void;
+  isAdmin?: boolean;
 }
 
-const TarjetaDeCasoAbierto = ({ caso, getCases }: Props) => {
+const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
   const deleteButtonId = useId();
 
   const closeCase = async () => {
@@ -54,13 +55,15 @@ const TarjetaDeCasoAbierto = ({ caso, getCases }: Props) => {
           >
             Ver
           </IonButton>
-          <IonButton
-            fill="outline"
-            routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
-            color="tertiary"
-          >
-            Retroalimentar
-          </IonButton>
+          {!isAdmin && (
+            <IonButton
+              fill="outline"
+              routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
+              color="tertiary"
+            >
+              Retroalimentar
+            </IonButton>
+          )}
           {/* <IonButton fill="outline" color="tertiary">
             Editar
           </IonButton> */}
