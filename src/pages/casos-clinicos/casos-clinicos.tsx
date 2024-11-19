@@ -29,6 +29,7 @@ import { useLogOut } from "../../hooks/useLogOut";
 import { FaqModal } from "../../components/FaqModal";
 import {
   useClosedCasesCurrentUser,
+  useLibraryCases,
   useOpenCasesCurrentUser,
   useRequiredCurrentSpecialistCases,
 } from "../../hooks/queries/clinical-cases";
@@ -40,7 +41,7 @@ const CasosClinicos = () => {
   const [user, setUser] = useState<any>(null);
   const [currentSearch, setCurrentSearch] = useState("");
   const [caseState, setCaseState] = useState<
-    "abiertos" | "cerrados" | "mentoreables"
+    "abiertos" | "cerrados" | "mentoreables" | "biblioteca"
   >("abiertos");
 
   const userFromStore = useAppSelector((state) => state.user);
@@ -77,6 +78,9 @@ const CasosClinicos = () => {
       enabled: userFromStore?.type === "specialist" && user !== null,
     });
 
+  const { data: libraryCasesData, isLoading: libraryCasesLoading } =
+    useLibraryCases({ page, currentSearch, enabled: user !== null });
+
   const queryClient = useQueryClient();
 
   const showLoader =
@@ -84,21 +88,27 @@ const CasosClinicos = () => {
       ? openCasesLoading
       : caseState === "cerrados"
       ? closedCasesLoading
-      : requiredCasesLoading;
+      : caseState === "mentoreables"
+      ? requiredCasesLoading
+      : libraryCasesLoading;
 
   const getCasesQueryKey =
     caseState === "abiertos"
       ? (["clinical-cases", "open"] as const)
       : caseState === "cerrados"
       ? (["clinical-cases", "closed"] as const)
-      : (["clinical-cases", "specialist"] as const);
+      : caseState === "mentoreables"
+      ? (["clinical-cases", "specialist"] as const)
+      : (["clinical-cases", "library"] as const);
 
   const casesList =
     caseState === "abiertos"
       ? openCasesData
       : caseState === "cerrados"
       ? closedCasesData
-      : requiredCasesData;
+      : caseState === "mentoreables"
+      ? requiredCasesData
+      : libraryCasesData;
 
   useIonViewWillEnter(() => {
     getMe().then((data) => {
@@ -156,6 +166,18 @@ const CasosClinicos = () => {
                     </IonButton>
                     <IonButton
                       className={`${styles.button}`}
+                      onClick={() => {
+                        if (caseState !== "biblioteca") {
+                          setCaseState("biblioteca");
+                        }
+                      }}
+                      color="primary"
+                      fill={caseState === "biblioteca" ? "solid" : "outline"}
+                    >
+                      Biblioteca de casos
+                    </IonButton>
+                    <IonButton
+                      className={`${styles.button}`}
                       routerLink="/login"
                       onClick={logOut}
                       color="dark"
@@ -179,7 +201,9 @@ const CasosClinicos = () => {
               <IonLoading isOpen={showLoader} />
               <ListaDeCasos
                 casos={casesList?.data ?? []}
-                cerrado={caseState === "cerrados"}
+                tipoCasos={
+                  caseState === "mentoreables" ? "abiertos" : caseState
+                }
                 getCases={() =>
                   queryClient.invalidateQueries({
                     queryKey: getCasesQueryKey,
@@ -251,6 +275,18 @@ const CasosClinicos = () => {
                     </IonButton>
                     <IonButton
                       className={`${styles.button}`}
+                      onClick={() => {
+                        if (caseState !== "biblioteca") {
+                          setCaseState("biblioteca");
+                        }
+                      }}
+                      color="primary"
+                      fill={caseState === "biblioteca" ? "solid" : "outline"}
+                    >
+                      Biblioteca de casos
+                    </IonButton>
+                    <IonButton
+                      className={`${styles.button}`}
                       routerLink="/login"
                       onClick={logOut}
                       color="dark"
@@ -271,8 +307,7 @@ const CasosClinicos = () => {
               <IonLoading isOpen={showLoader} />
               <ListaDeCasosEspecialistas
                 casos={casesList?.data ?? []}
-                cerrado={caseState === "cerrados"}
-                mentorear={caseState === "mentoreables"}
+                tipoCasos={caseState}
                 getCases={() =>
                   queryClient.invalidateQueries({
                     queryKey: getCasesQueryKey,

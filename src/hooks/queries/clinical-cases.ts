@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  getCasesLibrary,
   getClosedCasesCurrentAdmin,
   getClosedCasesCurrentUser,
   getOpenCasesCurrentAdmin,
@@ -94,6 +95,20 @@ export function useRequiredCurrentSpecialistCases({
     ],
     queryFn: () => getRequiredCurrentSpecialistCases(page, size, currentSearch),
     staleTime: 1000 * 60 * 5,
+    enabled,
+  });
+}
+
+export function useLibraryCases({
+  page = 1,
+  size = 100,
+  currentSearch = "",
+  enabled = false,
+}) {
+  return useQuery({
+    queryKey: ["clinical-cases", "library", { page, size, currentSearch }],
+    queryFn: () => getCasesLibrary(page, size, currentSearch),
+    staleTime: 1000 * 60 * 10,
     enabled,
   });
 }

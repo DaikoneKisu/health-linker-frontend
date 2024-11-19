@@ -128,7 +128,7 @@ function AdminTabs() {
       <IonRouterOutlet>
         <Redirect exact path="/" to="/usuarios" />
         <Redirect exact path="/admin" to="/usuarios" />
-        <Redirect exact path="/login" to="/usuarios" />
+        {/* <Redirect exact path="/login" to="/usuarios" /> */}
         {/* Usuarios */}
         <Route exact path="/usuarios" component={AdminUsuarios} />
         <Route path="/especialistas/:document" component={EspecialistasAdmin} />

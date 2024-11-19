@@ -357,6 +357,41 @@ export const getRequiredCurrentSpecialistCases = async (
   }
 };
 
+export async function getCasesLibrary(page = 1, size = 100, query = "") {
+  try {
+    const token = localStorage.getItem("token");
+    const { data: casesFromBackend } = await axios.get(
+      `${SERVER}/clinical-cases/library?page=${page}&size=${size}&query=${query}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const libraryCases = await Promise.all(
+      (casesFromBackend as Array<any>).map(
+        async (c) => await mapClinicalCaseToCasoClinico(c)
+      )
+    );
+
+    return {
+      success: true as const,
+      data: libraryCases,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error obteniendo casos:", error);
+      return { success: false as const, error: "Error obteniendo casos" };
+    }
+  }
+}
+
 export const createClinicalCase = async (caso: CrearCasoClinico) => {
   try {
     const token = localStorage.getItem("token");
