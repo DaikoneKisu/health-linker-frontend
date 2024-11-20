@@ -20,7 +20,7 @@ import RegistroProfesionalRural from "./pages/registro/profesional-rural/profesi
 import RegistroEspecialista from "./pages/registro/especialista/especialista";
 import NotFound from "./pages/not-found";
 import CrearCasoClinico from "./pages/casos-clinicos/crear/crear-caso-clinico";
-
+import EditarCasoClinico from "./pages/casos-clinicos/editar/editar-caso-clinico";
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 
@@ -82,6 +82,11 @@ function MainTabs() {
           path="/casos-clinicos/caso-clinico/:id"
           component={CasoClinico}
         />
+        <Route
+          path="/casos-clinicos/caso-clinico/editar/:id"
+          component={EditarCasoClinico}
+        />
+
         <Route
           path="/casos-clinicos/retroalimentaciones/caso-clinico/:id"
           component={FeedbackRender}
