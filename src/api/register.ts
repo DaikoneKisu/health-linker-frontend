@@ -19,6 +19,7 @@ export const registerRuralProfessional = async (
       fullName,
       zone,
       phoneNumber: "593" + phoneNumber,
+      isVerified: true,
     });
 
     const token = response.data;
@@ -56,6 +57,7 @@ export const registerSpecialist = async (
       fullName,
       password,
       phoneNumber: "593" + phoneNumber,
+      isVerified: true
     });
 
     return {

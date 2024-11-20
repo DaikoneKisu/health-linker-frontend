@@ -55,15 +55,15 @@ function ChatRoomsList() {
     getRooms();
   }, []);
 
-  // useIonViewWillEnter(() => {
-  //   getMe().then((data) => {
-  //     if (data.success) {
-  //       setUser(data.user);
-  //     } else {
-  //       console.error("Error:", data.error);
-  //     }
-  //   });
-  // }, []);
+   useIonViewWillEnter(() => {
+     getMe().then((data) => {
+       if (data.success) {
+         setUser(data.user);
+       } else {
+         console.error("Error:", data.error);
+       }
+     });
+   }, []);
 
   useIonViewWillLeave(() => {
     setIsLoading(false);
