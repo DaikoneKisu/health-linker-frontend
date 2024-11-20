@@ -460,6 +460,7 @@ export const updateClinicalCase = async (
         patientGender: caso.genero === "masculino" ? "masculine" : "feminine",
         patientReason: caso.motivoPaciente,
         patientAssessment: caso.valoracionPaciente,
+        requiredSpecialtyId: caso.especialidadRequerida
       },
       {
         headers: {

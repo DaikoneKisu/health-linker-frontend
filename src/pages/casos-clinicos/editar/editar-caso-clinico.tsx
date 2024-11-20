@@ -165,13 +165,14 @@ const EditarCasoClinico: React.FC<Props> = ({ match }) => {
           validationSchema={crearCasoClinicoSchema}
           onSubmit={(values, { setSubmitting }) => {console.log("Se manda", values)
             updateClinicalCase(values).then((data) => {
+              console.log(values)
               if (data.success) {
                 // alert("Caso clínico creado satisfactoriamente");
-                showToast("Caso clínico creado satisfactoriamente", "success");
+                showToast("Caso clínico editado satisfactoriamente", "success");
                 router.push("/casos-clinicos");
               } else {
                 // alert("Error al crear el caso clínico");
-                showToast("Error al crear el caso clínico", "error");
+                showToast("Error al editar el caso clínico", "error");
               }
               setSubmitting(false);
             });
