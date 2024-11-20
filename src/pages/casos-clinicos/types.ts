@@ -8,16 +8,19 @@ export interface CasoClinico {
   descripcionCaso: string;
   motivoPaciente: string;
   archivosAsociados: Archivo[] | null;
+  editable: boolean;
 }
 
-export interface EditarCasoClinico {
+export interface EditCasoClinico {
+  id: number;
   fechaNacimiento: string;
   genero: "masculino" | "femenino";
-  especialidadRequerida: string;
+  especialidadRequerida: number;
   motivoMentoria: string;
   valoracionPaciente: string;
   descripcionCaso: string;
   motivoPaciente: string;
+  archivosAsociados: File[] | null;
 }
 
 export interface CrearCasoClinico {

@@ -3,7 +3,7 @@ import { SERVER } from "./server";
 import {
   CasoClinico,
   CrearCasoClinico,
-  EditarCasoClinico,
+  EditCasoClinico,
 } from "../pages/casos-clinicos/types";
 
 export const getCase = async (id: number) => {
@@ -444,17 +444,16 @@ export const createClinicalCase = async (caso: CrearCasoClinico) => {
   }
 };
 
-export const editClinicalCase = async (
-  id: number,
-  caso: EditarCasoClinico,
-  files?: File[]
+export const updateClinicalCase = async (
+  caso: EditCasoClinico
 ) => {
   try {
     const token = localStorage.getItem("token");
 
     await axios.patch(
-      `${SERVER}/clinical-cases/${id}`,
+      `${SERVER}/clinical-cases/${caso.id}`,
       {
+        id: caso.id,
         description: caso.descripcionCaso,
         reason: caso.motivoMentoria,
         patientBirthdate: caso.fechaNacimiento,
@@ -468,12 +467,12 @@ export const editClinicalCase = async (
         },
       }
     );
-
-    if (files) {
+  
+    if (!(caso.archivosAsociados == null)) {
       await Promise.all(
-        files.map(async (archivo) => {
+        caso.archivosAsociados.map(async (archivo) => {
           const form = new FormData();
-          form.append("clinicalCaseId", id.toString());
+          form.append("clinicalCaseId", caso.id.toString());
           form.append("file", archivo);
 
           await axios.post(`${SERVER}/clinical-cases-files`, form, {
@@ -482,7 +481,7 @@ export const editClinicalCase = async (
         })
       );
     }
-
+  
     return {
       success: true,
     };
@@ -706,6 +705,7 @@ const mapClinicalCaseToCasoClinico = async (
     descripcionCaso: c.description,
     motivoPaciente: c.patientReason,
     archivosAsociados: files.map((f) => ({ id: f.id, enlace: f.link })),
+    editable: c.editable
   };
 };
 
@@ -718,6 +718,7 @@ type ClinicalCaseResponse = {
   patientReason: string;
   patientAssessment: string;
   requiredSpecialtyId: number;
+  editable: boolean;
 };
 
 type ClinicalCasePost = {
