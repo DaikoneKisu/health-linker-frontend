@@ -3,49 +3,36 @@ import { CasoClinico } from "./types";
 import TarjetaDeCasoAbierto from "./tarjetas-de-casos/tarjeta-de-caso-abierto";
 import { IonList } from "@ionic/react";
 import TarjetaDeCasoCerrado from "./tarjetas-de-casos/tarjeta-de-caso-cerrado";
+import TarjetaDeCasoBiblioteca from "./tarjetas-de-casos/tarjeta-de-caso-biblioteca";
 
 interface Props {
   casos: CasoClinico[];
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
-  cerrado: boolean;
+  tipoCasos: "abiertos" | "cerrados" | "biblioteca";
   getCases: () => void;
 }
 
-const ListaDeCasos = ({
-  casos,
-  dentroCaso,
-  casoEscogido,
-  cerrado,
-  getCases,
-}: Props) => {
+const ListaDeCasos = ({ casos, tipoCasos, getCases }: Props) => {
   return (
     <IonList>
-      {casos.length === 0 && cerrado && (
+      {casos.length === 0 && tipoCasos === "cerrados" && (
         <p style={{ textAlign: "center" }}>No has cerrado casos todavía</p>
       )}
-      {casos.length === 0 && !cerrado && (
+      {casos.length === 0 && tipoCasos === "abiertos" && (
         <p style={{ textAlign: "center" }}>No has abierto casos todavía</p>
       )}
-      {cerrado
-        ? casos.map((c) => (
-            <TarjetaDeCasoCerrado
-              caso={c}
-              dentroCaso={dentroCaso}
-              casoEscogido={casoEscogido}
-              key={c.id}
-              getCases={getCases}
-            />
-          ))
-        : casos.map((c) => (
-            <TarjetaDeCasoAbierto
-              caso={c}
-              dentroCaso={dentroCaso}
-              casoEscogido={casoEscogido}
-              key={c.id}
-              getCases={getCases}
-            />
-          ))}
+      {casos.length === 0 && tipoCasos === "biblioteca" && (
+        <p style={{ textAlign: "center" }}>No hay casos en la biblioteca</p>
+      )}
+      {tipoCasos === "cerrados" &&
+        casos.map((c) => (
+          <TarjetaDeCasoCerrado caso={c} getCases={getCases} key={c.id} />
+        ))}
+      {tipoCasos === "abiertos" &&
+        casos.map((c) => (
+          <TarjetaDeCasoAbierto caso={c} getCases={getCases} key={c.id} />
+        ))}
+      {tipoCasos === "biblioteca" &&
+        casos.map((c) => <TarjetaDeCasoBiblioteca caso={c} key={c.id} />)}
     </IonList>
   );
 };

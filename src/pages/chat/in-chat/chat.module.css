@@ -1,0 +1,34 @@
+.header {
+  height: 80px;
+}
+
+.emptyMessage {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.message {
+  margin: 0.5rem;
+}
+
+.messageContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.messageDetail {
+  color: #666;
+}
+
+.messageTime {
+  font-size: 0.85rem;
+}
+
+.inputContainer {
+  display: flex;
+  min-width: 100%;
+  position: fixed;
+  bottom: 1rem;
+  padding-inline: 0.6rem;
+}

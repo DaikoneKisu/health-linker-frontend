@@ -8,33 +8,61 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonToolbar,
-  useIonRouter,
+  useIonLoading,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
 import {
   publicizeClinicalCase,
   reopenClinicalCase,
 } from "../../../api/casos-clinicos";
+import { useCommonToast } from "../../../hooks/useCommonToast";
+import { getCaseDataForPdf } from "./utils";
+import { pdf } from "@react-pdf/renderer";
+import PdfCaso from "./pdf-caso";
+import { saveAs } from "file-saver";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   caso: CasoClinico;
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
   getCases: () => void;
+  isAdmin?: boolean;
 }
 
-const TarjetaDeCasoCerrado = ({
-  caso,
-  dentroCaso,
-  casoEscogido,
-  getCases,
-}: Props) => {
+const TarjetaDeCasoCerrado = ({ caso, getCases, isAdmin = false }: Props) => {
+  const [showToast] = useCommonToast();
+  const [present, dismiss] = useIonLoading();
+
+  const queryClient = useQueryClient();
+
+  const downloadPdf = async () => {
+    const fileData = await getCaseDataForPdf(caso.id);
+    if (!fileData.success) {
+      showToast(fileData.message, "error");
+      dismiss();
+      return;
+    }
+    const blob = await pdf(
+      <PdfCaso
+        medicalCase={fileData.medicalCase!}
+        feedbackList={fileData.feedback!}
+      />
+    ).toBlob();
+    const fileName = `documento-caso-nro-${caso.id}.pdf`;
+    saveAs(blob, fileName);
+    dismiss();
+  };
+
   const publicizeCase = () => {
     publicizeClinicalCase(caso.id).then((data) => {
       if (data.success) {
         getCases();
+        queryClient.invalidateQueries({
+          queryKey: ["clinical-cases", "library"],
+        });
+        showToast("Caso hecho público", "success");
       } else {
-        alert("Error al hacer público el caso");
+        // alert("Error al hacer público el caso");
+        showToast("Error al hacer público el caso", "error");
       }
     });
   };
@@ -45,6 +73,7 @@ const TarjetaDeCasoCerrado = ({
         getCases();
       } else {
         alert("Error al reabrir el caso");
+        showToast("Error al reabrir el caso", "error");
       }
     });
   };
@@ -78,11 +107,25 @@ const TarjetaDeCasoCerrado = ({
           >
             Ver retroalimentaciones
           </IonButton>
-          <IonButton fill="outline" onClick={reopenCase} color="tertiary">
-            Reabrir
-          </IonButton>
-          <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
-            Hacer público
+          {!isAdmin && (
+            <IonButton fill="outline" onClick={reopenCase} color="tertiary">
+              Reabrir
+            </IonButton>
+          )}
+          {!isAdmin && (
+            <IonButton fill="outline" onClick={publicizeCase} color="tertiary">
+              Hacer público
+            </IonButton>
+          )}
+          <IonButton
+            fill="outline"
+            color="tertiary"
+            onClick={() => {
+              present({ spinner: "circles" });
+              downloadPdf();
+            }}
+          >
+            Descargar como PDF
           </IonButton>
         </IonButtons>
       </IonToolbar>

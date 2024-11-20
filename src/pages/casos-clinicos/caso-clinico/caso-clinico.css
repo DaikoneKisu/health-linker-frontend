@@ -1,0 +1,12 @@
+.sc-ion-label-md {
+  color: #444;
+}
+
+#previewModalHeader {
+  text-align: center;
+}
+
+#previewModalClose {
+  min-width: 100%;
+  margin-top: 0.8rem;
+}

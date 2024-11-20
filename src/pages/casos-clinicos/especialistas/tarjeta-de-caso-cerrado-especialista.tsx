@@ -8,45 +8,39 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonToolbar,
-  useIonRouter,
+  useIonLoading,
 } from "@ionic/react";
-import { CasoClinico } from "../types";
-import {
-  publicizeClinicalCase,
-  reopenClinicalCase,
-} from "../../../api/casos-clinicos";
+import { type CasoClinico } from "../types";
+import { useCommonToast } from "../../../hooks/useCommonToast";
+import { getCaseDataForPdf } from "../tarjetas-de-casos/utils";
+import { pdf } from "@react-pdf/renderer";
+import PdfCaso from "../tarjetas-de-casos/pdf-caso";
+import { saveAs } from "file-saver";
 
 interface Props {
   caso: CasoClinico;
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
-  getCases: () => void;
 }
 
-const TarjetaDeCasoCerradoEspecialista = ({
-  caso,
-  dentroCaso,
-  casoEscogido,
-  getCases,
-}: Props) => {
-  const publicizeCase = () => {
-    publicizeClinicalCase(caso.id).then((data) => {
-      if (data.success) {
-        getCases();
-      } else {
-        alert("Error al hacer público el caso");
-      }
-    });
-  };
+const TarjetaDeCasoCerradoEspecialista = ({ caso }: Props) => {
+  const [showToast] = useCommonToast();
+  const [present, dismiss] = useIonLoading();
 
-  const reopenCase = () => {
-    reopenClinicalCase(caso.id).then((data) => {
-      if (data.success) {
-        getCases();
-      } else {
-        alert("Error al reabrir el caso");
-      }
-    });
+  const downloadPdf = async () => {
+    const fileData = await getCaseDataForPdf(caso.id);
+    if (!fileData.success) {
+      showToast(fileData.message, "error");
+      dismiss();
+      return;
+    }
+    const blob = await pdf(
+      <PdfCaso
+        medicalCase={fileData.medicalCase!}
+        feedbackList={fileData.feedback!}
+      />
+    ).toBlob();
+    const fileName = `documento-caso-nro-${caso.id}.pdf`;
+    saveAs(blob, fileName);
+    dismiss();
   };
 
   return (
@@ -77,6 +71,16 @@ const TarjetaDeCasoCerradoEspecialista = ({
             color="tertiary"
           >
             Ver retroalimentaciones
+          </IonButton>
+          <IonButton
+            fill="outline"
+            color="tertiary"
+            onClick={() => {
+              present({ spinner: "circles" });
+              downloadPdf();
+            }}
+          >
+            Descargar como PDF
           </IonButton>
         </IonButtons>
       </IonToolbar>

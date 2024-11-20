@@ -8,38 +8,17 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonToolbar,
-  useIonRouter,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
-import ConfirmCaseDelete from "../../../components/confirm-case-delete/confirm-case-delete";
 import { useId } from "react";
 import { closeClinicalCase } from "../../../api/casos-clinicos";
 
 interface Props {
   caso: CasoClinico;
-  dentroCaso: (answer: boolean) => void;
-  casoEscogido: (caso: CasoClinico) => void;
   getCases: () => void;
 }
 
-const TarjetaDeCasoAbiertoEspecialista = ({
-  caso,
-  dentroCaso,
-  casoEscogido,
-  getCases,
-}: Props) => {
-  const deleteButtonId = useId();
-
-  const closeCase = async () => {
-    closeClinicalCase(caso.id).then((data) => {
-      if (data.success) {
-        getCases();
-      } else {
-        alert("Error al cerrar el caso");
-      }
-    });
-  };
-
+const TarjetaDeCasoAbiertoEspecialista = ({ caso, getCases }: Props) => {
   return (
     <IonCard>
       <IonCardHeader>

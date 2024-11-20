@@ -15,3 +15,8 @@
   font-weight: bold;
   width: min(300px, 80%);
 }
+
+.caseCount {
+  padding-left: 1.35rem;
+  color: #555;
+}

@@ -16,7 +16,7 @@ const NotFound: React.FC = () => {
       </IonHeader>
       <IonContent>
         <h2>404 - Página no encontrada</h2>
-        <IonButton routerLink="/" size="small">
+        <IonButton routerLink="/login" size="small">
           Volver a home
         </IonButton>
       </IonContent>
