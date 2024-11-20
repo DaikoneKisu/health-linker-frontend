@@ -98,7 +98,7 @@ function MainTabs() {
         <Route path="/chat" exact component={ChatRoomsList} />
         <Route path="/chat/:id" component={Chat} />
         <Route path="/recursos" exact component={RecursosEducativos} />
-        <Route path="/recursos/nuevo" exact component={CrearRecurso} />
+        <Route path="/nuevo-recurso" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
         <Route component={NotFound} />
@@ -153,7 +153,7 @@ function AdminTabs() {
         <Route exact path="/especialidades" component={AdminEspecialidades} />
         {/* Recursos educativos */}
         <Route path="/recursos" exact component={RecursosEducativos} />
-        <Route path="/recursos/nuevo" exact component={CrearRecurso} />
+        <Route path="/nuevo-recurso" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
         {/* Chat */}

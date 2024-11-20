@@ -92,7 +92,7 @@ export default function RecursosEducativos() {
             <>
               {/* For creating resources */}
               <IonFab slot="fixed" horizontal="end" vertical="bottom">
-                <IonFabButton color="primary" routerLink="/recursos/nuevo">
+                <IonFabButton color="primary" routerLink="/nuevo-recurso">
                   <IonIcon icon={add} />
                 </IonFabButton>
               </IonFab>
