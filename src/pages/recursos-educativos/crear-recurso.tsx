@@ -23,11 +23,11 @@ const resourceSchema = Yup.object({
   title: Yup.string()
     .trim()
     .required("Es obligario ingresar un título")
-    .max(254, "El correo está limitado a 254 caracteres"),
+    .max(254, "El título está limitado a 254 caracteres"),
   content: Yup.string()
     .trim()
     .required("Es obligario ingresar un contenido")
-    .max(1000, "El contenido está limitado a 1000 caracteres"),
+    .max(10000, "El contenido está limitado a 1000 caracteres"),
 });
 
 export default function CrearRecurso() {
@@ -58,6 +58,7 @@ export default function CrearRecurso() {
             initialValues={{ title: "", content: "" }}
             validationSchema={resourceSchema}
             onSubmit={(values, { setSubmitting }) => {
+              console.log(values)
               setSubmitting(true);
               createMutation.mutate(
                 {
