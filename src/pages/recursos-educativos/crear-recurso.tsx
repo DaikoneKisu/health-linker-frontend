@@ -18,17 +18,19 @@ import { useCommonToast } from "../../hooks/useCommonToast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Yup from "yup";
 import { createResource } from "../../api/recursos-educativos";
+import ReactQuill from 'react-quill';
+import QuillEditor from "../../components/QuillEditor";
 
-const resourceSchema = Yup.object({
-  title: Yup.string()
-    .trim()
-    .required("Es obligario ingresar un título")
-    .max(254, "El título está limitado a 254 caracteres"),
-  content: Yup.string()
-    .trim()
-    .required("Es obligario ingresar un contenido")
-    .max(10000, "El contenido está limitado a 1000 caracteres"),
+const resourceSchema = Yup.object().shape({
+  title: Yup.string().required('El título es requerido'),
+  content: Yup.string().required('El contenido no puede estar vacío')
 });
+
+interface CrearRecursoValues {
+  title: string;
+  content: string;
+}
+
 
 export default function CrearRecurso() {
   const [showToast] = useCommonToast();
@@ -85,7 +87,7 @@ export default function CrearRecurso() {
               );
             }}
           >
-            {({ errors, isSubmitting }) => (
+            {({ errors, isSubmitting, touched }) => (
               <Form className={`${styles.resourceForm} ion-padding`}>
                 <Field name="title">
                   {({ field }: FieldProps) => (
@@ -107,22 +109,17 @@ export default function CrearRecurso() {
                   )}
                 </Field>
                 <Field name="content">
-                  {({ field }: FieldProps) => (
-                    <IonTextarea
-                      className={`${errors.content ? "ion-invalid" : ""}`}
-                      required
-                      label="Contenido"
-                      labelPlacement="stacked"
-                      placeholder="Introduzca el contenido del recurso (tips, enlaces, etc.)"
-                      fill="outline"
-                      value={field.value}
-                      name={field.name}
-                      errorText={errors.content}
-                      onIonBlur={field.onBlur}
-                      onIonInput={field.onChange}
-                      clearOnEdit={false}
-                      autoGrow
-                    />
+                  {({ field, form }: FieldProps) => (
+                    <div>
+                      <QuillEditor 
+                        field={field} 
+                        form={form} 
+                        placeholder="Ingresa el contenido del recurso educativo"
+                      />
+                      {errors.content && touched.content && (
+                      <div className="error">{errors.content}</div>
+                    )}
+                    </div>
                   )}
                 </Field>
                 <IonButton

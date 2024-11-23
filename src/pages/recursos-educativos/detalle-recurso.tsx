@@ -11,11 +11,14 @@ import LogoHeader from "../../components/logo-header/logo-header";
 import commonStyles from "../../common.module.css";
 import styles from "./recursos.module.css";
 import { useResource } from "../../hooks/queries/educational-resources";
-
+import DOMPurify from 'dompurify'
 interface Props extends RouteComponentProps<{ id: string }> {}
 
 export default function DetalleRecurso({ match }: Props) {
   const resource = useResource(match.params.id);
+
+  // Sanitizar el contenido HTML
+  const sanitizedContent = DOMPurify.sanitize(resource.data?.data?.content || '')
 
   return (
     <WithAuth>
@@ -40,10 +43,12 @@ export default function DetalleRecurso({ match }: Props) {
             </p>
             <p className={`${styles.resourceDetailSub}`}>
               Autor:{" "}
-              {resource.data?.data?.adminName ??
+              {resource.data?.data?.adminName??
                 resource.data?.data?.specialistName}
             </p>
-            <p>{resource.data?.data?.content}</p>
+            <div 
+              dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+            />
           </div>
         </IonContent>
       </IonPage>
