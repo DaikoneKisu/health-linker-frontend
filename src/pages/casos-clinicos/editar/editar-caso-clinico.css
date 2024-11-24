@@ -1,0 +1,34 @@
+ion-textarea {
+    .textarea-wrapper-inner,
+    .native-wrapper {
+      align-items: initial;
+      justify-content: initial;
+    }
+  }
+  
+  .save-button,
+  .cancel-button,
+  .upload-button {
+    margin: 0;
+  }
+  
+  .upload-button {
+    margin: 0 auto;
+  }
+  
+  .form-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px 10px;
+    gap: 0.6rem;
+  }
+  
+  .form-card {
+    background-color: white;
+  }
+  
+  ion-datetime-button::part(native) {
+    background-color: #e9d5ff;
+  }
+  

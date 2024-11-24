@@ -1,0 +1,9 @@
+.faqToolbarBtn {
+  color: #6b21a8;
+}
+
+.faqContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

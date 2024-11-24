@@ -1,0 +1,26 @@
+.userItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-block: 0.65rem;
+}
+
+.userTitle {
+  font-size: 1.2rem;
+}
+
+.userSection * {
+  text-align: start;
+}
+
+.userDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adminForm {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}

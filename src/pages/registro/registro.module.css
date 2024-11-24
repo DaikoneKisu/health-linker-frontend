@@ -1,0 +1,21 @@
+.mainContent,
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mainContent {
+  margin-top: auto;
+  gap: 30px;
+}
+
+.contentContainer {
+  height: 100%;
+}
+
+.modalTitle {
+  padding-block: 1rem;
+  text-align: center;
+  font-weight: 700;
+}
