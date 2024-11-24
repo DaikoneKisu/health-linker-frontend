@@ -18,19 +18,18 @@ import { useCommonToast } from "../../hooks/useCommonToast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Yup from "yup";
 import { createResource } from "../../api/recursos-educativos";
-import ReactQuill from 'react-quill';
+import ReactQuill from "react-quill";
 import QuillEditor from "../../components/QuillEditor";
 
 const resourceSchema = Yup.object().shape({
-  title: Yup.string().required('El título es requerido'),
-  content: Yup.string().required('El contenido no puede estar vacío')
+  title: Yup.string().required("El título es requerido"),
+  content: Yup.string().required("El contenido no puede estar vacío"),
 });
 
 interface CrearRecursoValues {
   title: string;
   content: string;
 }
-
 
 export default function CrearRecurso() {
   const [showToast] = useCommonToast();
@@ -60,7 +59,7 @@ export default function CrearRecurso() {
             initialValues={{ title: "", content: "" }}
             validationSchema={resourceSchema}
             onSubmit={(values, { setSubmitting }) => {
-              console.log(values)
+              console.log(values);
               setSubmitting(true);
               createMutation.mutate(
                 {
@@ -111,14 +110,20 @@ export default function CrearRecurso() {
                 <Field name="content">
                   {({ field, form }: FieldProps) => (
                     <div>
-                      <QuillEditor 
-                        field={field} 
-                        form={form} 
+                      <QuillEditor
+                        field={field}
+                        form={form}
                         placeholder="Ingresa el contenido del recurso educativo"
+                        meta={{
+                          error: String(errors.content),
+                          touched: Boolean(touched.content),
+                          value: field.value,
+                          initialTouched: false,
+                        }}
                       />
                       {errors.content && touched.content && (
-                      <div className="error">{errors.content}</div>
-                    )}
+                        <div className="error">{errors.content}</div>
+                      )}
                     </div>
                   )}
                 </Field>

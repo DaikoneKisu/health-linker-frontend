@@ -1,31 +1,10 @@
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonCard,
-  IonButtons,
-  IonButton,
-  IonText,
-  IonList,
-  IonFooter,
-  IonIcon,
-  IonCardContent,
-  IonItemDivider,
-  IonItemSliding,
-  IonItem,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonInfiniteScroll,
-} from "@ionic/react";
 import { CasoClinico } from "../types";
 import { DatosPaciente } from "./información/datos-paciente";
 import { FeedbackRender } from "./retroalimentación/retroalimentacion-pacientes";
-import { person } from "ionicons/icons";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { RouteComponentProps } from "react-router";
 
-interface Props {
+interface Props extends RouteComponentProps<{ id: string }> {
   casoClinico: CasoClinico;
   dentroCaso: (answer: boolean) => void;
 }
@@ -33,6 +12,7 @@ interface Props {
 export const CasoIndividual: React.FC<Props> = ({
   casoClinico,
   dentroCaso,
+  match,
 }) => {
   const [feedback, setFeedback] = useState(false);
 
@@ -43,7 +23,7 @@ export const CasoIndividual: React.FC<Props> = ({
   return (
     <div>
       {feedback ? (
-        <FeedbackRender caseId={casoClinico.id} isFeedback={isFeedback} />
+        <FeedbackRender caseId={match.params.id} />
       ) : (
         <DatosPaciente
           casoClinico={casoClinico}

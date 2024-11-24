@@ -22,11 +22,11 @@ import { useCommonToast } from "../../../../hooks/useCommonToast";
 import { useCaseFeedback } from "../../../../hooks/queries/feedback";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-interface Props extends RouteComponentProps<{ id: string }> {
-  isFeedback: (answer: boolean) => void;
+interface Props {
+  caseId: string;
 }
 
-export const FeedbackRender = ({ match, isFeedback }: Props) => {
+export const FeedbackRender = ({ caseId }: Props) => {
   const [texto, setTexto] = useState("");
   const router = useIonRouter();
 
@@ -35,16 +35,16 @@ export const FeedbackRender = ({ match, isFeedback }: Props) => {
 
   const queryClient = useQueryClient();
 
-  const { data: feedbacks } = useCaseFeedback(Number(match.params.id));
+  const { data: feedbacks } = useCaseFeedback(Number(caseId));
 
   const submitMutation = useMutation({
-    mutationFn: () => submitFeedback(texto, Number(match.params.id)),
+    mutationFn: () => submitFeedback(texto, Number(caseId)),
     onSuccess: ({ success }) => {
       if (success) {
         showToast("Retroalimentación enviada exitosamente", "success");
         setTexto("");
         queryClient.invalidateQueries({
-          queryKey: ["feedback", { caseId: Number(match.params.id) }],
+          queryKey: ["feedback", { caseId: Number(caseId) }],
         });
       } else {
         showToast("Error al enviar la retroalimentación", "error");
