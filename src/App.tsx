@@ -149,6 +149,14 @@ function AdminTabs() {
           path="/casos-clinicos/caso-clinico/:id"
           component={CasoClinico}
         />
+        <Route
+          path="/casos-clinicos/retroalimentaciones/caso-clinico/:id"
+          component={ClosedFeedbackRender}
+        />
+        <Route
+          path="/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/:id"
+          component={ClosedFeedbackRender}
+        />
         {/* Especialidades */}
         <Route exact path="/especialidades" component={AdminEspecialidades} />
         {/* Recursos educativos */}
@@ -157,8 +165,8 @@ function AdminTabs() {
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
         {/* Chat */}
-        <Route path="/chat" exact component={ChatRoomsList} />
-        <Route path="/chat/:id" component={Chat} />
+        {/* <Route path="/chat" exact component={ChatRoomsList} />
+        <Route path="/chat/:id" component={Chat} /> */}
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -176,10 +184,10 @@ function AdminTabs() {
           <IonIcon icon={flask} />
           <IonLabel>Especialidades</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="chat" href="/chat">
+        {/* <IonTabButton tab="chat" href="/chat">
           <IonIcon icon={chatbox} />
           <IonLabel>Chat</IonLabel>
-        </IonTabButton>
+        </IonTabButton> */}
       </IonTabBar>
     </IonTabs>
   );

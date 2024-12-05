@@ -36,7 +36,7 @@ const FAQ = [
   },
   {
     question: "¿Cómo puedo realizar copias de seguridad de los datos?",
-    reply: "TODO",
+    reply: "Comunícate con los administradores técnicos de la plataforma.",
   },
   {
     question: "¿Qué hacer si hay un fallo técnico en la página?",
