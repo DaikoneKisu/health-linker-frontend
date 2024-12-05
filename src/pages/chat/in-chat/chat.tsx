@@ -1,14 +1,17 @@
 import {
+  IonAlert,
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
+  IonImg,
   IonInput,
   IonItem,
   IonLabel,
   IonList,
   IonLoading,
+  IonModal,
   IonPage,
   IonText,
   IonTitle,
@@ -18,15 +21,22 @@ import {
 } from "@ionic/react";
 import WithAuth from "../../../components/WithAuth";
 import { RouteComponentProps } from "react-router";
-import React, { useState } from "react";
+import React, { useId, useRef, useState } from "react";
 import { type ChatMessage } from "../../casos-clinicos/types";
 import { getInitialChatData } from "../../../api/chat-rooms";
 import { useCommonToast } from "../../../hooks/useCommonToast";
 import { io, Socket } from "socket.io-client";
 import { SERVER } from "../../../api/server";
 import styles from "./chat.module.css";
-import { arrowBack, send } from "ionicons/icons";
-import { sendMessage } from "../../../api/chat-messages";
+import {
+  arrowBack,
+  attach,
+  imageOutline,
+  micOutline,
+  send,
+} from "ionicons/icons";
+import { sendMessage, uploadFile } from "../../../api/chat-messages";
+import { useMutation } from "@tanstack/react-query";
 
 interface ChatPageProps
   extends RouteComponentProps<{
@@ -41,10 +51,12 @@ function Chat({ match }: ChatPageProps) {
   // Message to send
   const [currentMessage, setCurrentMessage] = useState("");
 
-  // Socket for conntection
+  // Socket for connection
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
+
+  const adjuntoTriggerId = useId();
 
   const router = useIonRouter();
 
@@ -115,28 +127,7 @@ function Chat({ match }: ChatPageProps) {
         <IonContent>
           <IonLoading isOpen={isLoading} />
           {/* Chat messages */}
-          <IonList>
-            {messages.map((message) => (
-              <IonItem key={message.id} className={`${styles.message}`}>
-                <div className={`${styles.messageContent}`}>
-                  <IonText className={`${styles.messageDetail}`}>
-                    {message.senderName}
-                  </IonText>
-                  <IonText>{message.content}</IonText>
-                  <IonText
-                    className={`${styles.messageDetail} ${styles.messageTime}`}
-                  >
-                    {new Date(message.createdAt).toLocaleTimeString()}
-                  </IonText>
-                </div>
-              </IonItem>
-            ))}
-            {messages.length === 0 && (
-              <IonLabel className={`${styles.emptyMessage}`}>
-                No hay mensajes en este chat
-              </IonLabel>
-            )}
-          </IonList>
+          <MessagesList messages={messages} />
 
           {/* Message input */}
           <form className={`${styles.inputContainer}`} onSubmit={onSendMessage}>
@@ -145,6 +136,9 @@ function Chat({ match }: ChatPageProps) {
               value={currentMessage}
               onIonInput={(e) => setCurrentMessage(String(e.target.value))}
             />
+            <IonButton shape="round" type="button" id={adjuntoTriggerId}>
+              <IonIcon slot="icon-only" icon={attach} />
+            </IonButton>
             <IonButton
               shape="round"
               disabled={!currentMessage.length}
@@ -153,9 +147,206 @@ function Chat({ match }: ChatPageProps) {
               <IonIcon slot="icon-only" icon={send} />
             </IonButton>
           </form>
+
+          <FileUploadModal
+            triggerId={adjuntoTriggerId}
+            roomId={match.params.id}
+          />
         </IonContent>
       </IonPage>
     </WithAuth>
+  );
+}
+
+function MessagesList({ messages }: { messages: ChatMessage[] }) {
+  const [image, setImage] = useState("");
+
+  return (
+    <>
+      {/* Lista de mensajes */}
+      <IonList>
+        {messages.map((message) => (
+          <IonItem key={message.id} className={`${styles.message}`}>
+            {message.messageType === "text" && (
+              <div className={`${styles.messageContent}`}>
+                <IonText className={`${styles.messageDetail}`}>
+                  {message.senderName}
+                </IonText>
+                <IonText>{message.content}</IonText>
+                <IonText
+                  className={`${styles.messageDetail} ${styles.messageTime}`}
+                >
+                  {new Date(message.createdAt).toLocaleTimeString()}
+                </IonText>
+              </div>
+            )}
+
+            {message.messageType === "image" && (
+              <div className={`${styles.messageContent}`}>
+                <IonText className={`${styles.messageDetail}`}>
+                  {message.senderName}
+                </IonText>
+                <IonImg
+                  src={message.content}
+                  alt={`Mensaje de ${message.senderName}`}
+                  className={`${styles.chatImage}`}
+                  onClick={() => {
+                    setImage(message.content);
+                  }}
+                />
+                <IonText
+                  className={`${styles.messageDetail} ${styles.messageTime}`}
+                >
+                  {new Date(message.createdAt).toLocaleTimeString()}
+                </IonText>
+              </div>
+            )}
+          </IonItem>
+        ))}
+        {messages.length === 0 && (
+          <IonLabel className={`${styles.emptyMessage}`}>
+            No hay mensajes en este chat
+          </IonLabel>
+        )}
+      </IonList>
+
+      {/* Vista previa de imágenes */}
+      <IonModal isOpen={image !== ""}>
+        <IonHeader className="ion-padding">
+          <IonToolbar>
+            <IonTitle>Vista previa</IonTitle>
+            <IonButtons slot="end">
+              <IonButton
+                onClick={() => {
+                  setImage("");
+                }}
+                color="primary"
+              >
+                Salir
+              </IonButton>
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <IonImg src={image} alt="Imagen del mensaje" />
+        </IonContent>
+      </IonModal>
+    </>
+  );
+}
+
+function FileUploadModal({
+  triggerId,
+  roomId,
+}: {
+  triggerId: string;
+  roomId: string;
+}) {
+  const modalRef = useRef<HTMLIonModalElement>(null);
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [showToast] = useCommonToast();
+
+  const fileUploadMutation = useMutation({
+    mutationFn: (files: File[]) => {
+      return Promise.all(
+        files.map(async (file) => {
+          const response = await uploadFile(file);
+          if (response.success) {
+            return sendMessage(Number(roomId), response.fileName, "image");
+          }
+        })
+      );
+    },
+    onSuccess: (data) => {
+      if (!data.some((res) => res?.success)) {
+        showToast("Ocurrió un error", "error");
+      }
+      setUploadFiles([]);
+      modalRef.current?.dismiss();
+    },
+  });
+
+  const handleIconClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      setUploadFiles(Array.from(files));
+    }
+  };
+  return (
+    <>
+      <IonAlert
+        isOpen={uploadFiles.length > 0}
+        header="Confirmar carga de imagen"
+        message="¿Desea subir las imágenes seleccionadas?"
+        onDidDismiss={() => setUploadFiles([])}
+        buttons={[
+          {
+            text: "Cancelar",
+            role: "cancel",
+            handler: () => {
+              setUploadFiles([]);
+            },
+          },
+          {
+            text: "Confirmar",
+            role: "confirm",
+            handler: () => {
+              fileUploadMutation.mutate(uploadFiles);
+            },
+          },
+        ]}
+      />
+
+      <IonModal
+        ref={modalRef}
+        trigger={triggerId}
+        initialBreakpoint={0.25}
+        breakpoints={[0, 0.25, 0.5]}
+      >
+        <IonHeader className="ion-padding">
+          <IonTitle>Selecciona el tipo de multimedia</IonTitle>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <IonList className={`${styles.adjuntoOptionsList}`}>
+            <IonItem>
+              <form className={`${styles.adjuntoBtnContainer}`}>
+                <IonButton type="button" fill="clear" onClick={handleIconClick}>
+                  <IonIcon
+                    icon={imageOutline}
+                    slot="icon-only"
+                    className={`${styles.adjuntoIcon}`}
+                  />
+                </IonButton>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/avif,image/webp"
+                  multiple
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
+                <IonText>Imagen</IonText>
+              </form>
+            </IonItem>
+            <IonItem>
+              <div className={`${styles.adjuntoBtnContainer}`}>
+                <IonIcon
+                  icon={micOutline}
+                  className={`${styles.adjuntoIcon}`}
+                />
+                <IonText>Audio</IonText>
+              </div>
+            </IonItem>
+          </IonList>
+        </IonContent>
+      </IonModal>
+    </>
   );
 }
 

@@ -27,8 +27,30 @@
 
 .inputContainer {
   display: flex;
+  background-color: white;
   min-width: 100%;
   position: fixed;
   bottom: 1rem;
   padding-inline: 0.6rem;
+}
+
+.adjuntoOptionsList {
+  display: flex;
+  flex-direction: row;
+}
+
+.adjuntoBtnContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.adjuntoIcon {
+  font-size: 2rem;
+  color: var(--ion-color-primary);
+}
+
+.chatImage {
+  height: 250px;
 }

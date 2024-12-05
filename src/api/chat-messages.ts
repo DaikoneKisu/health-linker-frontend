@@ -70,3 +70,25 @@ export async function sendMessage(
     }
   }
 }
+
+export async function uploadFile(file: File) {
+  const form = new FormData();
+  form.append("file", file);
+  const token = localStorage.getItem("token");
+  try {
+    const { data } = await axios.post(`${SERVER}/chat-messages/files`, form, {
+      headers: { Authorization: "Bearer " + token },
+    });
+    return { success: true as const, fileName: data.fileName as string };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error subiendo archivo de chat:", error);
+      return { success: false as const, error: "Error inesperado" };
+    }
+  }
+}
