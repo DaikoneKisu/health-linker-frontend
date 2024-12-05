@@ -3,6 +3,7 @@ import {
   IonButton,
   IonButtons,
   IonContent,
+  IonFooter,
   IonHeader,
   IonIcon,
   IonImg,
@@ -63,6 +64,8 @@ function Chat({ match }: ChatPageProps) {
 
   const [showToast] = useCommonToast();
 
+  const contentRef = useRef<HTMLIonContentElement>(null);
+
   useIonViewWillEnter(() => {
     async function getChatData() {
       const chatData = await getInitialChatData(match.params.id);
@@ -74,7 +77,7 @@ function Chat({ match }: ChatPageProps) {
         setIsLoading(false);
       }
     }
-    getChatData();
+    getChatData().then(() => contentRef.current?.scrollToBottom(500));
   }, [match.params.id]);
 
   useIonViewWillEnter(() => {
@@ -83,6 +86,7 @@ function Chat({ match }: ChatPageProps) {
 
       sock.on(`new-message-${match.params.id}`, (message: ChatMessage) => {
         setMessages((prev) => [...prev, message]);
+        contentRef.current?.scrollToBottom(500);
       });
 
       setSocket(sock);
@@ -101,6 +105,7 @@ function Chat({ match }: ChatPageProps) {
     setIsLoading(false);
     if (result.success) {
       setCurrentMessage("");
+      contentRef.current?.scrollToBottom(500);
     } else {
       showToast(String(result.error), "error");
     }
@@ -125,11 +130,18 @@ function Chat({ match }: ChatPageProps) {
           </IonToolbar>
         </IonHeader>
 
-        <IonContent>
+        <IonContent ref={contentRef}>
           <IonLoading isOpen={isLoading} />
-          {/* Chat messages */}
+
           <MessagesList messages={messages} />
 
+          <FileUploadModal
+            triggerId={adjuntoTriggerId}
+            roomId={match.params.id}
+          />
+        </IonContent>
+
+        <IonFooter>
           {/* Message input */}
           <form className={`${styles.inputContainer}`} onSubmit={onSendMessage}>
             <IonInput
@@ -148,12 +160,7 @@ function Chat({ match }: ChatPageProps) {
               <IonIcon slot="icon-only" icon={send} />
             </IonButton>
           </form>
-
-          <FileUploadModal
-            triggerId={adjuntoTriggerId}
-            roomId={match.params.id}
-          />
-        </IonContent>
+        </IonFooter>
       </IonPage>
     </WithAuth>
   );
@@ -361,7 +368,7 @@ function FileUploadModal({
                     fileUploadMutation.mutate([blob]);
                   }}
                   classes={{
-                    AudioRecorderClass: `${styles.audioRecorder}`
+                    AudioRecorderClass: `${styles.audioRecorder}`,
                   }}
                 />
                 <IonText>Audio</IonText>
