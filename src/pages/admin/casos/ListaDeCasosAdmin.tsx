@@ -29,7 +29,12 @@ const ListaDeCasosAdmin = ({ casos, cerrado, getCases }: Props) => {
             />
           ))
         : casos.map((c) => (
-            <TarjetaDeCasoAbierto caso={c} key={c.id} getCases={getCases} />
+            <TarjetaDeCasoAbierto
+              caso={c}
+              key={c.id}
+              getCases={getCases}
+              isAdmin
+            />
           ))}
     </IonList>
   );

@@ -86,7 +86,7 @@ const CasosClinicosAdmin = () => {
                   color="primary"
                   fill={caseState === "cerrados" ? "solid" : "outline"}
                 >
-                  Mis casos cerrados
+                  Casos cerrados
                 </IonButton>
                 <IonButton
                   className={`${styles.button}`}
@@ -98,11 +98,11 @@ const CasosClinicosAdmin = () => {
                   color="primary"
                   fill={caseState === "abiertos" ? "solid" : "outline"}
                 >
-                  Mis casos abiertos
+                  Casos abiertos
                 </IonButton>
                 <IonButton
                   className={`${styles.button}`}
-                  routerLink="/login"
+                  routerLink="/admin"
                   onClick={logOut}
                   color="dark"
                   fill="outline"

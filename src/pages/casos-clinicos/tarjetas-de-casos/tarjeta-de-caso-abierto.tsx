@@ -32,7 +32,7 @@ const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
       }
     });
   };
-  
+
   return (
     <IonCard>
       <IonCardHeader>
@@ -55,30 +55,32 @@ const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
           >
             Ver
           </IonButton>
-          {!isAdmin && (
-            <IonButton
-              fill="outline"
-              routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
-              color="tertiary"
-            >
-              Retroalimentar
-            </IonButton>
-          )}
+          <IonButton
+            fill="outline"
+            routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
+            color="tertiary"
+          >
+            Retroalimentaciones
+          </IonButton>
           {/* <IonButton fill="outline" color="tertiary">
             Editar
           </IonButton> */}
-          <IonButton fill="outline" onClick={closeCase} color="tertiary">
-            Cerrar
-          </IonButton>
-          <IonButton fill="outline" id={deleteButtonId} color="danger">
-            Eliminar
-          </IonButton>
+          {!isAdmin && (
+            <IonButton fill="outline" onClick={closeCase} color="tertiary">
+              Cerrar
+            </IonButton>
+          )}
+          {!isAdmin && (
+            <IonButton fill="outline" id={deleteButtonId} color="danger">
+              Eliminar
+            </IonButton>
+          )}
           <ConfirmCaseDelete
             caseId={caso.id}
             afterDelete={() => getCases()}
             triggerElementId={deleteButtonId}
           />
-          { caso.editable && (
+          {caso.editable && (
             <IonButton
               fill="outline"
               routerLink={`/casos-clinicos/caso-clinico/editar/${caso.id}`}

@@ -22,15 +22,11 @@ export const CasoIndividual: React.FC<Props> = ({
 
   return (
     <div>
-      {feedback ? (
-        <FeedbackRender caseId={match.params.id} />
-      ) : (
-        <DatosPaciente
-          casoClinico={casoClinico}
-          dentroCaso={dentroCaso}
-          isFeedback={isFeedback}
-        />
-      )}
+      <DatosPaciente
+        casoClinico={casoClinico}
+        dentroCaso={dentroCaso}
+        isFeedback={isFeedback}
+      />
     </div>
   );
 };

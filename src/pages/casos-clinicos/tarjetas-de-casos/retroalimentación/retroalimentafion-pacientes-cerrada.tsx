@@ -16,14 +16,16 @@ import LogoHeader from "../../../../components/logo-header/logo-header";
 import otherStyles from "../../casos-clinicos.module.css";
 import { useCaseFeedback } from "../../../../hooks/queries/feedback";
 
-interface Props extends RouteComponentProps<{ id: string }> {
-  isFeedback: (answer: boolean) => void;
-}
+interface Props
+  extends RouteComponentProps<{
+    id: string;
+  }> {}
 
-export const ClosedFeedbackRender = ({ match, isFeedback }: Props) => {
+export const ClosedFeedbackRender = ({ match }: Props) => {
   const router = useIonRouter();
+  const { id } = match.params;
 
-  const { data: feedbacks } = useCaseFeedback(Number(match.params.id));
+  const { data: feedbacks } = useCaseFeedback(Number(id));
 
   return (
     <IonPage>
