@@ -36,7 +36,9 @@
 
 .adjuntoOptionsList {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .adjuntoBtnContainer {
@@ -49,6 +51,14 @@
 .adjuntoIcon {
   font-size: 2rem;
   color: var(--ion-color-primary);
+}
+
+.audioRecorder {
+  background-color: white !important;
+  box-shadow: none !important;
+  border-width: 1px;
+  border-color: var(--ion-color-primary) !important;
+  border-style: solid;
 }
 
 .chatImage {

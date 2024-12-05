@@ -37,6 +37,7 @@ import {
 } from "ionicons/icons";
 import { sendMessage, uploadFile } from "../../../api/chat-messages";
 import { useMutation } from "@tanstack/react-query";
+import { AudioRecorder } from "react-audio-voice-recorder";
 
 interface ChatPageProps
   extends RouteComponentProps<{
@@ -201,6 +202,20 @@ function MessagesList({ messages }: { messages: ChatMessage[] }) {
                 </IonText>
               </div>
             )}
+
+            {message.messageType === "audio" && (
+              <div className={`${styles.messageContent}`}>
+                <IonText className={`${styles.messageDetail}`}>
+                  {message.senderName}
+                </IonText>
+                <audio src={message.content} controls />
+                <IonText
+                  className={`${styles.messageDetail} ${styles.messageTime}`}
+                >
+                  {new Date(message.createdAt).toLocaleTimeString()}
+                </IonText>
+              </div>
+            )}
           </IonItem>
         ))}
         {messages.length === 0 && (
@@ -243,18 +258,19 @@ function FileUploadModal({
   roomId: string;
 }) {
   const modalRef = useRef<HTMLIonModalElement>(null);
-  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const [fileType, setFileType] = useState<"image" | "audio">("image");
+  const [uploadFiles, setUploadFiles] = useState<File[] | Blob[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [showToast] = useCommonToast();
 
   const fileUploadMutation = useMutation({
-    mutationFn: (files: File[]) => {
+    mutationFn: (files: File[] | Blob[]) => {
       return Promise.all(
         files.map(async (file) => {
           const response = await uploadFile(file);
           if (response.success) {
-            return sendMessage(Number(roomId), response.fileName, "image");
+            return sendMessage(Number(roomId), response.fileName, fileType);
           }
         })
       );
@@ -270,6 +286,7 @@ function FileUploadModal({
 
   const handleIconClick = () => {
     fileInputRef.current?.click();
+    setFileType("image");
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -306,8 +323,8 @@ function FileUploadModal({
       <IonModal
         ref={modalRef}
         trigger={triggerId}
-        initialBreakpoint={0.25}
-        breakpoints={[0, 0.25, 0.5]}
+        initialBreakpoint={0.3}
+        breakpoints={[0, 0.3, 0.5]}
       >
         <IonHeader className="ion-padding">
           <IonTitle>Selecciona el tipo de multimedia</IonTitle>
@@ -334,11 +351,18 @@ function FileUploadModal({
                 <IonText>Imagen</IonText>
               </form>
             </IonItem>
+
             <IonItem>
               <div className={`${styles.adjuntoBtnContainer}`}>
-                <IonIcon
-                  icon={micOutline}
-                  className={`${styles.adjuntoIcon}`}
+                <AudioRecorder
+                  showVisualizer
+                  onRecordingComplete={(blob) => {
+                    setFileType("audio");
+                    fileUploadMutation.mutate([blob]);
+                  }}
+                  classes={{
+                    AudioRecorderClass: `${styles.audioRecorder}`
+                  }}
                 />
                 <IonText>Audio</IonText>
               </div>

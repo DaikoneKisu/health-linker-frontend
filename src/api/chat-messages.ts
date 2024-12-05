@@ -71,7 +71,7 @@ export async function sendMessage(
   }
 }
 
-export async function uploadFile(file: File) {
+export async function uploadFile(file: File | Blob) {
   const form = new FormData();
   form.append("file", file);
   const token = localStorage.getItem("token");
