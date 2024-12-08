@@ -42,9 +42,7 @@ import "./theme/variables.css";
 import CasoClinico from "./pages/casos-clinicos/caso-clinico/caso-clinico";
 import { FeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentacion-pacientes";
 import { ClosedFeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentafion-pacientes-cerrada";
-import { chatbox, documentText, flask, person, school } from "ionicons/icons";
-import { useAppSelector } from "./store/hooks";
-import ChatRoomsList from "./pages/chat/chat-rooms/chat-rooms-list";
+import { documentText, flask, person, school } from "ionicons/icons";
 import Chat from "./pages/chat/in-chat/chat";
 import AdminLogin from "./pages/admin/login/admin-login";
 import AdminEspecialidades from "./pages/admin/especialidades/especialidades";
@@ -87,6 +85,7 @@ function MainTabs() {
           path="/casos-clinicos/caso-clinico/editar/:id"
           component={EditarCasoClinico}
         />
+        <Route path="/casos-clinicos/caso-clinico/chat/:id" component={Chat} />
 
         <Route
           path="/casos-clinicos/retroalimentaciones/caso-clinico/:id"
@@ -96,8 +95,7 @@ function MainTabs() {
           path="/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/:id"
           component={ClosedFeedbackRender}
         />
-        <Route path="/chat" exact component={ChatRoomsList} />
-        <Route path="/chat/:id" component={Chat} />
+        {/* Recursos educativos */}
         <Route path="/recursos" exact component={RecursosEducativos} />
         <Route path="/nuevo-recurso" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
@@ -114,10 +112,6 @@ function MainTabs() {
         <IonTabButton tab="recursos" href="/recursos">
           <IonIcon icon={school} />
           <IonLabel>Recursos Educativos</IonLabel>
-        </IonTabButton>
-        <IonTabButton tab="chat" href="/chat">
-          <IonIcon icon={chatbox} />
-          <IonLabel>Chat</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonTabs>
@@ -165,9 +159,6 @@ function AdminTabs() {
         <Route path="/nuevo-recurso" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
-        {/* Chat */}
-        {/* <Route path="/chat" exact component={ChatRoomsList} />
-        <Route path="/chat/:id" component={Chat} /> */}
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -185,10 +176,6 @@ function AdminTabs() {
           <IonIcon icon={flask} />
           <IonLabel>Especialidades</IonLabel>
         </IonTabButton>
-        {/* <IonTabButton tab="chat" href="/chat">
-          <IonIcon icon={chatbox} />
-          <IonLabel>Chat</IonLabel>
-        </IonTabButton> */}
       </IonTabBar>
     </IonTabs>
   );

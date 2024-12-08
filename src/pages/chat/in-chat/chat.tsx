@@ -19,24 +19,21 @@ import {
   IonToolbar,
   useIonRouter,
   useIonViewWillEnter,
+  useIonViewWillLeave,
 } from "@ionic/react";
 import WithAuth from "../../../components/WithAuth";
 import { RouteComponentProps } from "react-router";
 import React, { useId, useRef, useState } from "react";
 import { type ChatMessage } from "../../casos-clinicos/types";
-import { getInitialChatData } from "../../../api/chat-rooms";
 import { useCommonToast } from "../../../hooks/useCommonToast";
-import { io, Socket } from "socket.io-client";
-import { SERVER } from "../../../api/server";
+import { socket } from "../socket";
 import styles from "./chat.module.css";
+import { arrowBack, attach, imageOutline, send } from "ionicons/icons";
 import {
-  arrowBack,
-  attach,
-  imageOutline,
-  micOutline,
-  send,
-} from "ionicons/icons";
-import { sendMessage, uploadFile } from "../../../api/chat-messages";
+  getPaginatedChatMessages,
+  sendMessage,
+  uploadFile,
+} from "../../../api/chat-messages";
 import { useMutation } from "@tanstack/react-query";
 import { AudioRecorder } from "react-audio-voice-recorder";
 
@@ -47,15 +44,12 @@ interface ChatPageProps
 
 function Chat({ match }: ChatPageProps) {
   // Displayed state
-  const [chatName, setChatName] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   // Message to send
   const [currentMessage, setCurrentMessage] = useState("");
 
   // Socket for connection
-  const [socket, setSocket] = useState<Socket | null>(null);
-
   const [isLoading, setIsLoading] = useState(true);
 
   const adjuntoTriggerId = useId();
@@ -68,12 +62,15 @@ function Chat({ match }: ChatPageProps) {
 
   useIonViewWillEnter(() => {
     async function getChatData() {
-      const chatData = await getInitialChatData(match.params.id);
+      const chatData = await getPaginatedChatMessages(
+        1,
+        20,
+        Number(match.params.id)
+      );
       if (!chatData.success) {
         showToast("Error obteniendo sala de chat", "error");
       } else {
-        setChatName(chatData.data?.chatData.roomName ?? "");
-        setMessages(chatData.data?.messages ?? []);
+        setMessages(chatData.data ?? []);
         setIsLoading(false);
       }
     }
@@ -82,17 +79,17 @@ function Chat({ match }: ChatPageProps) {
 
   useIonViewWillEnter(() => {
     function connectToChat() {
-      const sock = io(SERVER);
-
-      sock.on(`new-message-${match.params.id}`, (message: ChatMessage) => {
+      socket.on(`new-message-${match.params.id}`, (message: ChatMessage) => {
         setMessages((prev) => [...prev, message]);
         contentRef.current?.scrollToBottom(500);
       });
-
-      setSocket(sock);
     }
     connectToChat();
   }, [match.params.id]);
+
+  useIonViewWillLeave(() => {
+    socket.off(`new-message-${match.params.id}`);
+  });
 
   async function onSendMessage(e: React.FormEvent) {
     e.preventDefault();
@@ -120,13 +117,15 @@ function Chat({ match }: ChatPageProps) {
               <IonButton
                 fill="clear"
                 onClick={() => {
-                  router.canGoBack() ? router.goBack() : router.push("/chat");
+                  router.canGoBack()
+                    ? router.goBack()
+                    : router.push("/casos-clinicos");
                 }}
               >
                 <IonIcon slot="icon-only" icon={arrowBack} />
               </IonButton>
             </IonButtons>
-            <IonTitle>{chatName}</IonTitle>
+            <IonTitle>Chat del caso #{match.params.id}</IonTitle>
           </IonToolbar>
         </IonHeader>
 

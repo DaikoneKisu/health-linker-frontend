@@ -48,6 +48,13 @@ const TarjetaDeCasoAbiertoEspecialista = ({ caso, getCases }: Props) => {
           >
             Retroalimentar
           </IonButton>
+          <IonButton
+            fill="outline"
+            routerLink={`/casos-clinicos/caso-clinico/chat/${caso.id}`}
+            color="tertiary"
+          >
+            Chat
+          </IonButton>
         </IonButtons>
       </IonToolbar>
     </IonCard>

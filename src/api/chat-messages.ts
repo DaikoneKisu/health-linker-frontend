@@ -5,12 +5,12 @@ import { ChatMessage } from "../pages/casos-clinicos/types";
 export async function getPaginatedChatMessages(
   page = 1,
   size = 20,
-  roomId: number
+  caseId: number
 ) {
   try {
     const token = localStorage.getItem("token");
     const { data } = await axios.get(
-      `${SERVER}/chat-messages?page=${page}&size=${size}&roomId=${roomId}`,
+      `${SERVER}/chat-messages?page=${page}&size=${size}&caseId=${caseId}`,
       {
         headers: {
           Authorization: "Bearer " + token,

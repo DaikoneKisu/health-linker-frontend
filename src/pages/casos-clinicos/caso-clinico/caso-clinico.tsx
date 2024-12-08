@@ -5,6 +5,9 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonContent,
+  IonFab,
+  IonFabButton,
+  IonIcon,
   IonImg,
   IonLabel,
   IonList,
@@ -23,6 +26,7 @@ import { getCase } from "../../../api/casos-clinicos";
 import { useCommonToast } from "../../../hooks/useCommonToast";
 import "./caso-clinico.css";
 import CaseFileItem from "./case-file";
+import { chatbubbleEllipsesOutline } from "ionicons/icons";
 
 interface Props extends RouteComponentProps<{ id: string }> {}
 
@@ -179,8 +183,13 @@ const CasoClinico = ({ match }: Props) => {
                       {/* Modal to display preview */}
                       <IonModal ref={modal}>
                         <IonContent className="ion-padding">
-                          <h3 id="previewModalHeader">Vista Previa de Archivo</h3>
-                          <IonImg src={previewUrl} alt="Vista previa del archivo" />
+                          <h3 id="previewModalHeader">
+                            Vista Previa de Archivo
+                          </h3>
+                          <IonImg
+                            src={previewUrl}
+                            alt="Vista previa del archivo"
+                          />
                           <IonButton
                             id="previewModalClose"
                             onClick={() => {
@@ -232,6 +241,14 @@ const CasoClinico = ({ match }: Props) => {
           Volver
         </IonButton>
       </IonContent>
+
+      <IonFab slot="fixed" horizontal="end" vertical="bottom">
+        <IonFabButton
+          routerLink={`/casos-clinicos/caso-clinico/chat/${caso?.id}`}
+        >
+          <IonIcon icon={chatbubbleEllipsesOutline} />
+        </IonFabButton>
+      </IonFab>
     </IonPage>
   );
 };
