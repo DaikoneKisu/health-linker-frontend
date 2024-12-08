@@ -20,6 +20,7 @@ import ResetOnLeave from "../../../components/helpers/reset-on-leave";
 import { adminSignIn } from "../../../api/admin";
 import { setUser } from "../../../store/slices/user";
 import { setRole } from "../../../store/slices/role";
+import { useStoreLogin } from "../../../store/local-storage";
 
 const adminLoginSchema = Yup.object({
   email: Yup.string()
@@ -35,6 +36,8 @@ const AdminLogin = () => {
   const router = useIonRouter();
 
   const dispatch = useAppDispatch();
+
+  const storeLogin = useStoreLogin();
 
   // Set up result toast
   const [showToast] = useCommonToast();
@@ -64,19 +67,29 @@ const AdminLogin = () => {
               onSubmit={(values, { setSubmitting }) => {
                 adminSignIn(values.email, values.password).then((data) => {
                   if (data.success) {
+                    showToast("Inicio de sesión exitoso", "success");
+
                     dispatch(setAuth(true));
+
+                    const userItem = {
+                      email: values.email,
+                      fullName: data.fullName,
+                      document: "",
+                      password: "",
+                      type: "" as "rural professional" | "specialist" | "",
+                    };
                     dispatch(
                       setUser({
-                        email: values.email,
-                        fullName: data.fullName,
+                        ...userItem,
                         document: "",
                         password: "",
                         type: "",
                       })
                     );
                     dispatch(setRole("admin"));
-                    showToast("Inicio de sesión exitoso", "success");
-                    localStorage.setItem("token", data.token);
+
+                    storeLogin(data.token, userItem, "admin", { auth: true });
+
                     router.push("/dashboard");
                   } else {
                     showToast("Error al iniciar sesión", "error");

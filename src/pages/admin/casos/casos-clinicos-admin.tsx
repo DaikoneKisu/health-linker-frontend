@@ -14,7 +14,7 @@ import { useState } from "react";
 import LogoHeader from "../../../components/logo-header/logo-header";
 import styles from "../../casos-clinicos/casos-clinicos.module.css";
 import SearchInput from "../../../components/SearchInput";
-import { useLogOut } from "../../../hooks/useLogOut";
+import { useLogOut } from "../../../store/local-storage";
 import {
   useClosedCasesCurrentAdmin,
   useOpenCasesCurrentAdmin,

@@ -42,7 +42,7 @@ export const signupSpecialist = async (
       email,
       fullName,
       specialtyId,
-      isVerified : true,
+      isVerified: true,
     });
 
     return {

@@ -23,7 +23,7 @@ import commonStyles from "../../../common.module.css";
 import styles from "./usuarios.module.css";
 import { useState } from "react";
 import SearchInput from "../../../components/SearchInput";
-import { useLogOut } from "../../../hooks/useLogOut";
+import { useLogOut } from "../../../store/local-storage";
 import {
   useAdmins,
   useRuralProfessionalsAdmins,

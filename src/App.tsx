@@ -59,6 +59,7 @@ import CrearRecurso from "./pages/recursos-educativos/crear-recurso";
 import DetalleRecurso from "./pages/recursos-educativos/detalle-recurso";
 import EditarRecurso from "./pages/recursos-educativos/editar-recurso";
 import CasosClinicosAdmin from "./pages/admin/casos/casos-clinicos-admin";
+import { useReadLocalStorage } from "usehooks-ts";
 
 setupIonicReact({ mode: "md" });
 
@@ -194,8 +195,8 @@ function AdminTabs() {
 }
 
 function NavTabs() {
-  const role = useAppSelector((state) => state.role);
-  if (role === "regular") {
+  const role = useReadLocalStorage<"regular" | "admin">("role");
+  if (!role || role === "regular") {
     return <MainTabs />;
   }
   return <AdminTabs />;
@@ -210,13 +211,13 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  const auth = useAppSelector((state) => state.auth);
+  const auth = useReadLocalStorage<{ auth: boolean }>("auth");
 
   return (
     <IonApp>
       <QueryClientProvider client={queryClient}>
         <IonReactRouter>
-          {auth.auth ? (
+          {auth && auth.auth ? (
             <NavTabs />
           ) : (
             <IonRouterOutlet>
@@ -232,12 +233,8 @@ const App = () => {
                 component={RegistroProfesionalRural}
                 exact
               />
-              <Route
-                path="/admin"
-                exact
-                component={auth.auth ? NavTabs : AdminLogin}
-              />
-              <Route path="/" exact component={auth.auth ? NavTabs : Login} />
+              <Route path="/admin" exact component={AdminLogin} />
+              <Route path="/" exact component={Login} />
               <Route component={NotFound} />
             </IonRouterOutlet>
           )}

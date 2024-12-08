@@ -25,7 +25,7 @@ import styles from "./casos-clinicos.module.css";
 import { getMe } from "../../api/auth";
 import ListaDeCasosEspecialistas from "./lista-de-casos-especialistas";
 import SearchInput from "../../components/SearchInput";
-import { useLogOut } from "../../hooks/useLogOut";
+import { useLogOut } from "../../store/local-storage";
 import { FaqModal } from "../../components/FaqModal";
 import {
   useClosedCasesCurrentUser,
