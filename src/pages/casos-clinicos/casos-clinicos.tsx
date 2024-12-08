@@ -9,11 +9,9 @@ import {
   IonFabButton,
   IonIcon,
   IonText,
-  useIonViewWillEnter,
   IonLoading,
   IonToolbar,
   useIonModal,
-  useIonViewWillLeave,
 } from "@ionic/react";
 import { add, helpOutline } from "ionicons/icons";
 import "./styles.css";
@@ -22,7 +20,6 @@ import WithAuth from "../../components/WithAuth";
 import ListaDeCasos from "./lista-de-casos";
 import LogoHeader from "../../components/logo-header/logo-header";
 import styles from "./casos-clinicos.module.css";
-import { getMe } from "../../api/auth";
 import ListaDeCasosEspecialistas from "./lista-de-casos-especialistas";
 import SearchInput from "../../components/SearchInput";
 import { useLogOut } from "../../store/local-storage";
@@ -33,17 +30,17 @@ import {
   useOpenCasesCurrentUser,
 } from "../../hooks/queries/clinical-cases";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAppSelector } from "../../store/hooks";
+import { useReadLocalStorage } from "usehooks-ts";
+import { UserState } from "../../store/slices/user";
 
 const CasosClinicos = () => {
   const [page, setPage] = useState(1);
-  const [user, setUser] = useState<any>(null);
   const [currentSearch, setCurrentSearch] = useState("");
   const [caseState, setCaseState] = useState<
     "abiertos" | "cerrados" | "biblioteca"
   >("abiertos");
 
-  const userFromStore = useAppSelector((state) => state.user);
+  const user = useReadLocalStorage<UserState>("user");
 
   const logOut = useLogOut();
 
@@ -58,7 +55,7 @@ const CasosClinicos = () => {
       page,
       currentSearch,
       document: user?.document ?? "",
-      enabled: user !== null,
+      enabled: caseState === "abiertos",
     });
 
   const { data: closedCasesData, isLoading: closedCasesLoading } =
@@ -66,11 +63,15 @@ const CasosClinicos = () => {
       page,
       currentSearch,
       document: user?.document ?? "",
-      enabled: user !== null,
+      enabled: caseState === "cerrados",
     });
 
   const { data: libraryCasesData, isLoading: libraryCasesLoading } =
-    useLibraryCases({ page, currentSearch, enabled: user !== null });
+    useLibraryCases({
+      page,
+      currentSearch,
+      enabled: caseState === "biblioteca",
+    });
 
   const queryClient = useQueryClient();
 
@@ -95,20 +96,6 @@ const CasosClinicos = () => {
       ? closedCasesData
       : libraryCasesData;
 
-  useIonViewWillEnter(() => {
-    getMe().then((data) => {
-      if (data.success) {
-        setUser({ ...data.user, type: data.user.userType });
-      } else {
-        console.error("Error:", data.error);
-      }
-    });
-  }, []);
-
-  useIonViewWillLeave(() => {
-    setUser(null);
-  });
-
   const onSearch = (value: string) => {
     setCurrentSearch(value);
   };
@@ -116,7 +103,7 @@ const CasosClinicos = () => {
   return (
     <WithAuth>
       <IonPage>
-        {user && user.userType === "rural professional" && (
+        {user && user.type === "rural professional" && (
           <>
             <LogoHeader>
               <IonHeader className="header-style ion-no-border">
@@ -211,7 +198,7 @@ const CasosClinicos = () => {
             </IonContent>
           </>
         )}
-        {user && user.userType === "specialist" && (
+        {user && user.type === "specialist" && (
           <>
             <LogoHeader>
               <IonHeader className="header-style ion-no-border">
