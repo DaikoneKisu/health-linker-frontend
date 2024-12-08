@@ -31,7 +31,6 @@ import {
   useClosedCasesCurrentUser,
   useLibraryCases,
   useOpenCasesCurrentUser,
-  useRequiredCurrentSpecialistCases,
 } from "../../hooks/queries/clinical-cases";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppSelector } from "../../store/hooks";
@@ -41,7 +40,7 @@ const CasosClinicos = () => {
   const [user, setUser] = useState<any>(null);
   const [currentSearch, setCurrentSearch] = useState("");
   const [caseState, setCaseState] = useState<
-    "abiertos" | "cerrados" | "mentoreables" | "biblioteca"
+    "abiertos" | "cerrados" | "biblioteca"
   >("abiertos");
 
   const userFromStore = useAppSelector((state) => state.user);
@@ -70,14 +69,6 @@ const CasosClinicos = () => {
       enabled: user !== null,
     });
 
-  const { data: requiredCasesData, isLoading: requiredCasesLoading } =
-    useRequiredCurrentSpecialistCases({
-      page,
-      currentSearch,
-      document: user?.document ?? "",
-      enabled: userFromStore?.type === "specialist" && user !== null,
-    });
-
   const { data: libraryCasesData, isLoading: libraryCasesLoading } =
     useLibraryCases({ page, currentSearch, enabled: user !== null });
 
@@ -88,8 +79,6 @@ const CasosClinicos = () => {
       ? openCasesLoading
       : caseState === "cerrados"
       ? closedCasesLoading
-      : caseState === "mentoreables"
-      ? requiredCasesLoading
       : libraryCasesLoading;
 
   const getCasesQueryKey =
@@ -97,8 +86,6 @@ const CasosClinicos = () => {
       ? (["clinical-cases", "open"] as const)
       : caseState === "cerrados"
       ? (["clinical-cases", "closed"] as const)
-      : caseState === "mentoreables"
-      ? (["clinical-cases", "specialist"] as const)
       : (["clinical-cases", "library"] as const);
 
   const casesList =
@@ -106,8 +93,6 @@ const CasosClinicos = () => {
       ? openCasesData
       : caseState === "cerrados"
       ? closedCasesData
-      : caseState === "mentoreables"
-      ? requiredCasesData
       : libraryCasesData;
 
   useIonViewWillEnter(() => {
@@ -201,9 +186,7 @@ const CasosClinicos = () => {
               <IonLoading isOpen={showLoader} />
               <ListaDeCasos
                 casos={casesList?.data ?? []}
-                tipoCasos={
-                  caseState === "mentoreables" ? "abiertos" : caseState
-                }
+                tipoCasos={caseState}
                 getCases={() =>
                   queryClient.invalidateQueries({
                     queryKey: getCasesQueryKey,
@@ -259,19 +242,7 @@ const CasosClinicos = () => {
                       color="primary"
                       fill={caseState === "abiertos" ? "solid" : "outline"}
                     >
-                      Casos abiertos
-                    </IonButton>
-                    <IonButton
-                      className={`${styles.button}`}
-                      onClick={() => {
-                        if (caseState !== "mentoreables") {
-                          setCaseState("mentoreables");
-                        }
-                      }}
-                      color="primary"
-                      fill={caseState === "mentoreables" ? "solid" : "outline"}
-                    >
-                      Casos mentoreables
+                      Casos asignados
                     </IonButton>
                     <IonButton
                       className={`${styles.button}`}
@@ -292,7 +263,7 @@ const CasosClinicos = () => {
                       color="dark"
                       fill="outline"
                     >
-                      Cerrar Sesion
+                      Cerrar Sesión
                     </IonButton>
                   </IonButtons>
                   <SearchInput
