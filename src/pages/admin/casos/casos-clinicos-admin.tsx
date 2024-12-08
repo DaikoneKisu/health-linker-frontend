@@ -17,6 +17,8 @@ import SearchInput from "../../../components/SearchInput";
 import { useLogOut } from "../../../store/local-storage";
 import {
   useClosedCasesCurrentAdmin,
+  useMentoredCasesAdmin,
+  useNotMentoredCasesAdmin,
   useOpenCasesCurrentAdmin,
 } from "../../../hooks/queries/clinical-cases";
 import { useQueryClient } from "@tanstack/react-query";
@@ -27,21 +29,27 @@ import { useAppSelector } from "../../../store/hooks";
 const CasosClinicosAdmin = () => {
   const [page, setPage] = useState(1);
   const [currentSearch, setCurrentSearch] = useState("");
-  const [caseState, setCaseState] = useState<"abiertos" | "cerrados">(
-    "abiertos"
-  );
+  const [caseState, setCaseState] = useState<
+    "asignados" | "cerrados" | "sin-asignar"
+  >("sin-asignar");
 
   const userFromStore = useAppSelector((state) => state.user);
 
   const logOut = useLogOut();
 
   // Clinical cases queries
-  const { data: openCasesData, isLoading: openCasesLoading } =
-    useOpenCasesCurrentAdmin({
+  const { data: assignedCasesData, isLoading: assignedCasesLoading } =
+    useMentoredCasesAdmin({
       page,
       currentSearch,
-      email: userFromStore?.email ?? "",
-      enabled: true,
+      enabled: caseState === "asignados",
+    });
+
+  const { data: notAssignedCasesData, isLoading: notAssignedCasesLoading } =
+    useNotMentoredCasesAdmin({
+      page,
+      currentSearch,
+      enabled: caseState === "sin-asignar",
     });
 
   const { data: closedCasesData, isLoading: closedCasesLoading } =
@@ -49,20 +57,31 @@ const CasosClinicosAdmin = () => {
       page,
       currentSearch,
       email: userFromStore?.email ?? "",
-      enabled: true,
+      enabled: caseState === "cerrados",
     });
 
   const queryClient = useQueryClient();
 
   const showLoader =
-    caseState === "abiertos" ? openCasesLoading : closedCasesLoading;
+    caseState === "sin-asignar"
+      ? notAssignedCasesLoading
+      : caseState === "asignados"
+      ? assignedCasesLoading
+      : closedCasesLoading;
 
   const getCasesQueryKey =
-    caseState === "abiertos"
-      ? (["clinical-cases", "open"] as const)
+    caseState === "asignados"
+      ? (["clinical-cases", "assigned"] as const)
+      : caseState === "sin-asignar"
+      ? (["clinical-cases", "not-assigned"] as const)
       : (["clinical-cases", "closed"] as const);
 
-  const casesList = caseState === "abiertos" ? openCasesData : closedCasesData;
+  const casesList =
+    caseState === "sin-asignar"
+      ? notAssignedCasesData
+      : caseState === "asignados"
+      ? assignedCasesData
+      : closedCasesData;
 
   const onSearch = (value: string) => {
     setCurrentSearch(value);
@@ -79,6 +98,30 @@ const CasosClinicosAdmin = () => {
                 <IonButton
                   className={`${styles.button}`}
                   onClick={() => {
+                    if (caseState !== "sin-asignar") {
+                      setCaseState("sin-asignar");
+                    }
+                  }}
+                  color="primary"
+                  fill={caseState === "sin-asignar" ? "solid" : "outline"}
+                >
+                  Casos sin asignar
+                </IonButton>
+                <IonButton
+                  className={`${styles.button}`}
+                  color="primary"
+                  onClick={() => {
+                    if (caseState !== "asignados") {
+                      setCaseState("asignados");
+                    }
+                  }}
+                  fill={caseState === "asignados" ? "solid" : "outline"}
+                >
+                  Casos asignados
+                </IonButton>
+                <IonButton
+                  className={`${styles.button}`}
+                  onClick={() => {
                     if (caseState !== "cerrados") {
                       setCaseState("cerrados");
                     }
@@ -87,18 +130,6 @@ const CasosClinicosAdmin = () => {
                   fill={caseState === "cerrados" ? "solid" : "outline"}
                 >
                   Casos cerrados
-                </IonButton>
-                <IonButton
-                  className={`${styles.button}`}
-                  onClick={() => {
-                    if (caseState !== "abiertos") {
-                      setCaseState("abiertos");
-                    }
-                  }}
-                  color="primary"
-                  fill={caseState === "abiertos" ? "solid" : "outline"}
-                >
-                  Casos abiertos
                 </IonButton>
                 <IonButton
                   className={`${styles.button}`}

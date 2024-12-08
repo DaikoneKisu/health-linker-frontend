@@ -11,6 +11,12 @@ export interface CasoClinico {
   editable: boolean;
 }
 
+export interface CasoClinicoAdmin extends CasoClinico {
+  specialityId?: number;
+  assigned?: boolean;
+  feedbackCount?: number;
+}
+
 export interface EditCasoClinico {
   id: number;
   fechaNacimiento: string;

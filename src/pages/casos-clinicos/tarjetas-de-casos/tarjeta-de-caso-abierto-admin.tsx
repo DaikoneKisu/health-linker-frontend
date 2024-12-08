@@ -9,25 +9,14 @@ import {
   IonCardTitle,
   IonToolbar,
 } from "@ionic/react";
-import { CasoClinico } from "../types";
-// import { mentorCase } from "../../../api/casos-clinicos";
+import { CasoClinicoAdmin } from "../types";
 
 interface Props {
-  caso: CasoClinico;
-  getCases: () => void;
+  caso: CasoClinicoAdmin;
+  onAssign: () => void;
 }
 
-const TarjetaDeCasoMentoreableEspecialista = ({ caso, getCases }: Props) => {
-  // const mentorClinicalCase = () => {
-  //   mentorCase(caso.id).then((data) => {
-  //     if (data.success) {
-  //       getCases();
-  //     } else {
-  //       alert("Error al mentorear el caso");
-  //     }
-  //   });
-  // };
-
+const TarjetaDeCasoAbierto = ({ caso, onAssign }: Props) => {
   return (
     <IonCard>
       <IonCardHeader>
@@ -38,9 +27,11 @@ const TarjetaDeCasoMentoreableEspecialista = ({ caso, getCases }: Props) => {
           Género del paciente: <span>{caso.genero}</span>
         </IonCardSubtitle>
       </IonCardHeader>
+
       <IonCardContent>
         <p>{caso.descripcionCaso}</p>
       </IonCardContent>
+
       <IonToolbar className="ion-card-footer">
         <IonButtons style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
           <IonButton
@@ -50,17 +41,29 @@ const TarjetaDeCasoMentoreableEspecialista = ({ caso, getCases }: Props) => {
           >
             Ver
           </IonButton>
-          <IonButton
-            fill="outline"
-            // onClick={mentorClinicalCase}
-            color="tertiary"
-          >
-            Mentorear
-          </IonButton>
+          {caso.assigned && (
+            <IonButton
+              fill="outline"
+              routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
+              color="tertiary"
+            >
+              Retroalimentaciones
+            </IonButton>
+          )}
+          {caso.assigned && (
+            <IonButton fill="outline" color="tertiary">
+              Cambiar especialista asignado
+            </IonButton>
+          )}
+          {caso.assigned === false && (
+            <IonButton fill="outline" color="tertiary" onClick={onAssign}>
+              Asignar a especialista
+            </IonButton>
+          )}
         </IonButtons>
       </IonToolbar>
     </IonCard>
   );
 };
 
-export default TarjetaDeCasoMentoreableEspecialista;
+export default TarjetaDeCasoAbierto;

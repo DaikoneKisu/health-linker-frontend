@@ -265,6 +265,88 @@ export const getClosedCasesCurrentAdmin = async (
   }
 };
 
+export const getNotMentoredCasesAdmin = async (
+  page: number = 1,
+  size: number = 100,
+  query = ""
+) => {
+  try {
+    const token = localStorage.getItem("token");
+    const { data: openCasesFromBackend } = await axios.get(
+      `${SERVER}/clinical-cases/not-mentored/current-admin?page=${page}&size=${size}&query=${query}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const openCases = await Promise.all(
+      (openCasesFromBackend as Array<any>).map(async (c) => ({
+        ...(await mapClinicalCaseToCasoClinico(c)),
+        assigned: false as const,
+        specialityId: Number(c.requiredSpecialtyId),
+      }))
+    );
+
+    return {
+      success: true as const,
+      data: openCases,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Error inesperado" };
+    }
+  }
+};
+
+export const getMentoredCasesAdmin = async (
+  page: number = 1,
+  size: number = 100,
+  query = ""
+) => {
+  try {
+    const token = localStorage.getItem("token");
+    const { data: openCasesFromBackend } = await axios.get(
+      `${SERVER}/clinical-cases/mentored/current-admin?page=${page}&size=${size}&query=${query}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const openCases = await Promise.all(
+      (openCasesFromBackend as Array<any>).map(async (c) => ({
+        ...(await mapClinicalCaseToCasoClinico(c)),
+        assigned: true as const,
+        specialityId: Number(c.requiredSpecialtyId),
+      }))
+    );
+
+    return {
+      success: true as const,
+      data: openCases,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Error inesperado" };
+    }
+  }
+};
+
 export const getAllClosedCasesCurrentUser = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -444,9 +526,7 @@ export const createClinicalCase = async (caso: CrearCasoClinico) => {
   }
 };
 
-export const updateClinicalCase = async (
-  caso: EditCasoClinico
-) => {
+export const updateClinicalCase = async (caso: EditCasoClinico) => {
   try {
     const token = localStorage.getItem("token");
 
@@ -460,7 +540,7 @@ export const updateClinicalCase = async (
         patientGender: caso.genero === "masculino" ? "masculine" : "feminine",
         patientReason: caso.motivoPaciente,
         patientAssessment: caso.valoracionPaciente,
-        requiredSpecialtyId: caso.especialidadRequerida
+        requiredSpecialtyId: caso.especialidadRequerida,
       },
       {
         headers: {
@@ -468,7 +548,7 @@ export const updateClinicalCase = async (
         },
       }
     );
-  
+
     if (!(caso.archivosAsociados == null)) {
       await Promise.all(
         caso.archivosAsociados.map(async (archivo) => {
@@ -482,7 +562,7 @@ export const updateClinicalCase = async (
         })
       );
     }
-  
+
     return {
       success: true,
     };
@@ -648,15 +728,25 @@ export const reopenClinicalCase = async (id: number) => {
   }
 };
 
-export const mentorCase = async (id: number) => {
+export const assignCase = async ({
+  id,
+  specialistDocument,
+}: {
+  id: number;
+  specialistDocument: string;
+}) => {
   try {
     const token = localStorage.getItem("token");
 
-    await axios.post(`${SERVER}/clinical-cases/mentor/${id}`, undefined, {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
+    await axios.post(
+      `${SERVER}/clinical-cases/mentor/${id}`,
+      { specialistDocument },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
 
     return {
       success: true,
@@ -706,7 +796,7 @@ const mapClinicalCaseToCasoClinico = async (
     descripcionCaso: c.description,
     motivoPaciente: c.patientReason,
     archivosAsociados: files.map((f) => ({ id: f.id, enlace: f.link })),
-    editable: c.editable
+    editable: c.editable,
   };
 };
 

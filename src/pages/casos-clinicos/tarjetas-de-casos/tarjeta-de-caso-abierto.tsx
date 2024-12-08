@@ -17,10 +17,9 @@ import { closeClinicalCase } from "../../../api/casos-clinicos";
 interface Props {
   caso: CasoClinico;
   getCases: () => void;
-  isAdmin?: boolean;
 }
 
-const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
+const TarjetaDeCasoAbierto = ({ caso, getCases }: Props) => {
   const deleteButtonId = useId();
 
   const closeCase = async () => {
@@ -64,25 +63,19 @@ const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
           >
             Retroalimentaciones
           </IonButton>
-          {!isAdmin && (
-            <IonButton
-              fill="outline"
-              color="tertiary"
-              routerLink={`/casos-clinicos/caso-clinico/chat/${caso.id}`}
-            >
-              Chat
-            </IonButton>
-          )}
-          {!isAdmin && (
-            <IonButton fill="outline" onClick={closeCase} color="tertiary">
-              Cerrar
-            </IonButton>
-          )}
-          {!isAdmin && (
-            <IonButton fill="outline" id={deleteButtonId} color="danger">
-              Eliminar
-            </IonButton>
-          )}
+          <IonButton
+            fill="outline"
+            color="tertiary"
+            routerLink={`/casos-clinicos/caso-clinico/chat/${caso.id}`}
+          >
+            Chat
+          </IonButton>
+          <IonButton fill="outline" onClick={closeCase} color="tertiary">
+            Cerrar
+          </IonButton>
+          <IonButton fill="outline" id={deleteButtonId} color="danger">
+            Eliminar
+          </IonButton>
           <ConfirmCaseDelete
             caseId={caso.id}
             afterDelete={() => getCases()}

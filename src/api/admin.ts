@@ -183,6 +183,39 @@ export async function getSpecialist(document: string) {
   }
 }
 
+export async function getSpecialistBySpeciality(
+  search: string,
+  specialityId: number
+) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      `${SERVER}/specialists/all/speciality/${specialityId}?query=${search}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data as SpecialistAdmin[];
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Error inesperado" };
+    }
+  }
+}
+
 export async function updateSpecialistPassword({
   document,
   password,
