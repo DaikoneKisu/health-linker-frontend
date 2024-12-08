@@ -14,9 +14,10 @@ import { CasoClinicoAdmin } from "../types";
 interface Props {
   caso: CasoClinicoAdmin;
   onAssign: () => void;
+  onReassign: () => void;
 }
 
-const TarjetaDeCasoAbierto = ({ caso, onAssign }: Props) => {
+const TarjetaDeCasoAbierto = ({ caso, onAssign, onReassign }: Props) => {
   return (
     <IonCard>
       <IonCardHeader>
@@ -51,7 +52,7 @@ const TarjetaDeCasoAbierto = ({ caso, onAssign }: Props) => {
             </IonButton>
           )}
           {caso.assigned && (
-            <IonButton fill="outline" color="tertiary">
+            <IonButton fill="outline" color="tertiary" onClick={onReassign}>
               Cambiar especialista asignado
             </IonButton>
           )}

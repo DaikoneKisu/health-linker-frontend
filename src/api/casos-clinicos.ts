@@ -764,6 +764,46 @@ export const assignCase = async ({
   }
 };
 
+export const reassignCase = async ({
+  id,
+  specialistDocument,
+}: {
+  id: number;
+  specialistDocument: string;
+}) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const deleteAllFromCase = axios.delete(
+      `${SERVER}/specialist-mentors-clinical-cases/${id}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    await Promise.allSettled([
+      assignCase({ id, specialistDocument }),
+      deleteAllFromCase,
+    ]);
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false, error: "Error inesperado" };
+    }
+  }
+};
+
 const mapClinicalCaseToCasoClinico = async (
   c: ClinicalCaseResponse
 ): Promise<CasoClinico> => {

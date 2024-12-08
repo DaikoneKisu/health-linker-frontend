@@ -216,6 +216,39 @@ export async function getSpecialistBySpeciality(
   }
 }
 
+export async function getSpecialistsAssignedToCase(id: number) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      `${SERVER}/specialist-mentors-clinical-cases/mentors/${id}`,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data as {
+      clinicalCaseId: number;
+      specialistDocument: string;
+    }[];
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Error inesperado" };
+    }
+  }
+}
+
 export async function updateSpecialistPassword({
   document,
   password,

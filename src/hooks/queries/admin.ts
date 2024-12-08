@@ -7,6 +7,7 @@ import {
   getSpecialist,
   getSpecialistBySpeciality,
   getSpecialistsAdmin,
+  getSpecialistsAssignedToCase,
 } from "../../api/admin";
 
 export function useSpecialistAdmins(query: string) {
@@ -29,6 +30,15 @@ export function useSpecialistsBySpeciality({
     queryFn: () => getSpecialistBySpeciality(search, specialityId),
     networkMode: "online",
     enabled: specialityId !== 0,
+  });
+}
+
+export function useSpecialistsAssignedToCase(caseId: number) {
+  return useQuery({
+    queryKey: ["specialists", { admin: true, case: caseId }],
+    queryFn: () => getSpecialistsAssignedToCase(caseId),
+    networkMode: "online",
+    enabled: caseId !== 0,
   });
 }
 
