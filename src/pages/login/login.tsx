@@ -81,14 +81,16 @@ const Login = () => {
                     // Set user type
                     dispatch(setRole("regular"));
 
+                    const userType = data.type as
+                      | "rural professional"
+                      | "specialist"
+                      | "";
+
                     const userItem = {
                       document: values.document,
                       email: "",
                       fullName: "",
-                      type: data.type as
-                        | "rural professional"
-                        | "specialist"
-                        | "",
+                      type: userType,
                       password: "",
                     };
                     dispatch(setUser({ ...userItem, password: "" }));

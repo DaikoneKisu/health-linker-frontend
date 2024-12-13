@@ -1,6 +1,7 @@
 import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
+  IonBadge,
   IonIcon,
   IonLabel,
   IonRouterOutlet,
@@ -42,7 +43,13 @@ import "./theme/variables.css";
 import CasoClinico from "./pages/casos-clinicos/caso-clinico/caso-clinico";
 import { FeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentacion-pacientes";
 import { ClosedFeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentafion-pacientes-cerrada";
-import { documentText, flask, person, school } from "ionicons/icons";
+import {
+  documentText,
+  flask,
+  notifications,
+  person,
+  school,
+} from "ionicons/icons";
 import Chat from "./pages/chat/in-chat/chat";
 import AdminLogin from "./pages/admin/login/admin-login";
 import AdminEspecialidades from "./pages/admin/especialidades/especialidades";
@@ -58,6 +65,11 @@ import DetalleRecurso from "./pages/recursos-educativos/detalle-recurso";
 import EditarRecurso from "./pages/recursos-educativos/editar-recurso";
 import CasosClinicosAdmin from "./pages/admin/casos/casos-clinicos-admin";
 import { useReadLocalStorage } from "usehooks-ts";
+import { useEffect, useRef, useState } from "react";
+import { getNotifications, setLastOnline } from "./api/notifications";
+import NotificationsPage from "./pages/notifications/notifications";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { setNotifications } from "./store/slices/notifications";
 
 setupIonicReact({ mode: "md" });
 
@@ -65,6 +77,8 @@ setupIonicReact({ mode: "md" });
  * Tabs when logged in
  */
 function MainTabs() {
+  const notificationState = useAppSelector((state) => state.notifications);
+
   return (
     <IonTabs>
       {/* Route definition */}
@@ -100,6 +114,8 @@ function MainTabs() {
         <Route path="/nuevo-recurso" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
+        {/* Notificaciones */}
+        <Route path="/notificaciones" exact component={NotificationsPage} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -113,6 +129,14 @@ function MainTabs() {
           <IonIcon icon={school} />
           <IonLabel>Recursos Educativos</IonLabel>
         </IonTabButton>
+        <IonTabButton tab="notificaciones" href="/notificaciones">
+          <IonIcon icon={notifications} />
+          <IonLabel>Notificaciones</IonLabel>
+          {(notificationState.assignedCasesCount ||
+            notificationState.feedbackCount ||
+            notificationState.messagesCount ||
+            notificationState.newCasesCount) && <IonBadge color="danger" />}
+        </IonTabButton>
       </IonTabBar>
     </IonTabs>
   );
@@ -122,6 +146,8 @@ function MainTabs() {
  * Tabs when logged in as admin
  */
 function AdminTabs() {
+  const notificationState = useAppSelector((state) => state.notifications);
+
   return (
     <IonTabs>
       {/* Route definition */}
@@ -159,6 +185,8 @@ function AdminTabs() {
         <Route path="/nuevo-recurso" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
+        {/* Notificaciones */}
+        <Route path="/notificaciones" exact component={NotificationsPage} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -176,13 +204,57 @@ function AdminTabs() {
           <IonIcon icon={flask} />
           <IonLabel>Especialidades</IonLabel>
         </IonTabButton>
+        <IonTabButton tab="notificacioens" href="/notificaciones">
+          <IonIcon icon={notifications} />
+          <IonLabel>Notificaciones</IonLabel>
+          {(notificationState.assignedCasesCount ||
+            notificationState.feedbackCount ||
+            notificationState.messagesCount ||
+            notificationState.newCasesCount) && <IonBadge color="danger" />}
+        </IonTabButton>
       </IonTabBar>
     </IonTabs>
   );
 }
 
 function NavTabs() {
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      const auth = localStorage.getItem("auth");
+      if (auth) {
+        setLastOnline();
+      }
+    }, 1 * 60 * 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
   const role = useReadLocalStorage<"regular" | "admin">("role");
+  const user = useReadLocalStorage<{ type: "rural professional" | "admin" }>(
+    "user"
+  );
+
+  useEffect(() => {
+    if (role === "admin") {
+      getNotifications(role).then((notifications) => {
+        if (notifications) dispatch(setNotifications(notifications));
+      });
+    } else {
+      if (user) {
+        getNotifications(user.type).then((notifications) => {
+          if (notifications) dispatch(setNotifications(notifications));
+        });
+      }
+    }
+  }, []);
+
   if (!role || role === "regular") {
     return <MainTabs />;
   }

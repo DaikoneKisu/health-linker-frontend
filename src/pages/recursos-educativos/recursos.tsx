@@ -74,9 +74,7 @@ export default function RecursosEducativos() {
         </LogoHeader>
 
         <IonContent>
-          <IonLoading
-            isOpen={resources.isLoading || deleteMutation.isPending}
-          />
+          <IonLoading isOpen={!resources.data || deleteMutation.isPending} />
 
           <IonList>
             {resources.data?.data?.map((resource) => (
