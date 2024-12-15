@@ -151,7 +151,7 @@ export function AdminUsuarios() {
                       <IonText>Cédula: {specialist.document}</IonText>
                       <IonText>Correo: {specialist.email}</IonText>
                       <IonText>
-                        Casos retroalimentados: {specialist.feedbackCount}
+                        Casos retroalimentados: {specialist.feedbackCount || 0}
                       </IonText>
                     </div>
                     <IonIcon slot="end" icon={chevronForward} />

@@ -21,6 +21,8 @@ import { useMutation } from "@tanstack/react-query";
 import { updateSpecialistPassword } from "../../../api/admin";
 import * as Yup from "yup";
 import ResetOnLeave from "../../../components/helpers/reset-on-leave";
+import { useState } from "react";
+import { SERVER } from "../../../api/server";
 
 interface Props extends RouteComponentProps<{ document: string }> {}
 
@@ -40,11 +42,36 @@ const passwordSchema = Yup.object({
 export default function EspecialistasAdmin({ match }: Props) {
   const { data, isLoading } = useSpecialist(match.params.document);
 
+  const [showToast] = useCommonToast();
+
+  const [loadingExcel, setLoadingExcel] = useState(false);
+
+  const handleExcelBtnClick = () => {
+    setLoadingExcel(true);
+    const token = localStorage.getItem("token");
+    fetch(`${SERVER}/admins/stats/specialist/${match.params.document}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute("download", "data.xlsx");
+        link.click();
+      })
+      .catch(() => {
+        showToast("Ocurrió un error", "error");
+      })
+      .finally(() => {
+        setLoadingExcel(false);
+      });
+  };
+
   const updateMutation = useMutation({
     mutationFn: updateSpecialistPassword,
   });
-
-  const [showToast] = useCommonToast();
 
   return (
     <WithAuth>
@@ -58,7 +85,9 @@ export default function EspecialistasAdmin({ match }: Props) {
         </LogoHeader>
 
         <IonContent>
-          <IonLoading isOpen={isLoading || updateMutation.isPending} />
+          <IonLoading
+            isOpen={isLoading || updateMutation.isPending || loadingExcel}
+          />
 
           {!!data?.data && (
             <div>
@@ -73,6 +102,16 @@ export default function EspecialistasAdmin({ match }: Props) {
                     Casos retroalimentados: {data.data.feedbackCount}
                   </IonText>
                 </div>
+              </section>
+
+              <section className={`${styles.userSection} ion-padding`}>
+                <h2>Generar reporte</h2>
+                <IonButton
+                  style={{ fontWeight: "bold" }}
+                  onClick={handleExcelBtnClick}
+                >
+                  Presiona para generar Excel
+                </IonButton>
               </section>
 
               <section className={`${styles.userSection} ion-padding`}>
