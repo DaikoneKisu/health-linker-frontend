@@ -124,6 +124,12 @@ export interface EducationalResource {
   specialistName: string | null;
 }
 
+export interface FAQ {
+  id?: number,
+  question: string,
+  answer: string
+}
+
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 
 género del paciente, 
 motivo de consulta del paciente, 
