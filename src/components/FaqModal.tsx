@@ -21,7 +21,7 @@ import styles from "./FaqModal.module.css";
 import { useEffect, useState } from "react";
 import { FAQ } from "../pages/casos-clinicos/types";
 import { getFaqs, createFAQ, deleteFAQ } from "../api/faq";
-
+import { useReadLocalStorage } from "usehooks-ts";
 
 export function FaqModal({
   dismiss,
@@ -37,6 +37,18 @@ export function FaqModal({
   const[creating, setCreating] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [faqToDelete, setFaqToDelete] = useState<number | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+  const role = useReadLocalStorage<"regular" | "admin">("role");
+
+  useEffect(() => {
+    if (role === "admin") {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [role]);
+
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
@@ -46,7 +58,7 @@ export function FaqModal({
         } else {
           setError('Error al obtener las preguntas frecuentes.');
           console.error(response.error);
-        }
+        };
       } catch (err) {
         setError('Error al obtener las preguntas frecuentes.');
         console.error(err);
@@ -81,7 +93,6 @@ export function FaqModal({
       setCreating(false)
     }
   }
-
   const handleDeleteFaq = async (id: number) => {
     try {
       const response = await deleteFAQ(id);
@@ -110,6 +121,7 @@ export function FaqModal({
     }
   }
 
+  
   return (
     <IonPage>
       <IonHeader className="ion-padding">
@@ -135,25 +147,29 @@ export function FaqModal({
                 <IonItem key={i} >
                   <IonLabel onClick={() => setSelectedQuestion(faq)}>{faq.question}</IonLabel>
                   <IonIcon slot="end" icon={chevronForward} />
-                  <IonIcon slot="end" icon={trash} onClick={() => confirmDeleteFaq(faq.id)} />
+                  {isAdmin && (<IonIcon slot="end" icon={trash} onClick={() => confirmDeleteFaq(faq.id)} />)}
                 </IonItem>
               ))}
             </IonList>
-            <div className="ion-padding">
-              <IonInput
-                value={newQuestion}
-                placeholder="Nueva pregunta"
-                onIonChange={(e) => setNewQuestion(e.detail.value!)}
-              />
-              <IonTextarea 
-                value={newAnswer}
-                placeholder="Respuesta"
-                onIonChange={(e) => setNewAnswer(e.detail.value!)}
-              />
-              <IonButton onClick={handleCreateFaq} disabled={creating}>
-                {creating ? 'Creando...' : 'Crear Pregunta Frecuente'}
-              </IonButton>
-            </div>
+            {
+              isAdmin && (
+                <div className="ion-padding">
+                  <IonInput
+                    value={newQuestion}
+                    placeholder="Nueva pregunta"
+                    onIonChange={(e) => setNewQuestion(e.detail.value!)}
+                  />
+                  <IonTextarea 
+                    value={newAnswer}
+                    placeholder="Respuesta"
+                    onIonChange={(e) => setNewAnswer(e.detail.value!)}
+                  />
+                  <IonButton onClick={handleCreateFaq} disabled={creating}>
+                    {creating ? 'Creando...' : 'Crear Pregunta Frecuente'}
+                  </IonButton>
+                </div>
+              )
+            }
           </>
         )}
 
