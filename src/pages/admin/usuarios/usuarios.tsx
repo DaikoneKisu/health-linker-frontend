@@ -23,7 +23,7 @@ import commonStyles from "../../../common.module.css";
 import styles from "./usuarios.module.css";
 import { useState } from "react";
 import SearchInput from "../../../components/SearchInput";
-import { useLogOut } from "../../../hooks/useLogOut";
+import { useLogOut } from "../../../store/local-storage";
 import {
   useAdmins,
   useRuralProfessionalsAdmins,
@@ -151,7 +151,7 @@ export function AdminUsuarios() {
                       <IonText>Cédula: {specialist.document}</IonText>
                       <IonText>Correo: {specialist.email}</IonText>
                       <IonText>
-                        Casos retroalimentados: {specialist.feedbackCount}
+                        Casos retroalimentados: {specialist.feedbackCount || 0}
                       </IonText>
                     </div>
                     <IonIcon slot="end" icon={chevronForward} />

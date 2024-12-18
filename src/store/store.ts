@@ -5,16 +5,18 @@ import storage from "redux-persist/lib/storage";
 import { authSlice } from "./slices/auth";
 import { userSlice } from "./slices/user";
 import { roleSlice } from "./slices/role";
+import { notificationsSlice } from "./slices/notifications";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "user", "role"],
+  whitelist: ["auth", "user", "role", "notifications"],
 };
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
   user: userSlice.reducer,
   role: roleSlice.reducer,
+  notifications: notificationsSlice.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -22,13 +22,15 @@ import { useCommonToast } from "../../../../hooks/useCommonToast";
 import { useCaseFeedback } from "../../../../hooks/queries/feedback";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-interface Props {
-  caseId: string;
-}
+interface Props
+  extends RouteComponentProps<{
+    id: string;
+  }> {}
 
-export const FeedbackRender = ({ caseId }: Props) => {
+export const FeedbackRender = ({ match }: Props) => {
   const [texto, setTexto] = useState("");
   const router = useIonRouter();
+  const { id: caseId } = match.params;
 
   // For API responses
   const [showToast] = useCommonToast();

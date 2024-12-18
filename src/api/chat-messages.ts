@@ -5,12 +5,12 @@ import { ChatMessage } from "../pages/casos-clinicos/types";
 export async function getPaginatedChatMessages(
   page = 1,
   size = 20,
-  roomId: number
+  caseId: number
 ) {
   try {
     const token = localStorage.getItem("token");
     const { data } = await axios.get(
-      `${SERVER}/chat-messages?page=${page}&size=${size}&roomId=${roomId}`,
+      `${SERVER}/chat-messages?page=${page}&size=${size}&caseId=${caseId}`,
       {
         headers: {
           Authorization: "Bearer " + token,
@@ -67,6 +67,28 @@ export async function sendMessage(
     } else {
       console.error("Error enviando mensaje:", error);
       return { success: false, error: "Error enviando mensaje" };
+    }
+  }
+}
+
+export async function uploadFile(file: File | Blob) {
+  const form = new FormData();
+  form.append("file", file);
+  const token = localStorage.getItem("token");
+  try {
+    const { data } = await axios.post(`${SERVER}/chat-messages/files`, form, {
+      headers: { Authorization: "Bearer " + token },
+    });
+    return { success: true as const, fileName: data.fileName as string };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error subiendo archivo de chat:", error);
+      return { success: false as const, error: "Error inesperado" };
     }
   }
 }

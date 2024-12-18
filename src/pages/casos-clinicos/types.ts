@@ -11,6 +11,12 @@ export interface CasoClinico {
   editable: boolean;
 }
 
+export interface CasoClinicoAdmin extends CasoClinico {
+  specialityId?: number;
+  assigned?: boolean;
+  feedbackCount?: number;
+}
+
 export interface EditCasoClinico {
   id: number;
   fechaNacimiento: string;
@@ -116,6 +122,12 @@ export interface EducationalResource {
   createdAt: string;
   adminName: string | null;
   specialistName: string | null;
+}
+
+export interface FAQ {
+  id: number,
+  question: string,
+  answer: string
 }
 
 /*Un caso clínico tiene: fecha de nacimiento del paciente, 

@@ -22,6 +22,7 @@ import { useAppDispatch } from "../../store/hooks";
 import { setAuth } from "../../store/slices/auth";
 import { setRole } from "../../store/slices/role";
 import { setUser } from "../../store/slices/user";
+import { useStoreLogin } from "../../store/local-storage";
 
 const loginSchema = Yup.object({
   document: Yup.string()
@@ -41,6 +42,8 @@ const Login = () => {
   const router = useIonRouter();
 
   const dispatch = useAppDispatch();
+
+  const storeLogin = useStoreLogin();
 
   // Set up result toast
   const [showToast] = useCommonToast();
@@ -71,23 +74,29 @@ const Login = () => {
                 signin(values.document, values.password).then((data) => {
                   if (data.success) {
                     // alert("Inicio de sesión exitoso");
+                    showToast("Inicio de sesión exitoso", "success");
+
                     dispatch(setAuth(true));
 
                     // Set user type
                     dispatch(setRole("regular"));
 
-                    dispatch(
-                      setUser({
-                        document: values.document,
-                        email: "",
-                        fullName: "",
-                        password: values.password,
-                        type: data.type,
-                      })
-                    );
+                    const userType = data.type as
+                      | "rural professional"
+                      | "specialist"
+                      | "";
 
-                    showToast("Inicio de sesión exitoso", "success");
-                    localStorage.setItem("token", data.token);
+                    const userItem = {
+                      document: values.document,
+                      email: "",
+                      fullName: "",
+                      type: userType,
+                      password: "",
+                    };
+                    dispatch(setUser({ ...userItem, password: "" }));
+
+                    storeLogin(data.token, userItem, "regular", { auth: true });
+
                     router.push("/casos-clinicos");
                   } else {
                     // alert("Error al iniciar sesión");

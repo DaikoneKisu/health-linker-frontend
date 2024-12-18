@@ -17,10 +17,9 @@ import { closeClinicalCase } from "../../../api/casos-clinicos";
 interface Props {
   caso: CasoClinico;
   getCases: () => void;
-  isAdmin?: boolean;
 }
 
-const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
+const TarjetaDeCasoAbierto = ({ caso, getCases }: Props) => {
   const deleteButtonId = useId();
 
   const closeCase = async () => {
@@ -32,7 +31,7 @@ const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
       }
     });
   };
-  
+
   return (
     <IonCard>
       <IonCardHeader>
@@ -43,9 +42,11 @@ const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
           Género del paciente: <span>{caso.genero}</span>
         </IonCardSubtitle>
       </IonCardHeader>
+
       <IonCardContent>
         <p>{caso.descripcionCaso}</p>
       </IonCardContent>
+
       <IonToolbar className="ion-card-footer">
         <IonButtons style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
           <IonButton
@@ -55,18 +56,20 @@ const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
           >
             Ver
           </IonButton>
-          {!isAdmin && (
-            <IonButton
-              fill="outline"
-              routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
-              color="tertiary"
-            >
-              Retroalimentar
-            </IonButton>
-          )}
-          {/* <IonButton fill="outline" color="tertiary">
-            Editar
-          </IonButton> */}
+          <IonButton
+            fill="outline"
+            routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
+            color="tertiary"
+          >
+            Retroalimentaciones
+          </IonButton>
+          <IonButton
+            fill="outline"
+            color="tertiary"
+            routerLink={`/casos-clinicos/caso-clinico/chat/${caso.id}`}
+          >
+            Chat
+          </IonButton>
           <IonButton fill="outline" onClick={closeCase} color="tertiary">
             Cerrar
           </IonButton>
@@ -78,7 +81,7 @@ const TarjetaDeCasoAbierto = ({ caso, getCases, isAdmin = false }: Props) => {
             afterDelete={() => getCases()}
             triggerElementId={deleteButtonId}
           />
-          { caso.editable && (
+          {caso.editable && (
             <IonButton
               fill="outline"
               routerLink={`/casos-clinicos/caso-clinico/editar/${caso.id}`}

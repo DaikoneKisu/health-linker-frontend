@@ -9,11 +9,9 @@ import {
   IonFabButton,
   IonIcon,
   IonText,
-  useIonViewWillEnter,
   IonLoading,
   IonToolbar,
   useIonModal,
-  useIonViewWillLeave,
 } from "@ionic/react";
 import { add, helpOutline } from "ionicons/icons";
 import "./styles.css";
@@ -22,29 +20,27 @@ import WithAuth from "../../components/WithAuth";
 import ListaDeCasos from "./lista-de-casos";
 import LogoHeader from "../../components/logo-header/logo-header";
 import styles from "./casos-clinicos.module.css";
-import { getMe } from "../../api/auth";
 import ListaDeCasosEspecialistas from "./lista-de-casos-especialistas";
 import SearchInput from "../../components/SearchInput";
-import { useLogOut } from "../../hooks/useLogOut";
+import { useLogOut } from "../../store/local-storage";
 import { FaqModal } from "../../components/FaqModal";
 import {
   useClosedCasesCurrentUser,
   useLibraryCases,
   useOpenCasesCurrentUser,
-  useRequiredCurrentSpecialistCases,
 } from "../../hooks/queries/clinical-cases";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAppSelector } from "../../store/hooks";
+import { useReadLocalStorage } from "usehooks-ts";
+import { UserState } from "../../store/slices/user";
 
 const CasosClinicos = () => {
   const [page, setPage] = useState(1);
-  const [user, setUser] = useState<any>(null);
   const [currentSearch, setCurrentSearch] = useState("");
   const [caseState, setCaseState] = useState<
-    "abiertos" | "cerrados" | "mentoreables" | "biblioteca"
+    "abiertos" | "cerrados" | "biblioteca"
   >("abiertos");
 
-  const userFromStore = useAppSelector((state) => state.user);
+  const user = useReadLocalStorage<UserState>("user");
 
   const logOut = useLogOut();
 
@@ -59,7 +55,7 @@ const CasosClinicos = () => {
       page,
       currentSearch,
       document: user?.document ?? "",
-      enabled: user !== null,
+      enabled: caseState === "abiertos",
     });
 
   const { data: closedCasesData, isLoading: closedCasesLoading } =
@@ -67,19 +63,15 @@ const CasosClinicos = () => {
       page,
       currentSearch,
       document: user?.document ?? "",
-      enabled: user !== null,
-    });
-
-  const { data: requiredCasesData, isLoading: requiredCasesLoading } =
-    useRequiredCurrentSpecialistCases({
-      page,
-      currentSearch,
-      document: user?.document ?? "",
-      enabled: userFromStore?.type === "specialist" && user !== null,
+      enabled: caseState === "cerrados",
     });
 
   const { data: libraryCasesData, isLoading: libraryCasesLoading } =
-    useLibraryCases({ page, currentSearch, enabled: user !== null });
+    useLibraryCases({
+      page,
+      currentSearch,
+      enabled: caseState === "biblioteca",
+    });
 
   const queryClient = useQueryClient();
 
@@ -88,8 +80,6 @@ const CasosClinicos = () => {
       ? openCasesLoading
       : caseState === "cerrados"
       ? closedCasesLoading
-      : caseState === "mentoreables"
-      ? requiredCasesLoading
       : libraryCasesLoading;
 
   const getCasesQueryKey =
@@ -97,8 +87,6 @@ const CasosClinicos = () => {
       ? (["clinical-cases", "open"] as const)
       : caseState === "cerrados"
       ? (["clinical-cases", "closed"] as const)
-      : caseState === "mentoreables"
-      ? (["clinical-cases", "specialist"] as const)
       : (["clinical-cases", "library"] as const);
 
   const casesList =
@@ -106,23 +94,7 @@ const CasosClinicos = () => {
       ? openCasesData
       : caseState === "cerrados"
       ? closedCasesData
-      : caseState === "mentoreables"
-      ? requiredCasesData
       : libraryCasesData;
-
-  useIonViewWillEnter(() => {
-    getMe().then((data) => {
-      if (data.success) {
-        setUser({ ...data.user, type: data.user.userType });
-      } else {
-        console.error("Error:", data.error);
-      }
-    });
-  }, []);
-
-  useIonViewWillLeave(() => {
-    setUser(null);
-  });
 
   const onSearch = (value: string) => {
     setCurrentSearch(value);
@@ -131,7 +103,7 @@ const CasosClinicos = () => {
   return (
     <WithAuth>
       <IonPage>
-        {user && user.userType === "rural professional" && (
+        {user && user.type === "rural professional" && (
           <>
             <LogoHeader>
               <IonHeader className="header-style ion-no-border">
@@ -201,9 +173,7 @@ const CasosClinicos = () => {
               <IonLoading isOpen={showLoader} />
               <ListaDeCasos
                 casos={casesList?.data ?? []}
-                tipoCasos={
-                  caseState === "mentoreables" ? "abiertos" : caseState
-                }
+                tipoCasos={caseState}
                 getCases={() =>
                   queryClient.invalidateQueries({
                     queryKey: getCasesQueryKey,
@@ -228,7 +198,7 @@ const CasosClinicos = () => {
             </IonContent>
           </>
         )}
-        {user && user.userType === "specialist" && (
+        {user && user.type === "specialist" && (
           <>
             <LogoHeader>
               <IonHeader className="header-style ion-no-border">
@@ -259,19 +229,7 @@ const CasosClinicos = () => {
                       color="primary"
                       fill={caseState === "abiertos" ? "solid" : "outline"}
                     >
-                      Casos abiertos
-                    </IonButton>
-                    <IonButton
-                      className={`${styles.button}`}
-                      onClick={() => {
-                        if (caseState !== "mentoreables") {
-                          setCaseState("mentoreables");
-                        }
-                      }}
-                      color="primary"
-                      fill={caseState === "mentoreables" ? "solid" : "outline"}
-                    >
-                      Casos mentoreables
+                      Casos asignados
                     </IonButton>
                     <IonButton
                       className={`${styles.button}`}
@@ -292,7 +250,7 @@ const CasosClinicos = () => {
                       color="dark"
                       fill="outline"
                     >
-                      Cerrar Sesion
+                      Cerrar Sesión
                     </IonButton>
                   </IonButtons>
                   <SearchInput

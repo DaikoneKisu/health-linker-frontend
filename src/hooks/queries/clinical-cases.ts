@@ -3,6 +3,8 @@ import {
   getCasesLibrary,
   getClosedCasesCurrentAdmin,
   getClosedCasesCurrentUser,
+  getMentoredCasesAdmin,
+  getNotMentoredCasesAdmin,
   getOpenCasesCurrentAdmin,
   getOpenCasesCurrentUser,
   getRequiredCurrentSpecialistCases,
@@ -77,6 +79,7 @@ export function useClosedCasesCurrentAdmin({
     queryFn: () => getClosedCasesCurrentAdmin(page, size, currentSearch),
     staleTime: 1000 * 60 * 5, // 5 minutes
     enabled,
+    networkMode: "online",
   });
 }
 
@@ -95,6 +98,7 @@ export function useRequiredCurrentSpecialistCases({
     ],
     queryFn: () => getRequiredCurrentSpecialistCases(page, size, currentSearch),
     staleTime: 1000 * 60 * 5,
+    networkMode: "online",
     enabled,
   });
 }
@@ -110,5 +114,33 @@ export function useLibraryCases({
     queryFn: () => getCasesLibrary(page, size, currentSearch),
     staleTime: 1000 * 60 * 10,
     enabled,
+  });
+}
+
+export function useNotMentoredCasesAdmin({
+  page = 1,
+  size = 100,
+  currentSearch = "",
+  enabled = false,
+}) {
+  return useQuery({
+    queryKey: ["clinical-cases", "not-assigned", { page, size, currentSearch }],
+    queryFn: () => getNotMentoredCasesAdmin(page, size, currentSearch),
+    enabled,
+    networkMode: "online",
+  });
+}
+
+export function useMentoredCasesAdmin({
+  page = 1,
+  size = 100,
+  currentSearch = "",
+  enabled = false,
+}) {
+  return useQuery({
+    queryKey: ["clinical-cases", "assigned", { page, size, currentSearch }],
+    queryFn: () => getMentoredCasesAdmin(page, size, currentSearch),
+    enabled,
+    networkMode: "online",
   });
 }

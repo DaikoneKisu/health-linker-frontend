@@ -1,6 +1,7 @@
 import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
+  IonBadge,
   IonIcon,
   IonLabel,
   IonRouterOutlet,
@@ -42,9 +43,13 @@ import "./theme/variables.css";
 import CasoClinico from "./pages/casos-clinicos/caso-clinico/caso-clinico";
 import { FeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentacion-pacientes";
 import { ClosedFeedbackRender } from "./pages/casos-clinicos/tarjetas-de-casos/retroalimentación/retroalimentafion-pacientes-cerrada";
-import { chatbox, documentText, flask, person, school } from "ionicons/icons";
-import { useAppSelector } from "./store/hooks";
-import ChatRoomsList from "./pages/chat/chat-rooms/chat-rooms-list";
+import {
+  documentText,
+  flask,
+  notifications,
+  person,
+  school,
+} from "ionicons/icons";
 import Chat from "./pages/chat/in-chat/chat";
 import AdminLogin from "./pages/admin/login/admin-login";
 import AdminEspecialidades from "./pages/admin/especialidades/especialidades";
@@ -59,6 +64,12 @@ import CrearRecurso from "./pages/recursos-educativos/crear-recurso";
 import DetalleRecurso from "./pages/recursos-educativos/detalle-recurso";
 import EditarRecurso from "./pages/recursos-educativos/editar-recurso";
 import CasosClinicosAdmin from "./pages/admin/casos/casos-clinicos-admin";
+import { useReadLocalStorage } from "usehooks-ts";
+import { useEffect, useRef, useState } from "react";
+import { getNotifications, setLastOnline } from "./api/notifications";
+import NotificationsPage from "./pages/notifications/notifications";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { setNotifications } from "./store/slices/notifications";
 
 setupIonicReact({ mode: "md" });
 
@@ -66,6 +77,8 @@ setupIonicReact({ mode: "md" });
  * Tabs when logged in
  */
 function MainTabs() {
+  const notificationState = useAppSelector((state) => state.notifications);
+
   return (
     <IonTabs>
       {/* Route definition */}
@@ -86,6 +99,7 @@ function MainTabs() {
           path="/casos-clinicos/caso-clinico/editar/:id"
           component={EditarCasoClinico}
         />
+        <Route path="/casos-clinicos/caso-clinico/chat/:id" component={Chat} />
 
         <Route
           path="/casos-clinicos/retroalimentaciones/caso-clinico/:id"
@@ -95,12 +109,13 @@ function MainTabs() {
           path="/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/:id"
           component={ClosedFeedbackRender}
         />
-        <Route path="/chat" exact component={ChatRoomsList} />
-        <Route path="/chat/:id" component={Chat} />
+        {/* Recursos educativos */}
         <Route path="/recursos" exact component={RecursosEducativos} />
         <Route path="/nuevo-recurso" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
+        {/* Notificaciones */}
+        <Route path="/notificaciones" exact component={NotificationsPage} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -114,9 +129,13 @@ function MainTabs() {
           <IonIcon icon={school} />
           <IonLabel>Recursos Educativos</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="chat" href="/chat">
-          <IonIcon icon={chatbox} />
-          <IonLabel>Chat</IonLabel>
+        <IonTabButton tab="notificaciones" href="/notificaciones">
+          <IonIcon icon={notifications} />
+          <IonLabel>Notificaciones</IonLabel>
+          {(notificationState.assignedCasesCount ||
+            notificationState.feedbackCount ||
+            notificationState.messagesCount ||
+            notificationState.newCasesCount) && <IonBadge color="danger" />}
         </IonTabButton>
       </IonTabBar>
     </IonTabs>
@@ -127,6 +146,8 @@ function MainTabs() {
  * Tabs when logged in as admin
  */
 function AdminTabs() {
+  const notificationState = useAppSelector((state) => state.notifications);
+
   return (
     <IonTabs>
       {/* Route definition */}
@@ -149,6 +170,14 @@ function AdminTabs() {
           path="/casos-clinicos/caso-clinico/:id"
           component={CasoClinico}
         />
+        <Route
+          path="/casos-clinicos/retroalimentaciones/caso-clinico/:id"
+          component={ClosedFeedbackRender}
+        />
+        <Route
+          path="/casos-clinicos/retroalimentaciones/cerrado/caso-clinico/:id"
+          component={ClosedFeedbackRender}
+        />
         {/* Especialidades */}
         <Route exact path="/especialidades" component={AdminEspecialidades} />
         {/* Recursos educativos */}
@@ -156,9 +185,8 @@ function AdminTabs() {
         <Route path="/nuevo-recurso" exact component={CrearRecurso} />
         <Route path="/recursos/:id" component={DetalleRecurso} />
         <Route path="/recursos/editar/:id" exact component={EditarRecurso} />
-        {/* Chat */}
-        <Route path="/chat" exact component={ChatRoomsList} />
-        <Route path="/chat/:id" component={Chat} />
+        {/* Notificaciones */}
+        <Route path="/notificaciones" exact component={NotificationsPage} />
         <Route component={NotFound} />
       </IonRouterOutlet>
 
@@ -176,9 +204,13 @@ function AdminTabs() {
           <IonIcon icon={flask} />
           <IonLabel>Especialidades</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="chat" href="/chat">
-          <IonIcon icon={chatbox} />
-          <IonLabel>Chat</IonLabel>
+        <IonTabButton tab="notificacioens" href="/notificaciones">
+          <IonIcon icon={notifications} />
+          <IonLabel>Notificaciones</IonLabel>
+          {(notificationState.assignedCasesCount ||
+            notificationState.feedbackCount ||
+            notificationState.messagesCount ||
+            notificationState.newCasesCount) && <IonBadge color="danger" />}
         </IonTabButton>
       </IonTabBar>
     </IonTabs>
@@ -186,8 +218,44 @@ function AdminTabs() {
 }
 
 function NavTabs() {
-  const role = useAppSelector((state) => state.role);
-  if (role === "regular") {
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      const auth = localStorage.getItem("auth");
+      if (auth) {
+        setLastOnline();
+      }
+    }, 1 * 60 * 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  const role = useReadLocalStorage<"regular" | "admin">("role");
+  const user = useReadLocalStorage<{ type: "rural professional" | "admin" }>(
+    "user"
+  );
+
+  useEffect(() => {
+    if (role === "admin") {
+      getNotifications(role).then((notifications) => {
+        if (notifications) dispatch(setNotifications(notifications));
+      });
+    } else {
+      if (user) {
+        getNotifications(user.type).then((notifications) => {
+          if (notifications) dispatch(setNotifications(notifications));
+        });
+      }
+    }
+  }, []);
+
+  if (!role || role === "regular") {
     return <MainTabs />;
   }
   return <AdminTabs />;
@@ -202,13 +270,13 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  const auth = useAppSelector((state) => state.auth);
+  const auth = useReadLocalStorage<{ auth: boolean }>("auth");
 
   return (
     <IonApp>
       <QueryClientProvider client={queryClient}>
         <IonReactRouter>
-          {auth.auth ? (
+          {auth && auth.auth ? (
             <NavTabs />
           ) : (
             <IonRouterOutlet>
@@ -224,12 +292,8 @@ const App = () => {
                 component={RegistroProfesionalRural}
                 exact
               />
-              <Route
-                path="/admin"
-                exact
-                component={auth.auth ? NavTabs : AdminLogin}
-              />
-              <Route path="/" exact component={auth.auth ? NavTabs : Login} />
+              <Route path="/admin" exact component={AdminLogin} />
+              <Route path="/" exact component={Login} />
               <Route component={NotFound} />
             </IonRouterOutlet>
           )}

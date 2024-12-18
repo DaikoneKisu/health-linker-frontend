@@ -28,7 +28,37 @@
 .inputContainer {
   display: flex;
   min-width: 100%;
-  position: fixed;
-  bottom: 1rem;
   padding-inline: 0.6rem;
+  padding-block: 0.25rem;
+}
+
+.adjuntoOptionsList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.adjuntoBtnContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.adjuntoIcon {
+  font-size: 2rem;
+  color: var(--ion-color-primary);
+}
+
+.audioRecorder {
+  background-color: white !important;
+  box-shadow: none !important;
+  border-width: 1px;
+  border-color: var(--ion-color-primary) !important;
+  border-style: solid;
+}
+
+.chatImage {
+  height: 250px;
 }

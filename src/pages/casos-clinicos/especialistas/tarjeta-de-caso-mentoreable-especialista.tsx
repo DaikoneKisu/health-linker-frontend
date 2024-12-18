@@ -10,7 +10,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { CasoClinico } from "../types";
-import { mentorCase } from "../../../api/casos-clinicos";
+// import { mentorCase } from "../../../api/casos-clinicos";
 
 interface Props {
   caso: CasoClinico;
@@ -18,15 +18,15 @@ interface Props {
 }
 
 const TarjetaDeCasoMentoreableEspecialista = ({ caso, getCases }: Props) => {
-  const mentorClinicalCase = () => {
-    mentorCase(caso.id).then((data) => {
-      if (data.success) {
-        getCases();
-      } else {
-        alert("Error al mentorear el caso");
-      }
-    });
-  };
+  // const mentorClinicalCase = () => {
+  //   mentorCase(caso.id).then((data) => {
+  //     if (data.success) {
+  //       getCases();
+  //     } else {
+  //       alert("Error al mentorear el caso");
+  //     }
+  //   });
+  // };
 
   return (
     <IonCard>
@@ -52,7 +52,7 @@ const TarjetaDeCasoMentoreableEspecialista = ({ caso, getCases }: Props) => {
           </IonButton>
           <IonButton
             fill="outline"
-            onClick={mentorClinicalCase}
+            // onClick={mentorClinicalCase}
             color="tertiary"
           >
             Mentorear

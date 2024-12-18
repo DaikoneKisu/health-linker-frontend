@@ -9,16 +9,15 @@ import {
   IonCardTitle,
   IonToolbar,
 } from "@ionic/react";
-import { CasoClinico } from "../types";
-import { useId } from "react";
-import { closeClinicalCase } from "../../../api/casos-clinicos";
+import { CasoClinicoAdmin } from "../types";
 
 interface Props {
-  caso: CasoClinico;
-  getCases: () => void;
+  caso: CasoClinicoAdmin;
+  onAssign: () => void;
+  onReassign: () => void;
 }
 
-const TarjetaDeCasoAbiertoEspecialista = ({ caso, getCases }: Props) => {
+const TarjetaDeCasoAbierto = ({ caso, onAssign, onReassign }: Props) => {
   return (
     <IonCard>
       <IonCardHeader>
@@ -29,9 +28,11 @@ const TarjetaDeCasoAbiertoEspecialista = ({ caso, getCases }: Props) => {
           Género del paciente: <span>{caso.genero}</span>
         </IonCardSubtitle>
       </IonCardHeader>
+
       <IonCardContent>
         <p>{caso.descripcionCaso}</p>
       </IonCardContent>
+
       <IonToolbar className="ion-card-footer">
         <IonButtons style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
           <IonButton
@@ -41,24 +42,29 @@ const TarjetaDeCasoAbiertoEspecialista = ({ caso, getCases }: Props) => {
           >
             Ver
           </IonButton>
-          <IonButton
-            fill="outline"
-            routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
-            color="tertiary"
-          >
-            Retroalimentar
-          </IonButton>
-          <IonButton
-            fill="outline"
-            routerLink={`/casos-clinicos/caso-clinico/chat/${caso.id}`}
-            color="tertiary"
-          >
-            Chat
-          </IonButton>
+          {caso.assigned && (
+            <IonButton
+              fill="outline"
+              routerLink={`/casos-clinicos/retroalimentaciones/caso-clinico/${caso.id}`}
+              color="tertiary"
+            >
+              Retroalimentaciones
+            </IonButton>
+          )}
+          {caso.assigned && (
+            <IonButton fill="outline" color="tertiary" onClick={onReassign}>
+              Cambiar especialista asignado
+            </IonButton>
+          )}
+          {caso.assigned === false && (
+            <IonButton fill="outline" color="tertiary" onClick={onAssign}>
+              Asignar a especialista
+            </IonButton>
+          )}
         </IonButtons>
       </IonToolbar>
     </IonCard>
   );
 };
 
-export default TarjetaDeCasoAbiertoEspecialista;
+export default TarjetaDeCasoAbierto;
