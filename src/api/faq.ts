@@ -69,3 +69,32 @@ export async function createFAQ({
         }
     }
 }
+
+export const deleteFAQ = async (id: number) => {
+    try {
+        const token = localStorage.getItem("token");
+        await axios.delete(
+            `${SERVER}/faq/${id}`,
+            {
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            }
+        );
+
+        return {
+            success: true
+        };
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            return {
+                success: false,
+                error: error.response.data
+            };
+        } else {
+            console.error("Error inesperado: ", error);
+            return { success: false, error: "Error inesperado" };
+        }
+    }
+};

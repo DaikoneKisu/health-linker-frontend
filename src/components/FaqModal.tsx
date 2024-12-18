@@ -1,4 +1,5 @@
 import {
+  IonAlert,
   IonButton,
   IonButtons,
   IonContent,
@@ -15,11 +16,11 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { chevronForward } from "ionicons/icons";
+import { chevronForward, trash } from "ionicons/icons";
 import styles from "./FaqModal.module.css";
 import { useEffect, useState } from "react";
 import { FAQ } from "../pages/casos-clinicos/types";
-import { getFaqs, createFAQ } from "../api/faq";
+import { getFaqs, createFAQ, deleteFAQ } from "../api/faq";
 
 
 export function FaqModal({
@@ -34,7 +35,8 @@ export function FaqModal({
   const[newQuestion, setNewQuestion] = useState<string>('');
   const[newAnswer, setNewAnswer] = useState<string>('');
   const[creating, setCreating] = useState<boolean>(false);
-
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [faqToDelete, setFaqToDelete] = useState<number | null>(null);
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
@@ -80,6 +82,34 @@ export function FaqModal({
     }
   }
 
+  const handleDeleteFaq = async (id: number) => {
+    try {
+      const response = await deleteFAQ(id);
+      if (response.success) {
+        setFaqs(faqs.filter(faq => faq.id !== id));
+      } else {
+        setError("Error al eliminar la pregunta frecuente.");
+        console.error(response.error);
+      }
+    } catch (error) {
+      setError("Error al eliminar la pregunta frecuente.");
+      console.error(error);
+    }
+  }
+
+  const confirmDeleteFaq = (id:number) => {
+    setFaqToDelete(id);
+    setShowAlert(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (faqToDelete) {
+      await handleDeleteFaq(faqToDelete);
+      setFaqToDelete(null);
+      setShowAlert(false);
+    }
+  }
+
   return (
     <IonPage>
       <IonHeader className="ion-padding">
@@ -102,9 +132,10 @@ export function FaqModal({
           <>
             <IonList className="ion-padding">
               {faqs.map((faq, i) => (
-                <IonItem key={i} onClick={() => setSelectedQuestion(faq)}>
-                  <IonLabel>{faq.question}</IonLabel>
+                <IonItem key={i} >
+                  <IonLabel onClick={() => setSelectedQuestion(faq)}>{faq.question}</IonLabel>
                   <IonIcon slot="end" icon={chevronForward} />
+                  <IonIcon slot="end" icon={trash} onClick={() => confirmDeleteFaq(faq.id)} />
                 </IonItem>
               ))}
             </IonList>
@@ -135,6 +166,27 @@ export function FaqModal({
             </IonButton>
           </div>
         )}
+
+        <IonAlert 
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header={"Confirmar Eliminación"}
+          message={"¿Estás seguro de que deseas eliminar esta pregunta frecuente?"}
+          buttons={[
+            {
+              text: "Calcelar",
+              role: "cancel",
+              handler: () => {
+                setShowAlert(false);
+                setFaqToDelete(null);
+              }
+            },
+            {
+              text: "Eliminar",
+              handler: handleConfirmDelete
+            }
+          ]}
+        />
       </IonContent>
     </IonPage>
   );
