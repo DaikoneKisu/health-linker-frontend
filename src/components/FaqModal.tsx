@@ -1,59 +1,127 @@
 import {
+  IonAlert,
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
+  IonInput,
   IonItem,
   IonLabel,
   IonList,
+  IonLoading,
   IonPage,
   IonText,
+  IonTextarea,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { chevronForward } from "ionicons/icons";
+import { chevronForward, trash } from "ionicons/icons";
 import styles from "./FaqModal.module.css";
-import { useState } from "react";
-
-const FAQ = [
-  {
-    question:
-      "¿Cómo puedo manejar las solicitudes de registro y autenticación de usuarios?",
-    reply:
-      "Los usuarios se registran por medio de la página web, con su documento de identidad y una contraseña que ellos mismos gestionan. Los administradores siempre tienen acceso al listado de usuarios registrados",
-  },
-  {
-    question: "¿Qué hacer si un usuario olvida su contraseña?",
-    reply:
-      "Por el momento, los usuarios deben contactar a los administradores para recuperar su contraseña. Si eres administrador, ingresa al panel, busca al usuario e ingresa a su perfil para cambiar su contraseña",
-  },
-  {
-    question:
-      "¿Cómo gestionar permisos y roles de los usuarios (administradores)?",
-    reply:
-      "Los usuarios escogen su rol al registrarse, y la plataforma asigna permisos en base a esto. Las cuentas de administrador solo pueden ser creadas por otro administrador, desde su panel",
-  },
-  {
-    question: "¿Cómo puedo realizar copias de seguridad de los datos?",
-    reply: "Comunícate con los administradores técnicos de la plataforma.",
-  },
-  {
-    question: "¿Qué hacer si hay un fallo técnico en la página?",
-    reply:
-      "Intenta revisar tu conexión a internet, recargar la página o volver a ingresar. Si el problema persiste, contacta a los administradores o al equipo de desarrollo",
-  },
-];
+import { useEffect, useState } from "react";
+import { FAQ } from "../pages/casos-clinicos/types";
+import { getFaqs, createFAQ, deleteFAQ } from "../api/faq";
+import { useReadLocalStorage } from "usehooks-ts";
 
 export function FaqModal({
   dismiss,
 }: {
   dismiss: (data?: string | null | undefined | number, role?: string) => void;
 }) {
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const[newQuestion, setNewQuestion] = useState<string>('');
+  const[newAnswer, setNewAnswer] = useState<string>('');
+  const[creating, setCreating] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [faqToDelete, setFaqToDelete] = useState<number | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+  const role = useReadLocalStorage<"regular" | "admin">("role");
+
+  useEffect(() => {
+    if (role === "admin") {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [role]);
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        const response = await getFaqs();
+        if (response.success) {
+          setFaqs(response.data);
+        } else {
+          setError('Error al obtener las preguntas frecuentes.');
+          console.error(response.error);
+        };
+      } catch (err) {
+        setError('Error al obtener las preguntas frecuentes.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFaqs();
+  }, []);
+
   const [selectedQuestion, setSelectedQuestion] = useState<
-    (typeof FAQ)[number] | null
+    (typeof faqs)[number] | null
   >(null);
 
+  const handleCreateFaq = async () => {
+    setCreating(true);
+    try {
+      const response = await createFAQ({ question: newQuestion, answer: newAnswer });
+      if (response?.success) {
+        setFaqs([...faqs, response.data])
+        setNewQuestion('');
+        setNewAnswer('');
+      } else {
+        setError('Error al crear la pregunta frecuente');
+        console.error(response?.error);
+      }
+    } catch (error) {
+      setError("Error al crear la pregunta frecuente. ");
+      console.error(error)
+    } finally {
+      setCreating(false)
+    }
+  }
+  const handleDeleteFaq = async (id: number) => {
+    try {
+      const response = await deleteFAQ(id);
+      if (response.success) {
+        setFaqs(faqs.filter(faq => faq.id !== id));
+      } else {
+        setError("Error al eliminar la pregunta frecuente.");
+        console.error(response.error);
+      }
+    } catch (error) {
+      setError("Error al eliminar la pregunta frecuente.");
+      console.error(error);
+    }
+  }
+
+  const confirmDeleteFaq = (id:number) => {
+    setFaqToDelete(id);
+    setShowAlert(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (faqToDelete) {
+      await handleDeleteFaq(faqToDelete);
+      setFaqToDelete(null);
+      setShowAlert(false);
+    }
+  }
+
+  
   return (
     <IonPage>
       <IonHeader className="ion-padding">
@@ -70,26 +138,71 @@ export function FaqModal({
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {!selectedQuestion && (
-          <IonList className="ion-padding">
-            {FAQ.map((faq, i) => (
-              <IonItem key={i} onClick={() => setSelectedQuestion(faq)}>
-                <IonLabel>{faq.question}</IonLabel>
-                <IonIcon slot="end" icon={chevronForward} />
-              </IonItem>
-            ))}
-          </IonList>
+        <IonLoading isOpen={loading} message={'Cargando...'} />
+        {error && <div>{error}</div>}
+        {!loading && !error &&!selectedQuestion && (
+          <>
+            <IonList className="ion-padding">
+              {faqs.map((faq, i) => (
+                <IonItem key={i} >
+                  <IonLabel onClick={() => setSelectedQuestion(faq)}>{faq.question}</IonLabel>
+                  <IonIcon slot="end" icon={chevronForward} />
+                  {isAdmin && (<IonIcon slot="end" icon={trash} onClick={() => confirmDeleteFaq(faq.id)} />)}
+                </IonItem>
+              ))}
+            </IonList>
+            {
+              isAdmin && (
+                <div className="ion-padding">
+                  <IonInput
+                    value={newQuestion}
+                    placeholder="Nueva pregunta"
+                    onIonChange={(e) => setNewQuestion(e.detail.value!)}
+                  />
+                  <IonTextarea 
+                    value={newAnswer}
+                    placeholder="Respuesta"
+                    onIonChange={(e) => setNewAnswer(e.detail.value!)}
+                  />
+                  <IonButton onClick={handleCreateFaq} disabled={creating}>
+                    {creating ? 'Creando...' : 'Crear Pregunta Frecuente'}
+                  </IonButton>
+                </div>
+              )
+            }
+          </>
         )}
 
         {selectedQuestion && (
           <div className={`ion-padding ${styles.faqContainer}`}>
             <h3>{selectedQuestion.question}</h3>
-            <IonText>{selectedQuestion.reply}</IonText>
+            <IonText>{selectedQuestion.answer}</IonText>
             <IonButton onClick={() => setSelectedQuestion(null)}>
               Entendido
             </IonButton>
           </div>
         )}
+
+        <IonAlert 
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header={"Confirmar Eliminación"}
+          message={"¿Estás seguro de que deseas eliminar esta pregunta frecuente?"}
+          buttons={[
+            {
+              text: "Calcelar",
+              role: "cancel",
+              handler: () => {
+                setShowAlert(false);
+                setFaqToDelete(null);
+              }
+            },
+            {
+              text: "Eliminar",
+              handler: handleConfirmDelete
+            }
+          ]}
+        />
       </IonContent>
     </IonPage>
   );
