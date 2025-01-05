@@ -290,6 +290,21 @@ function FileUploadModal({
     },
   });
 
+  const audioUploadMutation = useMutation({
+    mutationFn: async (file: Blob) => {
+      const response = await uploadFile(file);
+      if (response.success) {
+        return sendMessage(Number(roomId), response.fileName, "audio");
+      }
+    },
+    onSuccess: (data) => {
+      if (!data?.success) {
+        showToast("Ocurrió un error", "error");
+      }
+      modalRef.current?.dismiss();
+    },
+  });
+
   const handleIconClick = () => {
     fileInputRef.current?.click();
     setFileType("image");
@@ -363,8 +378,7 @@ function FileUploadModal({
                 <AudioRecorder
                   showVisualizer
                   onRecordingComplete={(blob) => {
-                    setFileType("audio");
-                    fileUploadMutation.mutate([blob]);
+                    audioUploadMutation.mutate(blob);
                   }}
                   classes={{
                     AudioRecorderClass: `${styles.audioRecorder}`,
