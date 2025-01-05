@@ -66,6 +66,45 @@ export async function addSpeciality(name: string) {
   }
 }
 
+export async function editSpeciality({
+  id,
+  name,
+}: {
+  id: number;
+  name: string;
+}) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.patch(
+      `${SERVER}/specialties/${id}`,
+      {
+        name,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+
+    const data = response.data;
+    return {
+      success: true as const,
+      data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false as const,
+        error: error,
+      };
+    } else {
+      console.error("Error inesperado:", error);
+      return { success: false as const, error: "Error inesperado" };
+    }
+  }
+}
+
 export async function getSpecialistsAdmin(query: string) {
   try {
     const token = localStorage.getItem("token");

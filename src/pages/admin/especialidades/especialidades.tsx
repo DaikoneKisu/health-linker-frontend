@@ -3,6 +3,7 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -20,15 +21,18 @@ import commonStyles from "../../../common.module.css";
 import { useSpecialities } from "../../../hooks/queries/others";
 import { useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { addSpeciality } from "../../../api/admin";
+import { addSpeciality, editSpeciality } from "../../../api/admin";
 import { useCommonToast } from "../../../hooks/useCommonToast";
+import { pencil } from "ionicons/icons";
 
 export default function AdminEspecialidades() {
   const specialities = useSpecialities();
 
   const modalRef = useRef<HTMLIonModalElement>(null);
+  const [showUpdModal, setShowUpdModal] = useState(false);
 
   const [specialityName, setSpecialityName] = useState("");
+  const [editingId, setEditingId] = useState(0);
 
   const [showToast] = useCommonToast();
 
@@ -42,6 +46,20 @@ export default function AdminEspecialidades() {
         specialities.refetch();
       } else {
         showToast("Error agregando especialidad", "error");
+      }
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: editSpeciality,
+    onSuccess: (data) => {
+      if (data.success) {
+        showToast("Especialidad editada con éxito", "success");
+        setSpecialityName("");
+        setShowUpdModal(false);
+        specialities.refetch();
+      } else {
+        showToast("Error editando especialidad", "error");
       }
     },
   });
@@ -75,11 +93,23 @@ export default function AdminEspecialidades() {
             {specialities.data?.specialties?.map((speciality) => (
               <IonItem key={speciality.name}>
                 <IonLabel>{speciality.name}</IonLabel>
+                <IonButton
+                  size="small"
+                  onClick={() => {
+                    setSpecialityName(speciality.name);
+                    setEditingId(speciality.id);
+                    setShowUpdModal(true);
+                  }}
+                >
+                  Editar
+                  <IonIcon icon={pencil} />
+                </IonButton>
               </IonItem>
             ))}
           </IonList>
         </IonContent>
 
+        {/* Crear especialidad */}
         <IonModal ref={modalRef} trigger="open-modal">
           <IonHeader className="ion-padding">
             <IonTitle>Agregar especialidad</IonTitle>
@@ -90,6 +120,39 @@ export default function AdminEspecialidades() {
               onSubmit={(e) => {
                 e.preventDefault();
                 addMutation.mutate(specialityName);
+              }}
+            >
+              <IonInput
+                label="Nombre de la especialidad"
+                placeholder="Introduzca el nombre"
+                labelPlacement="stacked"
+                type="text"
+                value={specialityName}
+                onIonInput={(e) => setSpecialityName(String(e.target.value))}
+              />
+              <IonButton
+                fill="solid"
+                color="primary"
+                type="submit"
+                disabled={addMutation.isPending}
+              >
+                Guardar
+              </IonButton>
+            </form>
+          </IonContent>
+        </IonModal>
+
+        {/* Modificar especialidad */}
+        <IonModal isOpen={showUpdModal}>
+          <IonHeader className="ion-padding">
+            <IonTitle>Editar especialidad</IonTitle>
+          </IonHeader>
+          <IonContent className="ion-padding">
+            <form
+              className={`${styles.createForm}`}
+              onSubmit={(e) => {
+                e.preventDefault();
+                updateMutation.mutate({ id: editingId, name: specialityName });
               }}
             >
               <IonInput

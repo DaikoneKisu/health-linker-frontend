@@ -47,7 +47,7 @@ export async function sendMessage(
     await axios.post(
       `${SERVER}/chat-messages`,
       {
-        roomId,
+        caseId: roomId,
         content,
         messageType,
       },

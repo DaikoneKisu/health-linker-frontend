@@ -57,7 +57,7 @@ export const registerSpecialist = async (
       fullName,
       password,
       phoneNumber: "593" + phoneNumber,
-      isVerified: true
+      isVerified: true,
     });
 
     return {
@@ -80,7 +80,7 @@ export const getSpecialities = async () => {
   try {
     const response = await axios.get(`${SERVER}/specialties/all`);
 
-    const specialties = response.data as { name: string }[];
+    const specialties = response.data as { id: number; name: string }[];
 
     return {
       success: true as const,

@@ -207,10 +207,10 @@ function AdminTabs() {
         <IonTabButton tab="notificacioens" href="/notificaciones">
           <IonIcon icon={notifications} />
           <IonLabel>Notificaciones</IonLabel>
-          {(notificationState.assignedCasesCount ||
-            notificationState.feedbackCount ||
-            notificationState.messagesCount ||
-            notificationState.newCasesCount) && <IonBadge color="danger" />}
+          {(!!notificationState.assignedCasesCount ||
+            !!notificationState.feedbackCount ||
+            !!notificationState.messagesCount ||
+            !!notificationState.newCasesCount) && <IonBadge color="danger" />}
         </IonTabButton>
       </IonTabBar>
     </IonTabs>
