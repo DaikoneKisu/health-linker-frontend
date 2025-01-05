@@ -37,7 +37,7 @@ export const FeedbackRender = ({ match }: Props) => {
 
   const queryClient = useQueryClient();
 
-  const { data: feedbacks } = useCaseFeedback(Number(caseId));
+  const { data: feedbacks, refetch } = useCaseFeedback(Number(caseId));
 
   const submitMutation = useMutation({
     mutationFn: () => submitFeedback(texto, Number(caseId)),
@@ -45,9 +45,7 @@ export const FeedbackRender = ({ match }: Props) => {
       if (success) {
         showToast("Retroalimentación enviada exitosamente", "success");
         setTexto("");
-        queryClient.invalidateQueries({
-          queryKey: ["feedback", { caseId: Number(caseId) }],
-        });
+        refetch();
       } else {
         showToast("Error al enviar la retroalimentación", "error");
       }
